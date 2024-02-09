@@ -1,0 +1,566 @@
+The system is: Linux - 3.10.0-1160.99.1.el7.x86_64 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
+
+The C compiler identification is GNU, found in "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/3.15.5/CompilerIdC/a.out"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+
+The CXX compiler identification is GNU, found in "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/3.15.5/CompilerIdCXX/a.out"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_7ba3a/fast && /usr/bin/gmake -f CMakeFiles/cmTC_7ba3a.dir/build.make CMakeFiles/cmTC_7ba3a.dir/build
+gmake[1]: se ingresa al directorio `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7ba3a.dir/testCCompiler.c.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc    -o CMakeFiles/cmTC_7ba3a.dir/testCCompiler.c.o   -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_7ba3a
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7ba3a.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc      -rdynamic CMakeFiles/cmTC_7ba3a.dir/testCCompiler.c.o  -o cmTC_7ba3a 
+gmake[1]: se sale del directorio `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_8a639/fast && /usr/bin/gmake -f CMakeFiles/cmTC_8a639.dir/build.make CMakeFiles/cmTC_8a639.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c
+Using built-in specs.
+COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc
+Target: x86_64-pc-linux-gnu
+Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
+Thread model: posix
+gcc version 8.2.0 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccfcg30k.s
+GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed"
+ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 9c89e30d7138ce48871612521942fabb
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o /tmp/ccfcg30k.s
+GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30
+COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
+LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_8a639
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8a639.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o  -o cmTC_8a639 
+Using built-in specs.
+COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc
+COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
+Thread model: posix
+gcc version 8.2.0 (GCC) 
+COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
+LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_8a639' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccx6rPfh.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_8a639 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_8a639' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+    add: [/usr/local/include]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed;/usr/local/include;/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_8a639/fast && /usr/bin/gmake -f CMakeFiles/cmTC_8a639.dir/build.make CMakeFiles/cmTC_8a639.dir/build]
+  ignore line: [gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building C object CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.2.0 (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccfcg30k.s]
+  ignore line: [GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed"]
+  ignore line: [ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 9c89e30d7138ce48871612521942fabb]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o /tmp/ccfcg30k.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30]
+  ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
+  ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_8a639]
+  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8a639.dir/link.txt --verbose=1]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o  -o cmTC_8a639 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc]
+  ignore line: [COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.2.0 (GCC) ]
+  ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
+  ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_8a639' '-mtune=generic' '-march=x86-64']
+  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccx6rPfh.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_8a639 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccx6rPfh.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_8a639] ==> ignore
+    arg [/lib/../lib64/crt1.o] ==> ignore
+    arg [/lib/../lib64/crti.o] ==> ignore
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o] ==> ignore
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..]
+    arg [CMakeFiles/cmTC_8a639.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [-lc] ==> lib [c]
+    arg [-lgcc] ==> lib [gcc]
+    arg [--as-needed] ==> ignore
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [--no-as-needed] ==> ignore
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o] ==> ignore
+    arg [/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib]
+  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
+  implicit dirs: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib64;/lib64;/usr/lib64;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib]
+  implicit fwks: []
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_6168b/fast && /usr/bin/gmake -f CMakeFiles/cmTC_6168b.dir/build.make CMakeFiles/cmTC_6168b.dir/build
+gmake[1]: se ingresa al directorio `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_6168b.dir/testCXXCompiler.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++     -o CMakeFiles/cmTC_6168b.dir/testCXXCompiler.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_6168b
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6168b.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++       -rdynamic CMakeFiles/cmTC_6168b.dir/testCXXCompiler.cxx.o  -o cmTC_6168b 
+gmake[1]: se sale del directorio `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_9d036/fast && /usr/bin/gmake -f CMakeFiles/cmTC_9d036.dir/build.make CMakeFiles/cmTC_9d036.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp
+Using built-in specs.
+COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++
+Target: x86_64-pc-linux-gnu
+Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
+Thread model: posix
+gcc version 8.2.0 (GCC) 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cccDs56f.s
+GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../include"
+ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed"
+ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed
+ /usr/local/include
+ /usr/include
+End of search list.
+GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
+	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
+
+GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
+Compiler executable checksum: 070e67e9ba8aa43ec95f43bd9e04daca
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o /tmp/cccDs56f.s
+GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30
+COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
+LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_9d036
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9d036.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_9d036 
+Using built-in specs.
+COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++
+COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
+Thread model: posix
+gcc version 8.2.0 (GCC) 
+COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
+LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_9d036' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccdX2SEn.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_9d036 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_9d036' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+    add: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+    add: [/usr/local/include]
+    add: [/usr/include]
+  end of search list found
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0/x86_64-pc-linux-gnu]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0/backward]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+  collapse include dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+  collapse include dir [/usr/local/include] ==> [/usr/local/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0/x86_64-pc-linux-gnu;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include/c++/8.2.0/backward;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed;/usr/local/include;/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/gmake cmTC_9d036/fast && /usr/bin/gmake -f CMakeFiles/cmTC_9d036.dir/build.make CMakeFiles/cmTC_9d036.dir/build]
+  ignore line: [gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp']
+  ignore line: [Building CXX object CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.2.0 (GCC) ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cccDs56f.s]
+  ignore line: [GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../include"]
+  ignore line: [ignoring duplicate directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed"]
+  ignore line: [ignoring nonexistent directory "/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/../../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../x86_64-pc-linux-gnu/include"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/x86_64-pc-linux-gnu]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../include/c++/8.2.0/backward]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include]
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/include-fixed]
+  ignore line: [ /usr/local/include]
+  ignore line: [ /usr/include]
+  ignore line: [End of search list.]
+  ignore line: [GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
+  ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
+  ignore line: []
+  ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
+  ignore line: [Compiler executable checksum: 070e67e9ba8aa43ec95f43bd9e04daca]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o /tmp/cccDs56f.s]
+  ignore line: [GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30]
+  ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
+  ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_9d036]
+  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9d036.dir/link.txt --verbose=1]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_9d036 ]
+  ignore line: [Using built-in specs.]
+  ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++]
+  ignore line: [COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper]
+  ignore line: [Target: x86_64-pc-linux-gnu]
+  ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
+  ignore line: [Thread model: posix]
+  ignore line: [gcc version 8.2.0 (GCC) ]
+  ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
+  ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_9d036' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/ccdX2SEn.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_9d036 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2] ==> ignore
+    arg [-plugin] ==> ignore
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccdX2SEn.res] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lc] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
+    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [--eh-frame-hdr] ==> ignore
+    arg [-m] ==> ignore
+    arg [elf_x86_64] ==> ignore
+    arg [-export-dynamic] ==> ignore
+    arg [-dynamic-linker] ==> ignore
+    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
+    arg [-o] ==> ignore
+    arg [cmTC_9d036] ==> ignore
+    arg [/lib/../lib64/crt1.o] ==> ignore
+    arg [/lib/../lib64/crti.o] ==> ignore
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o] ==> ignore
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64]
+    arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
+    arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
+    arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..]
+    arg [CMakeFiles/cmTC_9d036.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [-lstdc++] ==> lib [stdc++]
+    arg [-lm] ==> lib [m]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [-lc] ==> lib [c]
+    arg [-lgcc_s] ==> lib [gcc_s]
+    arg [-lgcc] ==> lib [gcc]
+    arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o] ==> ignore
+    arg [/lib/../lib64/crtn.o] ==> ignore
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib64]
+  collapse library dir [/lib/../lib64] ==> [/lib64]
+  collapse library dir [/usr/lib/../lib64] ==> [/usr/lib64]
+  collapse library dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib]
+  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
+  implicit dirs: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc/x86_64-pc-linux-gnu/8.2.0;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib/gcc;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib64;/lib64;/usr/lib64;/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/lib]
+  implicit fwks: []
+
+
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wall succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_fe513/fast && /usr/bin/gmake -f CMakeFiles/cmTC_fe513.dir/build.make CMakeFiles/cmTC_fe513.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_fe513.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -DCXX_FLAG_WORKS__Wall   -Wall -o CMakeFiles/cmTC_fe513.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_fe513
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fe513.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++   -DCXX_FLAG_WORKS__Wall    -rdynamic CMakeFiles/cmTC_fe513.dir/src.cxx.o  -o cmTC_fe513 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wextra succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_f9923/fast && /usr/bin/gmake -f CMakeFiles/cmTC_f9923.dir/build.make CMakeFiles/cmTC_f9923.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_f9923.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wall  -DCXX_FLAG_WORKS__Wextra   -Wextra -o CMakeFiles/cmTC_f9923.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f9923
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9923.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wall  -DCXX_FLAG_WORKS__Wextra    -rdynamic CMakeFiles/cmTC_f9923.dir/src.cxx.o  -o cmTC_f9923 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wshadow succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_0624f/fast && /usr/bin/gmake -f CMakeFiles/cmTC_0624f.dir/build.make CMakeFiles/cmTC_0624f.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_0624f.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow   -Wshadow -o CMakeFiles/cmTC_0624f.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_0624f
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0624f.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow    -rdynamic CMakeFiles/cmTC_0624f.dir/src.cxx.o  -o cmTC_0624f 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__WeffcPP succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_745e4/fast && /usr/bin/gmake -f CMakeFiles/cmTC_745e4.dir/build.make CMakeFiles/cmTC_745e4.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_745e4.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP   -Weffc++ -o CMakeFiles/cmTC_745e4.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_745e4
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_745e4.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP    -rdynamic CMakeFiles/cmTC_745e4.dir/src.cxx.o  -o cmTC_745e4 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__pedantic succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_9bdbd/fast && /usr/bin/gmake -f CMakeFiles/cmTC_9bdbd.dir/build.make CMakeFiles/cmTC_9bdbd.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_9bdbd.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic   -pedantic -o CMakeFiles/cmTC_9bdbd.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_9bdbd
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9bdbd.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic    -rdynamic CMakeFiles/cmTC_9bdbd.dir/src.cxx.o  -o cmTC_9bdbd 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wno_long_long succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_b4286/fast && /usr/bin/gmake -f CMakeFiles/cmTC_b4286.dir/build.make CMakeFiles/cmTC_b4286.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b4286.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long   -Wno-long-long -o CMakeFiles/cmTC_b4286.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b4286
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4286.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long    -rdynamic CMakeFiles/cmTC_b4286.dir/src.cxx.o  -o cmTC_b4286 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wuninitialized succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_79634/fast && /usr/bin/gmake -f CMakeFiles/cmTC_79634.dir/build.make CMakeFiles/cmTC_79634.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_79634.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized   -Wuninitialized -o CMakeFiles/cmTC_79634.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_79634
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_79634.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized    -rdynamic CMakeFiles/cmTC_79634.dir/src.cxx.o  -o cmTC_79634 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wl,_no_undefined succeeded with the following output:
+Change Dir: /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/gmake cmTC_46610/fast && /usr/bin/gmake -f CMakeFiles/cmTC_46610.dir/build.make CMakeFiles/cmTC_46610.dir/build
+gmake[1]: Entering directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_46610.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined   -Wl,-no-undefined -o CMakeFiles/cmTC_46610.dir/src.cxx.o -c /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+<command-line>: warning: ISO C++11 requires whitespace after the macro name
+Linking CXX executable cmTC_46610
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_46610.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined    -rdynamic CMakeFiles/cmTC_46610.dir/src.cxx.o  -o cmTC_46610 
+gmake[1]: Leaving directory `/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/DigiLCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
+
+
+Source file was:
+int main() { return 0; }

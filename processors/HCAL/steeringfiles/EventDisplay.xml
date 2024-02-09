@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+
+  <execute>
+    <processor name="GeoConditions"/>
+    <processor name="Ahc2MappingProcessor"/>
+    <processor name="Ahc2CellDescriptionProcessor"/>
+    <processor name="MyCellNeighboursProcessor"/>
+    <processor name="Ahc2CalibrationsProcessor"/>
+    <processor name="MyEventDisplayProcessor"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      Reco_gun_pion_100GeV_SIM_00_xminus15_yminus15.slcio
+    </parameter>
+    <parameter name="MaxRecordNumber" value="0" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR  </parameter>
+  </global>
+
+  <processor name="GeoConditions" type="ConditionsProcessor">
+    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBCondHandler" type="StringVec">
+      Ahc2ModuleDescription                 /cd_calice_Ahc2/TestbeamJune2018/ModuleDescription                  HEAD
+      Ahc2ModuleConnection                  /cd_calice_Ahc2/TestbeamJune2018/ModuleConnection                   HEAD
+      Ahc2ModuleLocationReference           /cd_calice_Ahc2/TestbeamJune2018/ModuleLocationReference            HEAD
+      Ahc2HardwareConnection                /cd_calice_Ahc2/TestbeamJune2018/HardwareConnection                 HEAD
+      Ahc2DetectorTransformation            /cd_calice_Ahc2/TestbeamJune2018/DetectorTransformation             HEAD
+      E4DPedestal                           /cd_calice_Ahc2/TestbeamJune2018/Pedestal                           ahc2_pedestal_180926
+      E4DPedestalMemoryCellOffset           /cd_calice_Ahc2/TestbeamJune2018/PedestalMemoryCellOffset           ahc2_pedestalmemorycelloffset_181216
+      E4DLowGainPedestal                    /cd_calice_Ahc2/TestbeamJune2018/LowGainPedestal                    ahc2_lg_pedestal_190118
+      E4DLowGainPedestalMemoryCellOffset    /cd_calice_Ahc2/TestbeamJune2018/LowGainPedestalMemoryCellOffset    ahc2_lg_pedestalmemorycelloffset_190227
+      E4DGainConstants                      /cd_calice_Ahc2/TestbeamJune2018/gain_constants                     ahc2_gainconstant_181212
+      E4DGainSlopes                         /cd_calice_Ahc2/TestbeamJune2018/gain_slopes                        HEAD
+      E4DMipConstants                       /cd_calice_Ahc2/TestbeamJune2018/mip_constants                      ahc2_mip_constants_181001
+      E4DMipSlopes                          /cd_calice_Ahc2/TestbeamJune2018/mip_slopes                         HEAD
+      E4DDeadCellMap                        /cd_calice_Ahc2/TestbeamMay2018/DeadCellMap                         HEAD
+      E4DSaturationParameters               /cd_calice_Ahc2/TestbeamJune2018/SaturationParameters               ahc2_SaturationParameters_181212
+      E4DIntercalibration                   /cd_calice_Ahc2/TestbeamJune2018/Intercalibration                   ahc2_Intercalibration_190109
+      E4DPhysicsCalibIntercalibration       /cd_calice_Ahc2/TestbeamMay2018/PhysicsCalibIntercalibration        HEAD
+      E4DTimeOffset_Timeout                 /cd_calice_Ahc2/TestbeamJune2018/TimeOffset_BufferOdd                     ahc2_timeOffsetsBufferOdd_190806
+      E4DTimeSlopes_Timeout                 /cd_calice_Ahc2/TestbeamJune2018/TimeSlopes_BufferOdd                     ahc2_timeSlopesBufferOdd_190806
+      E4DTimeOffsetMemCell_EvenTimeout      /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventEven          ahc2_timeOffsetsBufferOdd_EventEven_190806
+      E4DTimeOffsetMemCell_OddTimeout       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventOdd           ahc2_timeOffsetsBufferOdd_EventOdd_190806
+      E4DTimeOffsetMemCell_BufferEvenEventEven      /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferEven_EventEven ahc2_timeOffsetsBufferEven_EventEven_190808
+      E4DTimeOffsetMemCell_BufferEvenEventOdd       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferEven_EventOdd  ahc2_timeOffsetsBufferEven_EventOdd_190808
+      E4DTimeOffsetMemCell_BufferOddEventEven       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventEven  ahc2_timeOffsetsBufferOdd_EventEven_190806
+      E4DTimeOffsetMemCell_BufferOddEventOdd        /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventOdd   ahc2_timeOffsetsBufferOdd_EventOdd_190806
+    </parameter>
+  </processor>
+
+  <processor name="Ahc2MappingProcessor" type="MappingProcessor">
+    <!--Processor that provides a CALICE Mapping object from conditions data-->
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"  type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription" type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Type name of the mapper instance. Currently valid identifiers are: AHC,AHC2-->
+    <parameter name="MapperType" type="string" value="AHC2"/>
+  </processor>
+
+
+  <processor name="Ahc2CellDescriptionProcessor" type="CellDescriptionProcessor">
+    <!--Processor that provides a MappedContainer of CALICE CellDescription objects from conditions data-->
+
+    <!--name of MappingProcessor which takes care of the mapping-->
+    <parameter name="MappingProcessorName"   type="string"> Ahc2MappingProcessor </parameter>
+
+    <!--Name of the DetectorTransformation collection-->
+    <parameter name="DetectorTransformation" type="string" lcioInType="LCGenericObject"> Ahc2DetectorTransformation </parameter>
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"       type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription"      type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Name of the ModuleLocation collection-->
+    <parameter name="ModuleLocation"         type="string" lcioInType="LCGenericObject"> Ahc2ModuleLocationReference </parameter>
+    <parameter name="Verbosity" type="string"> ERROR </parameter>
+  </processor>
+
+  <processor name="Ahc2CalibrationsProcessor" type="Ahc2CalibrationsProcessor">
+    <!--Processor that provides a MappedContainer of SiPMCalibrations objects-->
+    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+    <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
+    <!--Name of the pedestal collection-->
+    <parameter name="PedestalCollection" type="string" lcioInType="LCGenericObject"> E4DPedestal </parameter>
+    <!--Name of the low gain pedestal collection-->
+    <parameter name="LowGainPedestalCollection" type="string" lcioInType="LCGenericObject"> E4DLowGainPedestal </parameter>
+    <!--Name of the memory cell offset pedestal collection-->
+    <parameter name="PedestalMemoryCellOffsetCollection" type="string" lcioInType="LCGenericObject"> E4DPedestalMemoryCellOffset </parameter>
+    <!--Name of the memory cell offset low gain pedestal collection-->
+    <parameter name="LowGainPedestalMemoryCellOffsetCollection" type="string" lcioInType="LCGenericObject"> E4DLowGainPedestalMemoryCellOffset </parameter>
+    <!--Name of the MIP constants collection-->
+    <parameter name="MIPConstantCollection" type="string" lcioInType="LCGenericObject"> E4DMipConstants </parameter>
+    <!--Name of the MIP slopes collection-->
+    <parameter name="MIPSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DMipSlopes </parameter>
+    <!--Name of the gain constants collection-->
+    <parameter name="GainConstantCollection" type="string" lcioInType="LCGenericObject"> E4DGainConstants </parameter>
+    <!--Name of the gain slopes collection-->
+    <parameter name="GainSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DGainSlopes </parameter>
+    <!--Name of the interCalibration collection-->
+    <parameter name="InterCalibrationCollection" type="string" lcioInType="LCGenericObject"> E4DIntercalibration </parameter>
+    <!--Name of the interCalibration physics calib collection-->
+    <parameter name="PhysicsCalibICCollection" type="string" lcioInType="LCGenericObject"> E4DPhysicsCalibIntercalibration </parameter>
+    <!--Name of the saturation collection-->
+    <parameter name="SaturationParametersCollection" type="string" lcioInType="LCGenericObject"> E4DSaturationParameters </parameter>
+    <!--Name of the time slopes collection-->
+    <parameter name="TimeSlopesParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeSlopes_Timeout </parameter>
+    <!--Name of the time offset collection-->
+    <parameter name="TimeOffsetParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffset_Timeout </parameter>
+    <!--Name of the time offset memoric cell with respect to the stopping of the detector-->
+    <parameter name="TimeOffsetMemCellEvenParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_EvenTimeout </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_OddTimeout </parameter>
+    <parameter name="TimeOffsetMemCellEvenParametersCollection_BufferEvenEventEven" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferEvenEventEven </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection_BufferEvenEventOdd" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferEvenEventOdd </parameter>
+    <parameter name="TimeOffsetMemCellEvenParametersCollection_BufferOddEventEven" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferOddEventEven </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection_BufferOddEventOdd" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferOddEventOdd </parameter>
+    <!--Collection with quality flags-->
+    <parameter name="CellQualityCollection" type="string" lcioInType="LCGenericObject"> E4DDeadCellMap </parameter>
+  </processor>
+
+  <processor name="MyCellNeighboursProcessor" type="CellNeighboursProcessor">
+    <!--Processor that provides a MappedContainer of CellNeighbours objects-->
+    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+    <parameter name="MappingProcessorName" type="string">Ahc2MappingProcessor </parameter>
+  </processor>
+
+  <processor name="MyEventDisplayProcessor" type="DEHEventDisplayProcessor">
+    <!--processor for displaying CALICE events in CED-->
+    <parameter name="InputCollectionNames" type="StringVec"> PreShowerCalorimeter_Hits HCALCalorimeter_Hits TailCatcherCalorimeter_Hits </parameter>
+    <!-- Name of input event variables collection -->
+    <parameter name="InEvtVarCollection" type="string"> EventVariables_HCAL </parameter>
+    <!--name of Ahcal CellDescriptionProcessor which takes care of the cell description generation-->
+    <parameter name="ProcessorName_CellDescription" type="string"> Ahc2CellDescriptionProcessor </parameter>
+    <!--name of Ahcal CellNeighboursProcessor which takes care of the cell neighbours calculation-->
+    <parameter name="ProcessorName_CellNeighbours" type="string"> MyCellNeighboursProcessor </parameter>
+    <!--name of Ahc2 MappingProcessor which takes care of the mapping-->
+    <parameter name="ProcessorName_Mapping" type="string"> Ahc2MappingProcessor </parameter>
+    <!-- Name of the Ahc2CalibrationsProcessor that provides the calibrations of the AHCal tiles -->
+    <parameter name="Ahc2CalibrationsProcessorName" type="string"> Ahc2CalibrationsProcessor </parameter>
+    <!-- Name of the ModuleLocation collection -->
+    <parameter name="ModuleLocation" type="string"> Ahc2ModuleLocationReference </parameter>
+    <!--1 skips opening a new CED connection and appends output to existing CED event-->
+    <parameter name="CED_AppendToExistingCED" type="int"> 0 </parameter>
+    <!--0 disables CED drawing-->
+    <parameter name="CED_Draw" type="int"> 1 </parameter>
+    <parameter name="CED_WaitForKeyPressed" type="int"> 1 </parameter>
+    <!-- T0 selection -->
+    <parameter name="T0_selection" type="bool"> false </parameter>
+    <!-- nT0 selection -->
+    <parameter name="T0_Number" type="int"> 0 </parameter>
+    <!--verbosity level of this processor ("DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT")-->
+    <parameter name="T0Handler" type="StringVec">
+    </parameter>
+    <parameter name="minNHits" type="int"> 0 </parameter>
+    <parameter name="CED_Port" type="int"> 5348 </parameter>
+    <parameter name="Verbosity" type="string"> DEBUG0 </parameter>
+  </processor>
+
+</marlin>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="ProgressHandler"/>
+    
+    <processor name="SiWECALConversion"/>
+
+    <!-- <processor name="MyLCIOOutputProcessor"/> -->
+  </execute>
+
+  <global>
+    <!-- parameter name="LCIOInputFiles">
+     /lhome/ific/a/airqui/SiWECAL/2017_SiECAL_DESY/test_2019/ECAL_conf1_e+_1GeV_QGSP_BERT_merged.slcio
+      /data_ilc/flc/ECAL/Simulations/DESY-2017/data/ECAL_conf1_e-_1GeV.slcio
+    </parameter-->
+    <parameter name="LCIOInputFiles">
+      /grid_mnt/vol_home/llr/ilc/jimenez/Projects/Simulations/data_calib3/Shaping_v03/ECAL_FTFP_BERT_conf0_e+_3GeV_0_shaping_v03.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!--parameter name="MaxRecordNumber" value="20000" /-->
+    <parameter name="MaxRecordNumber" value="1000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+  </global>
+
+
+  <!-- <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor"> -->
+  <!--  <parameter name="LCIOOutputFile" type="string"> ../digi_output/Conversion_v02_langauss/ECAL_FTFP_BERT_conf0_e+_3GeV_0_digi.slcio </parameter> -->
+  <!--  <parameter name="LCIOWriteMode" type="string"> WRITE_NEW </parameter> -->
+  <!-- </processor> -->
+
+<processor name="SiWECALConversion" type="ShapedConversionProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <!--parameter name="Input_Collection" type="string"> ecalSD </parameter-->
+    <parameter name="Input_Collections" type="string"> ShapedSiEcalCollection </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <!-- <parameter name="Output_Collections" type="string"> ecalGeV2MIP </parameter> -->
+    <parameter name="Energy_Conf_Name" type="string"> ../digi_output/ECAL_FTFP_BERT_conf0_e+_3GeV_0_digi_ShapedConversion_aux.root </parameter>
+    <!-- MIP value in GeV -->
+    <parameter name="MIP2GeV" type="float"> 0.000309 </parameter>
+    <!-- MIP fit mode: 1 (Gaus), 2 (Landau), 3 (LanGaus) -->
+    <parameter name="MIPFitMode" type="int"> 1 </parameter>
+    <parameter name="RootfileName" type="string"> Conversion_SiWECAL.root </parameter>
+    <!-- parameter name="WriteRootfile" type="bool"> false </parameter-->
+    <parameter name="WriteRootfile" type="bool"> true </parameter>
+  </processor>
+
+  <!-- ROC Threshold, deleted look at ahc2 example -->
+
+  <processor name="ProgressHandler" type="ProgressHandler">
+    <!--Report event/run numbers at fixed time intervals, and handle SIGINT (Ctrl-C) for a graceful exit.-->
+    <!--The number of seconds after which the number of processed events will be shown.-->
+    <parameter name="ReportInterval" type="int" value="20"/>
+  </processor>
+
+  <!-- DB parameters + Mapper -->
+
+</marlin>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="DigiLCIO2BuildConversion"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">/data_ilc/flc/jimenez/simulations/TB2022-03/CONF1/lcio/ECAL_QGSP_BERT_conf1_e-_1.0GeV_1_shaped.slcio</parameter>
+		<parameter name="MaxRecordNumber" value="1000"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="DigiLCIO2BuildConversion" type="DigiLCIO2BuildProcessor">
+		<parameter name="Input_Collections" type="string">ShapedSiEcalCollection</parameter>
+		<parameter name="hitType" type="string">CalorimeterHit</parameter>
+		<parameter name="Energy_Conf_Name" type="string">shaped_build.root</parameter>
+		<parameter name="WriteRootfile" type="bool">true</parameter>
+	</processor>
+</marlin>

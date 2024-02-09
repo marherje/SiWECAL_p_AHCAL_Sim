@@ -1,0 +1,26 @@
+In this folder, we provide the steering files to:
+
+- run the digitisation of simulated data: Digitisation.xml
+
+- run the reconstruction of simulated data: SimReconstruction_wPS_TC.xml
+
+- run the reconstruction of testbeam data: Reconstruction_wPS_TC.xml
+
+- run the event display: EventDisplay.xml
+
+Please remember to change:
+- the path of slcio files in steering files
+- the CALICE_INSTALL path in myMarlin
+
+To run any file:
+
+$ ./myMarlin <steering file>
+
+To run the event display do:
+If you have a problem crashing due to GLX. You can try to do
+$ unset LIBGL_ALWAYS_INDIRECT
+$ export CED_PORT=XXXX (any port between 1024-49151 can be used, if you get an error that the port is used try another one)
+$ glced&
+
+Change the parameter CED_port in the xml file to the chosen port
+./myMarlin EventDisplay.xml

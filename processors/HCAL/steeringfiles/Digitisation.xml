@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="MCRunTime"/>
+    <processor name="Ahc2TriggerSim"/>
+
+    <processor name="ProgressHandler"/>
+    <processor name="GeoConditions"/>
+    <processor name="Ahc2MappingProcessor"/>
+    <processor name="Ahc2CellDescriptionProcessor"/>
+    <processor name="Ahc2CellNeighboursProcessor"/>
+    <processor name="Ahc2CalibrationsProcessor"/>
+
+    <processor name="Ahc2MIP2GeVConversion"/>
+    <processor name="Ahc2ROCThreshold"/>
+    <processor name="Ahc2GangingProcessor"/>
+    <processor name="Ahc2SiPMStatistic"/>
+    <processor name="Ahc2TimeSmearingProcessor"/>
+
+    <!-- <processor name="Ahc2AppendProcessor"/> -->
+    <processor name="MyLCIOOutputProcessor"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles" >
+      INPUT_SIM_SLCIO
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <parameter name="MaxRecordNumber" value="0" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter>
+  </global>
+
+  <processor name="Ahc2TriggerSim" type="Ahc2TriggerSim">
+    <!-- Names of the scintillators in the beam line collections -->
+    <parameter name="Input_Collections" type="StringVec"> SmallScint1_RO SmallScint2_RO BigScint_front_RO BigScint_back_RO </parameter>
+    <!--Mode for trigger MC, 100 for 100x100 2 fold coincidence, 500 for 500x500 2 fold coincidence-->
+    <parameter name="DetectorName" type="string" value="Ahc2_June18"/>
+    <!--Mode for trigger MC, 100 for 100x100 2 fold coincidence, 500 for 500x500 2 fold coincidence-->
+    <parameter name="TriggerMode" type="int" value="100"/>
+  </processor>
+
+  <!-- Run Info -->
+  <processor name="MCRunTime" type="MCRunTimeProcessor">
+    <!--Sets the event time to the time of the given run number-->
+    <!--initialisation of the database-->
+    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <!--Collection from DB which contains information about the location of a run-->
+    <parameter name="RunLocationFolder" type="string" value="/cd_calice_Ahc2/TestbeamJune2018/RunLocation"/>
+    <!--Run number of the run for MC files-->
+    <parameter name="RunNumber" type="int" value="60972"/>
+    <!--Collection from DB which contains the start and stop time of a given run-->
+    <parameter name="RunTimeFolder" type="string" value="/cd_calice_Ahc2/TestbeamJune2018/RunTimeInfo"/>
+    <!--Apply a savety margin of n seconds between the nominal run start and
+    the first MC event time stamp to ensure validity of conditions data-->
+    <parameter name="SavetyMargin" type="int" value="0"/>
+  </processor>
+
+  <!-- MIP2GeV Conversion PS -->
+
+  <processor name="Ahc2MIP2GeVConversion" type="Ahc2MIP2GeVProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <parameter name="Input_Collections" type="StringVec"> PreShowerCollection HCALCollection TailCatcherCollection </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <parameter name="Output_Collections" type="StringVec"> PreShowerCollection_MIP HCALCollection_MIP TailCatcherCollection_MIP </parameter>
+    <!-- MIP value in GeV BL -->
+    <parameter name="MIP2GeV" type="float"> 0.000488 </parameter>
+    <parameter name="RootfileName" type="string"> MIP2GeV_HCAL.root </parameter>
+    <parameter name="WriteRootfile" type="bool"> false </parameter>
+    <!-- Map for changing K from Simulation to K in database (example in Sim K = 31 -> K = 14) -->
+    <parameter name="FileHandler" type="StringVec">
+      MappingK_June2018.txt
+    </parameter>
+  </processor>
+
+  <!-- ROC Threshold PS-->
+
+  <processor name="Ahc2ROCThreshold" type="Ahc2ROCThresholdProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <parameter name="ROCThresholdProcessor_simHitInputCollections" type="StringVec"> PreShowerCollection_MIP HCALCollection_MIP TailCatcherCollection_MIP </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <parameter name="ROCThresholdProcessor_calHitOutputCollections" type="StringVec"> PreShowerCollection_ROC HCALCollection_ROC TailCatcherCollection_ROC </parameter>
+    <!-- tile edge dimension in mm in X -->
+    <parameter name="ROCThresholdProcessor_tileEdgeX" type="float"> 30.15 </parameter>
+    <!-- tile edge dimension in mm in Y -->
+    <parameter name="ROCThresholdProcessor_tileEdgeY" type="float"> 30.15 </parameter>
+    <!-- dead space between tiles in mm -->
+    <parameter name="ROCThresholdProcessor_deadSpace" type="float"> 0.7 </parameter>
+    <!-- MIP threshold fraction -->
+    <parameter name="ROCThresholdProcessor_Threshold" type="float"> 0.5 </parameter>
+    <!-- fast shaper time in ns -->
+    <parameter name="ROCThresholdProcessor_tfast" type="float"> 15 </parameter>
+    <!-- low shaper time in ns -->
+    <parameter name="ROCThresholdProcessor_tslow" type="float"> 50 </parameter>
+  </processor>
+
+
+  <!-- Ganging Processor used because of the tokyo layer which has different tile size -->
+  <processor name="Ahc2GangingProcessor" type="Ahc2GangingProcessor">
+    <!--Name of the input collection-->
+    <parameter name="IntputCollectionName" type="string"> HCALCollection_ROC </parameter>
+    <!--Name of the output collection-->
+    <parameter name="OutputCollectionName" type="string"> HCALCollection_ROC_Hits_ganged </parameter>
+    <!--- The number of tokyo layer for ganging -->
+    <parameter name="TokyoLayerNumber" type="int"> 39 </parameter>
+  </processor>
+
+
+  <!-- SiPM Statistics PS -->
+
+  <processor name="Ahc2SiPMStatistic" type="Ahc2SiPMStatisticProcessor">
+    <!-- Name of CalorimeterHit input collections -->
+    <parameter name="Input_Collections" type="StringVec"> PreShowerCollection_ROC HCALCollection_ROC_Hits_ganged TailCatcherCollection_ROC </parameter>
+    <!-- Name of the input noise collection -->
+    <parameter name="NoiseCollectionName" type="string"> _Ahc2Noise </parameter>
+    <!-- Name of the Calorimeter Hit output collection converted to px with SiPM statistic treatment -->
+    <parameter name="Output_Collections" type="StringVec"> PreShowerCollection_Digi HCALCollection_Digi TailCatcherCollection_Digi </parameter>
+    <!-- Name of the MappingProcessor instance that provides the geometry of the detector -->
+    <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
+    <!-- Name of the CellDescriptionProcessor instance that provides the corrected position of the cells -->
+    <parameter name="CellDescriptionProcessorName" type="string"> Ahc2CellDescriptionProcessor </parameter>
+    <!-- Name of the CellNeighboursProcessor instance that provides the neighbours -->
+    <parameter name="CellNeighboursProcessorName" type="string"> Ahc2CellNeighboursProcessor </parameter>
+    <!-- Name of the Ahc2CalibrationsProcessor that provides the calibrations of the AHCal tiles -->
+    <parameter name="Ahc2CalibrationsProcessorName" type="string"> Ahc2CalibrationsProcessor </parameter>
+    <!-- Filter dead cells -->
+    <parameter name="filterDeadCells" type="bool"> false </parameter>
+    <!-- Filter cells that use some default value in calibration -->
+    <parameter name="filterDefaultCells" type="bool"> false </parameter>
+    <!-- Do MIP Temperature correction -->
+    <parameter name="doMIPTempCorrection" type="bool"> false </parameter>
+    <!-- Do Gain Temperature correction -->
+    <parameter name="doGainTempCorrection" type="bool"> false </parameter>
+    <!-- Add detector noise to pure MC -->
+    <parameter name="DoAddNoise" type="bool"> false </parameter>
+    <!-- Noise energy in MIPs -->
+    <parameter name="NoiseEnergyMIP" type="bool"> true </parameter>
+    <!-- Saturation of the pixel -->
+    <parameter name="doSaturation" type="bool"> true </parameter>
+    <!-- Binomial Smearing of the pixel -->
+    <parameter name="doBinomialSmearing" type="bool"> true </parameter>
+    <!-- Correct light yield for cells with default gain value in calibration -->
+    <parameter name="_correctDefaultGainToLY" type="bool"> true </parameter>
+    <!-- Fixed light yield for cells with default gain value in calibration -->
+    <parameter name="fixedLightYieldForCorrection" type="float"> 18. </parameter>
+    <!-- Apply optical cross talk -->
+    <parameter name="DoOpticalCrossTalk" type="bool"> false </parameter>
+    <!-- Apply layer filter for optical cross talk - 1: SPS July 2015 - 0:No filter -->
+    <parameter name="FilterCrossTalk" type="int"> 0 </parameter>
+    <!-- Light leakage (i.e. factor for the tiles cross-talk) -->
+    <parameter name="LightLeakageParameters" type="StringVec">
+    </parameter>
+  </processor>
+
+  <processor name="Ahc2TimeSmearingProcessor" type="Ahc2TimeSmearingProcessor">
+    <!-- Name of CalorimeterHit input collections -->
+    <parameter name="Input_Collections" type="StringVec"> PreShowerCollection_Digi HCALCollection_Digi TailCatcherCollection_Digi </parameter>
+    <!-- Name of the Calorimeter Hit output collection converted to MIP -->
+    <parameter name="Output_Collections" type="StringVec"> PreShower HCAL TailCatcher </parameter>
+    <!-- Name of the MappingProcessor instance that provides the geometry of the detector -->
+    <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
+    <!-- Random seed -->
+    <parameter name="RandomSeed" type="int"> 0 </parameter>
+    <!-- Time Smearing of the hit -->
+    <parameter name="doTimeSmearing" type="bool"> true </parameter>
+    <parameter name="SmearingTime" type="float">
+      1.
+    </parameter>
+  </processor>
+
+  <!-- Append -->
+
+  <processor name="Ahc2AppendProcessor" type="Ahc2AppendProcessor">
+    <parameter name="AppendFileNames" type="StringVec">
+      Overlay_Muons.slcio
+    </parameter>
+    <parameter name="InputCollections" type="StringVec"> Ahc2Noise </parameter>
+    <parameter name="OutputCollections" type="StringVec"> _Ahc2Noise </parameter>
+    <parameter name="RepeatCollections" type="bool"> true </parameter>
+  </processor>
+
+  <!-- DB parameters + Mapper -->
+
+  <processor name="GeoConditions" type="ConditionsProcessor">
+    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBCondHandler" type="StringVec">
+      Ahc2ModuleDescription                 /cd_calice_Ahc2/TestbeamJune2018/ModuleDescription                  HEAD
+      Ahc2ModuleConnection                  /cd_calice_Ahc2/TestbeamJune2018/ModuleConnection                   HEAD
+      Ahc2ModuleLocationReference           /cd_calice_Ahc2/TestbeamJune2018/ModuleLocationReference            HEAD
+      Ahc2HardwareConnection                /cd_calice_Ahc2/TestbeamJune2018/HardwareConnection                 HEAD
+      Ahc2DetectorTransformation            /cd_calice_Ahc2/TestbeamJune2018/DetectorTransformation             HEAD
+      E4DPedestal                           /cd_calice_Ahc2/TestbeamJune2018/Pedestal                           ahc2_pedestal_180926
+      E4DPedestalMemoryCellOffset           /cd_calice_Ahc2/TestbeamJune2018/PedestalMemoryCellOffset           ahc2_pedestalmemorycelloffset_181216
+      E4DLowGainPedestal                    /cd_calice_Ahc2/TestbeamJune2018/LowGainPedestal                    ahc2_lg_pedestal_190118
+      E4DLowGainPedestalMemoryCellOffset    /cd_calice_Ahc2/TestbeamJune2018/LowGainPedestalMemoryCellOffset    ahc2_lg_pedestalmemorycelloffset_190227
+      E4DGainConstants                      /cd_calice_Ahc2/TestbeamJune2018/gain_constants                     ahc2_gainconstant_181212
+      E4DGainSlopes                         /cd_calice_Ahc2/TestbeamJune2018/gain_slopes                        HEAD
+      E4DMipConstants                       /cd_calice_Ahc2/TestbeamJune2018/mip_constants                      ahc2_mip_constants_181001
+      E4DMipSlopes                          /cd_calice_Ahc2/TestbeamJune2018/mip_slopes                         HEAD
+      E4DDeadCellMap                        /cd_calice_Ahc2/TestbeamMay2018/DeadCellMap                         HEAD
+      E4DSaturationParameters               /cd_calice_Ahc2/TestbeamJune2018/SaturationParameters               ahc2_SaturationParameters_190628
+      E4DIntercalibration                   /cd_calice_Ahc2/TestbeamJune2018/Intercalibration                   ahc2_Intercalibration_190109
+      E4DPhysicsCalibIntercalibration       /cd_calice_Ahc2/TestbeamMay2018/PhysicsCalibIntercalibration        HEAD
+      E4DTimeOffset_Timeout                 /cd_calice_Ahc2/TestbeamJune2018/TimeOffset_BufferOdd                     ahc2_timeOffsetsBufferOdd_190806
+      E4DTimeSlopes_Timeout                 /cd_calice_Ahc2/TestbeamJune2018/TimeSlopes_BufferOdd                     ahc2_timeSlopesBufferOdd_190806
+      E4DTimeOffsetMemCell_EvenTimeout      /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventEven          ahc2_timeOffsetsBufferOdd_EventEven_190806
+      E4DTimeOffsetMemCell_OddTimeout       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventOdd           ahc2_timeOffsetsBufferOdd_EventOdd_190806
+      E4DTimeOffsetMemCell_BufferEvenEventEven      /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferEven_EventEven ahc2_timeOffsetsBufferEven_EventEven_190808
+      E4DTimeOffsetMemCell_BufferEvenEventOdd       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferEven_EventOdd  ahc2_timeOffsetsBufferEven_EventOdd_190808
+      E4DTimeOffsetMemCell_BufferOddEventEven       /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventEven  ahc2_timeOffsetsBufferOdd_EventEven_190806
+      E4DTimeOffsetMemCell_BufferOddEventOdd        /cd_calice_Ahc2/TestbeamJune2018/TimeOffsets_BufferOdd_EventOdd   ahc2_timeOffsetsBufferOdd_EventOdd_190806
+    </parameter>
+  </processor>
+
+  <processor name="Ahc2MappingProcessor" type="MappingProcessor">
+    <!--Processor that provides a CALICE Mapping object from conditions data-->
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"  type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription" type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Type name of the mapper instance. Currently valid identifiers are: AHC,AHC2-->
+    <parameter name="MapperType" type="string" value="AHC2"/>
+  </processor>
+
+  <processor name="Ahc2CellDescriptionProcessor" type="CellDescriptionProcessor">
+    <!--Processor that provides a MappedContainer of CALICE CellDescription objects from conditions data-->
+    <!--name of MappingProcessor which takes care of the mapping-->
+    <parameter name="MappingProcessorName"   type="string"> Ahc2MappingProcessor </parameter>
+    <!--Name of the DetectorTransformation collection-->
+    <parameter name="DetectorTransformation" type="string" lcioInType="LCGenericObject"> Ahc2DetectorTransformation </parameter>
+    <!--Name of the ModuleConnection collection-->
+    <parameter name="ModuleConnection"       type="string" lcioInType="LCGenericObject"> Ahc2ModuleConnection </parameter>
+    <!--Name of the ModuleDescription collection-->
+    <parameter name="ModuleDescription"      type="string" lcioInType="LCGenericObject"> Ahc2ModuleDescription </parameter>
+    <!--Name of the ModuleLocation collection-->
+    <parameter name="ModuleLocation"         type="string" lcioInType="LCGenericObject"> Ahc2ModuleLocationReference </parameter>
+  </processor>
+
+  <processor name="Ahc2CellNeighboursProcessor" type="CellNeighboursProcessor">
+    <!--Processor that provides a MappedContainer of CellNeighbours objects-->
+    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+    <parameter name="MappingProcessorName"   type="string"> Ahc2MappingProcessor </parameter>
+  </processor>
+
+  <processor name="Ahc2CalibrationsProcessor" type="Ahc2CalibrationsProcessor">
+    <!--Processor that provides a MappedContainer of SiPMCalibrations objects-->
+    <!--Name of the MappingProcessor instance that provides the geometry of the detector.-->
+    <parameter name="MappingProcessorName" type="string"> Ahc2MappingProcessor </parameter>
+    <!--Name of the pedestal collection-->
+    <parameter name="PedestalCollection" type="string" lcioInType="LCGenericObject"> E4DPedestal </parameter>
+    <!--Name of the low gain pedestal collection-->
+    <parameter name="LowGainPedestalCollection" type="string" lcioInType="LCGenericObject"> E4DLowGainPedestal </parameter>
+    <!--Name of the memory cell offset pedestal collection-->
+    <parameter name="PedestalMemoryCellOffsetCollection" type="string" lcioInType="LCGenericObject"> E4DPedestalMemoryCellOffset </parameter>
+    <!--Name of the memory cell offset low gain pedestal collection-->
+    <parameter name="LowGainPedestalMemoryCellOffsetCollection" type="string" lcioInType="LCGenericObject"> E4DLowGainPedestalMemoryCellOffset </parameter>
+    <!--Name of the MIP constants collection-->
+    <parameter name="MIPConstantCollection" type="string" lcioInType="LCGenericObject"> E4DMipConstants </parameter>
+    <!--Name of the MIP slopes collection-->
+    <parameter name="MIPSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DMipSlopes </parameter>
+    <!--Name of the gain constants collection-->
+    <parameter name="GainConstantCollection" type="string" lcioInType="LCGenericObject"> E4DGainConstants </parameter>
+    <!--Name of the gain slopes collection-->
+    <parameter name="GainSlopeCollection" type="string" lcioInType="LCGenericObject"> E4DGainSlopes </parameter>
+    <!--Name of the interCalibration collection-->
+    <parameter name="InterCalibrationCollection" type="string" lcioInType="LCGenericObject"> E4DIntercalibration </parameter>
+    <!--Name of the interCalibration physics calib collection-->
+    <parameter name="PhysicsCalibICCollection" type="string" lcioInType="LCGenericObject"> E4DPhysicsCalibIntercalibration </parameter>
+    <!--Name of the saturation collection-->
+    <parameter name="SaturationParametersCollection" type="string" lcioInType="LCGenericObject"> E4DSaturationParameters </parameter>
+    <!--Name of the time slopes collection-->
+    <parameter name="TimeSlopesParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeSlopes_Timeout </parameter>
+    <!--Name of the time offset collection-->
+    <parameter name="TimeOffsetParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffset_Timeout </parameter>
+    <!--Name of the time offset memoric cell with respect to the stopping of the detector-->
+    <parameter name="TimeOffsetMemCellEvenParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_EvenTimeout </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_OddTimeout </parameter>
+    <parameter name="TimeOffsetMemCellEvenParametersCollection_BufferEvenEventEven" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferEvenEventEven </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection_BufferEvenEventOdd" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferEvenEventOdd </parameter>
+    <parameter name="TimeOffsetMemCellEvenParametersCollection_BufferOddEventEven" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferOddEventEven </parameter>
+    <parameter name="TimeOffsetMemCellOddParametersCollection_BufferOddEventOdd" type="string" lcioInType="LCGenericObject"> E4DTimeOffsetMemCell_BufferOddEventOdd </parameter>
+    <!--Collection with quality flags-->
+    <parameter name="CellQualityCollection" type="string" lcioInType="LCGenericObject"> E4DDeadCellMap </parameter>
+  </processor>
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <!--Writes the current event to the specified LCIO outputfile. Needs to be the last ActiveProcessor.-->
+    <!--drops the named collections from the event-->
+    <parameter name="DropCollectionTypes" type="StringVec">
+      MCParticle
+      SimCalorimeterHit
+      CalorimeterHit
+    </parameter>
+    <!--parameter name="DropCollectionNames" type="StringVec"> </parameter-->
+    <!-- write complete objects in subset collections to the file (i.e. ignore subset flag)-->
+    <parameter name="FullSubsetCollections" type="StringVec"> MCParticles </parameter>
+    <!--force keep of the named collections - overrules DropCollectionTypes (and DropCollectionNames)-->
+    <parameter name="KeepCollectionNames" type="StringVec"> PreShower HCAL TailCatcher MCParticle </parameter>
+    <!-- name of output file -->
+    <parameter name="LCIOOutputFile" type="string">
+      OUTPUT_DIGI_SLCIO
+    </parameter>
+    <!--write mode for output file:  WRITE_APPEND or WRITE_NEW-->
+    <parameter name="LCIOWriteMode" type="string"> WRITE_NEW </parameter>
+    <!--will split output file if size in kB exceeds given value - doesn't work with APPEND and NEW-->
+    <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  </processor>
+
+  <processor name="ProgressHandler" type="ProgressHandler">
+    <!--Report event/run numbers at fixed time intervals, and handle SIGINT (Ctrl-C) for a graceful exit.-->
+    <!--The number of seconds after which the number of processed events will be shown.-->
+    <parameter name="ReportInterval" type="int" value="20"/>
+  </processor>
+
+</marlin>

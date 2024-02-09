@@ -1,0 +1,54 @@
+#!/bin/bash
+
+source /cvmfs/ilc.desy.de/sw/x86_64_gcc49_sl6/v02-00-01/init_ilcsoft.sh
+
+MY_INSTALL=/afs/desy.de/group/flc/hcal/calice_soft/HEAD/build/myInstall
+
+export MARLIN_DLL=
+export MARLIN_DLL=${MY_INSTALL}/lib/libuserlib.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libraw2calohit.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcellGeometry.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/librecoSiPM.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/liblabview2lcio.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libRootTreeWriter.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcalicesim.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libcaliceAnalysis.so
+export MARLIN_DLL=${MARLIN_DLL}:${MY_INSTALL}/lib/libCALIB.so
+
+# skip unloading processors
+# to avoid the problems to release the root library at the end of Marlin job
+export MARLIN_DEBUG=1
+
+if [ $ADD_MARLIN_DLL ] ; then
+    echo "***  Loading user libraries: $ADD_MARLIN_DLL"
+    export MARLIN_DLL=$MARLIN_DLL:$ADD_MARLIN_DLL
+fi
+
+# test if libpdcap is already preloaded
+echo $LD_PRELOAD | grep libpdcap > /dev/null
+if [ $? -eq 1 ]; then
+    for f in /usr/lib64/libpdcap.so; do
+	if [ -e $f ] ; then
+	    export LD_PRELOAD=$LD_PRELOAD:$f
+	    break
+	fi
+    done
+# libpdcap.so need libgsiTunnel.so since ilc_v01-17 on pal and NAF2.
+    for f in /usr/lib64/dcap/libgsiTunnel.so; do
+	if [ -e $f ] ; then
+	    export DCACHE_IO_TUNNEL=$f
+	    break
+	fi
+    done
+fi
+
+export DCACHE_CLIENT_ACTIVE=1
+
+#this is necessary because of some gsidcap problem on the NAF:
+MYSQL=`ls -1d ${ILCSOFT}/mysql/*`
+export LD_LIBRARY_PATH=:"${MYSQL}/lib/mysql:${LD_LIBRARY_PATH}"
+
+#next line prevents empty cdb.log file
+export COND_DB_DEBUGLOG=/dev/stdout
+
+exec ${ILCSOFT}/Marlin/*/bin/Marlin $@

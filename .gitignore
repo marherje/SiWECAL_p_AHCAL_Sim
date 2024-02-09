@@ -30,3 +30,28 @@
 *.exe
 *.out
 *.app
+
+# ROOT and slcio files
+*.root
+*.slcio
+
+# Plots
+*.pdf
+*.png
+*.eps
+*.ps
+*.gif
+*.jpeg
+
+# Generation folders
+generation/run_scripts/TB2022-06/logs/
+generation/run_scripts/TB2022-06/macros/
+generation/run_scripts/TB2022-06/data/
+generation/run_scripts/TB2022-06/steer/
+generation/run_scripts/TB2022-06/data/
+
+# Processing folders
+processors/ECAL/submit_jobs/LCIO2build_folder/
+
+# Plots folders
+analysis/ECAL_Sim/plots_Jan/

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!-- Loading shared library : /afs/desy.de/user/h/huonglan/RunMarlin/myInstall/lib/libuserlib.so.6.5.1 (libuserlib.so)-->
+<!-- Loading shared library : /afs/desy.de/user/h/huonglan/RunMarlin/myInstall/lib/liblabview2lcio.so.1.0.0 (liblabview2lcio.so)-->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="GeoConditions"/>
+    <processor name="SplitCollectionProcessor"/>
+    <processor name="EUDAQEventBuilder2016"/>
+    <!--processor name="MyDWCProcessor"/-->
+    <processor name="MyLCIOOutputProcessor"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      INPUT_SLCIO
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <parameter name="MaxRecordNumber" value="0" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter>
+  </global>
+
+  <processor name="GeoConditions" type="ConditionsProcessor">
+    <parameter name="DBInit" type="string" value="flccaldb02.desy.de:calice:caliceon:Delice.1:3306"/>
+    <parameter name="DBCondHandler" type="StringVec">
+      Ahc2HardwareConnection                /cd_calice_Ahc2/TestbeamJune2018/HardwareConnection             HEAD
+    </parameter>
+  </processor>
+
+  <processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+    <!--Writes the current event to the specified LCIO outputfile. Needs to be the last ActiveProcessor.-->
+    <!--drops the named collections from the event-->
+    <parameter name="DropCollectionTypes" type="StringVec">
+      CalorimeterHit
+    </parameter>
+    <!-- write complete objects in subset collections to the file (i.e. ignore subset flag)-->
+    <parameter name="FullSubsetCollections" type="StringVec"> MCParticles </parameter>
+    <!--force keep of the named collections - overrules DropCollectionTypes (and DropCollectionNames)-->
+    <parameter name="KeepCollectionNames" type="StringVec">
+      PreShower
+      HCAL
+      TailCatcher
+      DWCData
+      LDAData
+      BIFData
+      ASICStopData
+    </parameter>
+    <parameter name="DropCollectionNames" type="StringVec"> </parameter>
+    <!-- name of output file -->
+    <parameter name="LCIOOutputFile" type="string">
+      OUTPUT_SPLIT_SLCIO
+    </parameter>
+    <!--write mode for output file:  WRITE_APPEND or WRITE_NEW-->
+    <parameter name="LCIOWriteMode" type="string"> WRITE_NEW </parameter>
+    <!--will split output file if size in kB exceeds given value - doesn't work with APPEND and NEW-->
+    <!--parameter name="SplitFileSizekB" type="int">1992294 </parameter-->
+  </processor>
+
+  <processor name="SplitCollectionProcessor" type="SplitCollectionProcessor">
+    <parameter name="InputCollectionName" type="string"> EUDAQDataScCAL </parameter>
+    <parameter name="DetectorType" type="string"> Ahc2 </parameter>
+    <parameter name="OutputCollectionNamePreShower" type="string"> PreShower </parameter>
+    <parameter name="OutputCollectionNameHCAL" type="string"> HCAL </parameter>
+    <parameter name="OutputCollectionNameTC" type="string"> TailCatcher </parameter>
+    <parameter name="HardwareConnectionCollection" type="string"> Ahc2HardwareConnection </parameter>
+  </processor>
+
+  <processor name="EUDAQEventBuilder2016" type="EUDAQEventBuilder2016">
+    <parameter name="InputCollectionNameTemp" type="string"> TempSensor </parameter>
+    <parameter name="InputCollectionNameBIF" type="string"> EUDAQDataBIF </parameter>
+    <parameter name="InputCollectionNameLDA" type="string"> EUDAQDataLDATS </parameter>
+    <parameter name="DetectorType" type="string"> Ahc2 </parameter>
+    <parameter name="BIF_offset" type="string"> 451685 </parameter>
+    <parameter name="onlyValidatedEvents" type="bool"> false </parameter>
+    <parameter name="doEvtBuilding" type="bool"> false </parameter>
+  </processor>
+
+  <processor name="MyDWCProcessor" type="DWCProcessor">
+    <parameter name="InputCollectionNameBIF" type="string"> BIFData </parameter>
+    <parameter name="OutputCollectionNameDWC" type="string"> DWCData </parameter>
+    <parameter name="InputFileNameBIF" type="string">
+      INPUT_BIF
+    </parameter>
+    <parameter name="InputFileNameAHCAL" type="string">
+      INPUT_AHCAL
+    </parameter>
+    <parameter name="InputFileNameDWC" type="string">
+      INPUT_DWC
+    </parameter>
+  </processor>
+</marlin>

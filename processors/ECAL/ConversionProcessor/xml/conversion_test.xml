@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    
+    <processor name="SiWECALConversion"/>
+
+    <!-- <processor name="MyLCIOOutputProcessor"/> -->
+  </execute>
+
+  <global>
+    <!-- parameter name="LCIOInputFiles">
+     /lhome/ific/a/airqui/SiWECAL/2017_SiECAL_DESY/test_2019/ECAL_conf1_e+_1GeV_QGSP_BERT_merged.slcio
+      /eos/project/s/siw-ecal/TB2017-06/2017_SiECAL_DESY/data_calib3/conf0/ECAL_FTFP_BERT_conf0_e+_3GeV_0.slcio
+      /data_ilc/flc/ECAL/Simulations/DESY-2017/data/ECAL_conf1_e-_1GeV.slcio
+    </parameter-->
+    <parameter name="LCIOInputFiles">
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_1.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_2.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_3.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_4.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_5.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_6.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_7.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_8.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_9.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_10.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_11.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_12.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_13.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_14.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_15.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_16.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_17.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_18.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_19.slcio
+      /data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_20.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!--parameter name="MaxRecordNumber" value="20000" /-->
+    <parameter name="MaxRecordNumber" value="20000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+  </global>
+
+
+<processor name="SiWECALConversion" type="ConversionProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <!--parameter name="Input_Collection" type="string"> ecalSD </parameter-->
+    <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>
+    <parameter name="SiThicknesses" type="float"> 650 650 500 500 320 320 320 500 500 500 500 320 320 320 320 </parameter>
+    <parameter name="Energy_Conf_Name" type="string"> out_conv.root </parameter>
+    <!-- MIP fit mode: 1 (Gaus), 2 (Landau), 3 (LanGaus) -->
+    <parameter name="MIPFitMode" type="int"> 1 </parameter>
+  </processor>
+
+</marlin>

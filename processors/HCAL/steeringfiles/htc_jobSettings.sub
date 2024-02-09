@@ -1,0 +1,67 @@
+######################################################
+ # HTCondor Submit Description File. COMMON TEMPLATE
+ # Next commands should be added to all your submit files
+ #
+ # submit this script with: >> condor_submit htc_jobSettings.sub
+ ######################################################
+
+#
+# Infos from your job:
+Output = $(Cluster).$(Process).out
+#
+# Contains only last error:
+Error = $(Cluster).$(Process).err
+#
+# Infos from the scheduler:
+Log = $(Cluster).$(Process).log
+#
+# Default Universe for normal jobs
+Universe = vanilla
+#
+# Until now we use shared file system:
+Should_Transfer_Files = NO
+#
+# Defaults to submit dir:
+InitialDir = $ENV(PWD)
+#InitialDir = $ENV(HOME)
+#
+# Test it:
+#Arguments = "sleep 600"
+#
+# Mailing requests:
+#notification = $<$Always | Complete | Error | Never$>$
+#
+# Your mail address:
+#notify_user = your.mail@desy.de
+#
+# As you need (see notify...)
+Notification = Always
+#
+# Defaults to 1 day:
++RequestRuntime = 3600 * 24
+#
+# Defaults to 3G
+RequestDisk = 2048 * 2
+#
+# Defaults to 1500M:
+RequestMemory = 1024 * 2
+#
+# Defaults to 1:
+RequestCpus = 1
+#
+# Normally set by submit host:
+#+MyProject = "MyProject"
+#
+# Default:
+Requirements = OpSysAndVer=="SL6"
+#
+# Default is 1 job per submit
+# Job Id is $(Cluster).$(Process) e.g. 20202.0
+# request_cpus=10
+
+######################################
+## Execute jobs
+######################################
+
+Executable = $ENV(PWD)/runDataReco.sh
+Queue 1

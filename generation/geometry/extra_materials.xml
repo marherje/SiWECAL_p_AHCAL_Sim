@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<materials>
+
+    <comment> extra materials </comment>
+
+    <!-- this steel is only included in more recent versions of ${lcgeo_DIR}/ILD/compact/ILD_o2_v01/materials.xml -->
+<!--
+    <material name="Steel304L">
+      <D type="density" value="8.00" unit="g/cm3" />
+      <fraction n="0.695" ref="Fe" />
+      <fraction n="0.185" ref="Cr" />
+      <fraction n="0.100" ref="Ni" />
+      <fraction n="0.020" ref="Mn" />
+    </material>
+-->
+
+    <material name="PCB" state="solid">
+      <MEE unit="eV" value="88.255598548367"/>
+      <D unit="g/cm3" value="1.7"/>
+      <fraction n="0.180774" ref="Si"/>
+      <fraction n="0.405633" ref="O"/>
+      <fraction n="0.278042" ref="C"/>
+      <fraction n="0.0684428" ref="H"/>
+      <fraction n="0.0671091" ref="Br"/>
+    </material>
+
+
+    <!-- absorber used in SiW ECAL prototype: specifications (via M Anduze, LLR) "tungsten fraction >=99.95%, density 19.10 g/cm3" -->
+    <material name="TungstenDens1910">
+      <D value="19.10" unit="g/cm3"/>
+      <fraction n="1.0" ref="W"/>
+    </material>
+
+    <!-- Plastic plate used in TB2021/22 prototype-->
+    <!-- http://pdg.web.cern.ch/pdg/2020/AtomicNuclearProperties/HTML/polyethylene.html -->
+    <material name="PolyethyleneProto">
+      <D value="0.89" unit="g/cm3"/> <!-- Check value w/ Vincent -->
+      <fraction n="0.143711" ref="H"/>
+      <fraction n="0.856289" ref="C"/>
+    </material>
+
+  </materials>
+

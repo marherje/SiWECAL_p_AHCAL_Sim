@@ -1,0 +1,5 @@
+geometry_folder: /home/llr/ilc/jimenez/Projects/Simulations/SiWECAL-Sim/generation/geometry/
+ilcsoft_path: /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/ 
+data_path: /data_ilc/flc/jimenez/simulations/
+physics_list: QGSP_BERT
+submit_command: /opt/exp_soft/cms/t3/t3submit -short

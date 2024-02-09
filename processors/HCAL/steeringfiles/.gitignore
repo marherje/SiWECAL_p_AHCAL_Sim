@@ -1,0 +1,6 @@
+*.root
+*.slcio
+*.err
+*.log
+*.out
+*tmp.xml

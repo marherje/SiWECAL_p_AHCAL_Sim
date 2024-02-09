@@ -1,0 +1,1 @@
+/afs/cern.ch/work/j/jokunath/public/monitoring/3.0GeV_W_run_050282/masked_channels.txt

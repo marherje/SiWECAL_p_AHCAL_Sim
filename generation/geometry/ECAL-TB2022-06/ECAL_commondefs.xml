@@ -1,0 +1,98 @@
+<!-- 
+     ECAL parameters for testbeam: November 2021 (DESY)
+-->
+
+<!--
+   "||" = W layer (2.1mm)
+
+   Conf 1: 1 || 2 || 3 || 4 || 5 || 6 || 7 || 8 || 9 || 10 || 11 || 12 |||| 13 |||| 14 |||| 15 → 9.6 X0
+  -->
+  
+<!-- 
+   Plastic plate (polyethylene) thickness: 2 mm
+   Distance to groove 61.8 mm
+   Dist between grooves: 15 mm
+   Carbon thickness
+
+
+   ECAL slab structure (from upstream beam direction)
+
+   Tungsten             From 0 mm, to 5.6 mm (New in TB2022-06)
+   Carbon               1.50 mm (A Gallas)
+   Kapton               0.10 mm 
+   Glue                 0.10 mm
+   Silicon Sensor       0.32 mm or 0.5 mm or 0.65 mm
+   Glue                 0.10 mm
+   Copper layer:        0.10 mm
+   PCB                  1.70 mm (TODO To be checked with Jerome)
+   Chip                 1.20 mm 
+   Air
+   ==================================
+   total slab thickness = 10.72, 10.9 or 11.05 mm (counting 5.6 mm Tungsten "box")
+  
+
+  -->
+
+
+  <define>
+    <constant name="env_safety" value="0.001*mm"/>
+    
+    <constant name="Ecal_NcellsX" value="32" />
+    <constant name="Ecal_NcellsY" value="32" />
+    <constant name="Ecal_CellSizeX" value="5.5*mm" />
+    <constant name="Ecal_CellSizeY" value="5.5*mm" />
+
+    <constant name="Ecal_dim_x" value="Ecal_NcellsX*Ecal_CellSizeX"/>
+    <constant name="Ecal_dim_y" value="Ecal_NcellsY*Ecal_CellSizeY"/>
+    <constant name="Ecal_dim_z" value="285*mm"/> <!-- 15*15 layers + 26 (rear space) + 30 (upfront space) + 4 (plastic plates) -->
+    <!--TODO: check!! , more on the order of 220*mm (used to be 500*mm), but still fine if we put the first layer in the border of the box (?)-->
+    <constant name="EcalILD_dim_z" value="500*mm"/> <!-- 15*24 layers + 26 (rear space) + 30 (upfront space) + 4 (plastic plates), should be 420, but trying with 500 due to panic "overlapping daughter with mother volume" -->
+
+    <constant name="Ecal_LayerDistance" value="15.0*mm"/> 
+    <!-- <constant name="Ecal_slab_thickness" value="6.73*mm"/> -->
+    <constant name="Ecal_slab_thickness320" value="10.72*mm"/>
+    <constant name="Ecal_slab_thickness500" value="10.9*mm"/>
+    <constant name="Ecal_slab_thickness650" value="11.05*mm"/>
+
+    <!-- TB2021: No Aluminum-->
+    <!-- <constant name="Ecal_AlThickness" value="0.1*mm"/> --> 
+    <constant name="Ecal_WThickness" value="0.7*mm"/> <!-- Such that both tb21 and tb22 W thicknesses are integer multiples-->
+    <constant name="Ecal_CFThickness" value="1.5*mm"/>
+    <constant name="Ecal_KaptonThickness" value="0.1*mm"/>
+    <constant name="Ecal_GlueThickness_kap" value="0.1*mm"/>
+    <constant name="Ecal_WaferThickness320" value="0.320*mm"/>
+    <constant name="Ecal_WaferThickness500" value="0.500*mm"/>
+    <constant name="Ecal_WaferThickness650" value="0.650*mm"/>
+    <!-- TODO: Used to have GlueThickness_pcb and GlueThickness_kap, now (2021) only one-->
+    <!-- <constant name="Ecal_GlueThickness_pcb" value="0.08*mm"/>-->
+    <constant name="Ecal_GlueThickness_pcb" value="0.1*mm"/>
+    <!-- TODO: Used to have GlueThickness_pcb and GlueThickness_kap, now (2021) only one-->
+    <!-- <constant name="Ecal_GlueThickness_kap" value="0.08*mm"/> -->
+    <!-- TODO: Vincent suggested (I think) that we had wafer - glue - Cu (??) - PCB - Chip -->
+    <!-- TODO: check, PCBTHickness used to be 1.61*mm -->
+    <constant name="Ecal_PcbThickness" value="1.7*mm"/> 
+    <!-- TODO: missing chip!! --> 
+    <constant name="Ecal_ChipThickness" value="1.2*mm"/> 
+
+    <!-- this is the gap within a slab (electronics, etc) -->
+    <!-- <constant name="Ecal_GapThickness" value="Ecal_slab_thickness - Ecal_AlThickness - Ecal_PcbThickness - Ecal_WaferThickness - Ecal_KaptonThickness - Ecal_CFThickness - Ecal_GlueThickness_pcb - Ecal_GlueThickness_kap"/> -->
+    <!-- TODO: Check if this is necessary in 2021? -->
+    <!-- constant name="Ecal_GapThickness" value="Ecal_slab_thickness - Ecal_PcbThickness - Ecal_WaferThickness - Ecal_KaptonThickness - Ecal_CFThickness - Ecal_GlueThickness"/-->
+
+
+    <!-- TODO: Check if these gaps apply to 2021 -->
+    <!-- <constant name="Ecal_w_slab_gap1" value="0.5*mm"/> -->
+    <!-- <constant name="Ecal_w_slab_gap2" value="Ecal_LayerDistance-3*Ecal_WThickness-Ecal_slab_thickness-Ecal_w_slab_gap1"/> -->
+
+    <!--constant name="Ecal_w_slab_gap320" value="Ecal_LayerDistance-2*Ecal_WThickness-Ecal_slab_thickness320"/-->
+    <constant name="Ecal_w_slab_gap320" value="Ecal_LayerDistance-Ecal_slab_thickness320"/>
+    <!--constant name="Ecal_w_slab_gap500" value="Ecal_LayerDistance-2*Ecal_WThickness-Ecal_slab_thickness500"/-->
+    <constant name="Ecal_w_slab_gap500" value="Ecal_LayerDistance-Ecal_slab_thickness500"/>
+    <constant name="Ecal_w_slab_gap650" value="Ecal_LayerDistance-Ecal_slab_thickness650"/>
+
+    
+  </define>
+
+  
+
+
