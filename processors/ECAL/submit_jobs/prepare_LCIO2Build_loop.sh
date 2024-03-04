@@ -18,7 +18,7 @@ template_sh=LCIO2build_gen.sh
 template_sub=LCIO2build_gen.sub
 
 
-for particle in e- pi- #mu-
+for particle in e- pi- mu-
 do
   for energy in 2 4 6 8 10 20 30 40 50 60 70 80 90 100 125 150 175 200
   do

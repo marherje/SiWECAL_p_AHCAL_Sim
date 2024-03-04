@@ -1,0 +1,28 @@
+000 (43361458.000.000) 2024-02-23 17:03:07 Job submitted from host: <131.169.223.42:9618?addrs=131.169.223.42-9618+[2001-638-700-10df--1-2a]-9618&alias=bird-htc-sched14.desy.de&noUDP&sock=schedd_2205_066b>
+...
+040 (43361458.000.000) 2024-02-23 17:03:09 Started transferring input files
+	Transferring to host: <131.169.160.218:39866?addrs=131.169.160.218-39866+[2001-638-700-10a0--1-da]-39866&alias=batch1360.desy.de>
+...
+040 (43361458.000.000) 2024-02-23 17:03:09 Finished transferring input files
+...
+001 (43361458.000.000) 2024-02-23 17:03:10 Job executing on host: <131.169.160.218:39970?addrs=131.169.160.218-39970+[2001-638-700-10a0--1-da]-39970&alias=batch1360.desy.de>
+...
+040 (43361458.000.000) 2024-02-23 17:03:52 Finished transferring output files
+...
+005 (43361458.000.000) 2024-02-23 17:03:52 Job terminated.
+	(1) Normal termination (return value 1)
+		Usr 0 00:00:32, Sys 0 00:00:05  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:00:32, Sys 0 00:00:05  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	931263  -  Run Bytes Sent By Job
+	1290  -  Run Bytes Received By Job
+	931263  -  Total Bytes Sent By Job
+	1290  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated 
+	   Cpus                 :                 1         1 
+	   Disk (KB)            :      924 20480000  21530860 
+	   Memory (MB)          :      438     1536      1536 
+
+	Job terminated of its own accord at 2024-02-23T16:03:52Z.
+...
