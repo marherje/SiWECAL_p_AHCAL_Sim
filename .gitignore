@@ -47,11 +47,17 @@
 *.jpeg
 
 # Generation folders
-generation/run_scripts/TB2022-06/logs/
+generation/run_scripts/TB2022-06/log/
 generation/run_scripts/TB2022-06/macros/
 generation/run_scripts/TB2022-06/data/
 generation/run_scripts/TB2022-06/steer/
 generation/run_scripts/TB2022-06/data/
+
+generation/run_scripts/TB2022-06_ECAL_encoding/log/
+generation/run_scripts/TB2022-06_ECAL_encoding/macros/
+generation/run_scripts/TB2022-06_ECAL_encoding/data/
+generation/run_scripts/TB2022-06_ECAL_encoding/steer/
+
 
 # Processing folders
 processors/ECAL/submit_jobs/LCIO2build_folder/
