@@ -1,0 +1,26 @@
+This folder contains the main scripts for the ECAL study.
+
+*Analysis.C 
+	-Def: reads the build files and prepare a single ROOT file with all the TH1F, fits and average values.
+	-Func: voidanalysis (string particle)
+	-Par: particle can be "e-", "pi-", "mu-"    
+
+*run_analysis.sh
+	-Def: simple bash macro to prepare the results for e-, mu- and pi- by using Analysis.C
+
+*res_mol_plots.C
+	-Def: selection of plots covering linearity study, shower profile study, and some shower characterization variables
+	-Func: void res_mol_plots(string particle, bool transformed = true, bool save = false)
+	-Par: particle can be "e-", "pi-", "mu-"
+      	-Par: transformed true  means that the x-axis uses 1/sqrt(E) instead of E
+        -Par: save true is for saving the plots in .eps files
+
+*single_histo.C
+	-Def: plot one of the TH1F variables of a specific energy, for e-, pi- and mu- simultaneously
+	-Func: single_histo(TString varname, TString energy, bool save = false)
+	-Par: varname is the name of the TH1F histo selected
+	-Par: energy... is energy
+	-Par: save plot in .eps or not
+	
+*plots_macro.sh
+	-Def: simple bash macro to farm plots while you can focus on smth else

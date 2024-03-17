@@ -1,0 +1,11 @@
+# Unix submit description file
+# simple Marlin job
+
+
+executable              = /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/analysis/ECAL_Sim/ResMolShowAnalysis/run_analysis.sh
+log                     = run_analysis.log
+output                  = outfile_run_analysis.txt
+error                   = errors_run_analysis.txt
+should_transfer_files   = Yes
+when_to_transfer_output = ON_EXIT
+queue 1
