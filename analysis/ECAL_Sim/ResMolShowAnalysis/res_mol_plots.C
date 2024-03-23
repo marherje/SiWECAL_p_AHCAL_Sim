@@ -74,8 +74,8 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     TFile *file = new TFile(filename, "read");
     // TVectorD * energies = file->GetObject("energies");
     TString savetrans;
-    if(transformed == false) savetrans="Linear_"+particle+"_";
-    else savetrans="InvSq_"+particle+"_";
+    if(transformed == false) savetrans="Linear_"+particle;
+    else savetrans="InvSq_"+particle;
 
     TString partstring(particle);
     
@@ -906,7 +906,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     
     auto c = new TCanvas("c", "c", 800, 800);
     mg->Draw("AP");
-    mg->SetTitle("Resolution vs energy");
+    mg->SetTitle("Resolution vs energy ("+partstring+")");
     if (transformed) mg->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg->GetXaxis()->SetTitle("E[GeV]");
     mg->GetYaxis()->SetTitle("#sigma(E_{meas.})/#mu(E_{meas.}) (\%)");
@@ -972,7 +972,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     
     auto c_lin_nhit = new TCanvas("c_lin_nhit", "c_lin_nhit", 800, 800);
     mg_lin_nhit->Draw("AP");
-    mg_lin_nhit->SetTitle("Linearity (N hits)");
+    mg_lin_nhit->SetTitle("Linearity (N hits) ("+partstring+")");
     if (transformed) mg_lin_nhit->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_lin_nhit->GetXaxis()->SetTitle("E[GeV]");
     mg_lin_nhit->GetYaxis()->SetTitle("Number of hits");
@@ -997,7 +997,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_lin_sume = new TCanvas("c_lin_sume", "c_lin_sume", 800, 800);
     mg_lin_sume->Draw("AP");
-    mg_lin_sume->SetTitle("Linearity (energy)");
+    mg_lin_sume->SetTitle("Linearity (energy) ("+partstring+")");
     if (transformed) mg_lin_sume->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_lin_sume->GetXaxis()->SetTitle("E[GeV]");
     mg_lin_sume->GetYaxis()->SetTitle("Summed energy (MIPs)");
@@ -1022,7 +1022,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_lin_weight = new TCanvas("c_lin_weight", "c_lin_weight", 800, 800);
     mg_lin_weight->Draw("AP");
-    mg_lin_weight->SetTitle("Linearity (weighted energy)");
+    mg_lin_weight->SetTitle("Linearity (weighted energy) ("+partstring+")");
     if (transformed) mg_lin_weight->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_lin_weight->GetXaxis()->SetTitle("E[GeV]");
     mg_lin_weight->GetYaxis()->SetTitle("Weighted summed energy (MIPs)");
@@ -1062,7 +1062,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_mol = new TCanvas("c_mol", "c_mol", 800, 800);
     mg_mol->Draw("AP");
-    mg_mol->SetTitle("Moliere radius vs energy");
+    mg_mol->SetTitle("Moliere radius vs energy ("+partstring+")");
     // mg_mol->GetXaxis()->SetTitle("Energy [GeV]");
     if (transformed) mg_mol->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_mol->GetXaxis()->SetTitle("E[GeV]");
@@ -1083,7 +1083,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     addCaliceLogo();
     if(save == true){
       c_mol->SaveAs("mol_"+savetrans+".eps");
-      c_lin_weight->SaveAs("lin_weight_ecal_sim_"+savetrans+".png");                                                                                       
+      c_mol->SaveAs("mol_"+savetrans+".png");
     }
 
     // NHITS shower profile
@@ -1096,7 +1096,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_nhit_layer_3 = new TCanvas("c_nhit_layer_3", "c_nhit_layer_3", 800, 800);
     mg_nhit_layer_3->Draw("AP");
-    mg_nhit_layer_3->SetTitle("Hits in layer 3");
+    mg_nhit_layer_3->SetTitle("Hits in layer 3 ("+partstring+")");
 
     if (transformed) mg_nhit_layer_3->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_nhit_layer_3->GetXaxis()->SetTitle("E[GeV]");
@@ -1192,7 +1192,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_nhit_layer_n_3 = new TCanvas("c_nhit_layer_n_3", "c_nhit_layer_n_3", 800, 800);
     mg_nhit_layer_n_3->Draw("AP");
-    mg_nhit_layer_n_3->SetTitle("Hits in layer 3 (normalized)");
+    mg_nhit_layer_n_3->SetTitle("Hits in layer 3 (normalized) ("+partstring+")");
 
     if (transformed) mg_nhit_layer_n_3->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_nhit_layer_n_3->GetXaxis()->SetTitle("E[GeV]");
@@ -1246,7 +1246,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_energies_n = new TCanvas("c_shower_nhit_energies_n", "c_shower_nhit_energies_n", 800, 800);
     mg_shower_nhit_energies_n->Draw("AP");
-    mg_shower_nhit_energies_n->SetTitle("Shower profile (normalized)");
+    mg_shower_nhit_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_energies_n->GetXaxis()->SetTitle("Layer");
     else mg_shower_nhit_energies_n->GetXaxis()->SetTitle("Layer");
@@ -1273,8 +1273,8 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     leg_shower_nhit_energies_n->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_nhit_energies->SaveAs("shower_nhit_energies_n_"+savetrans+".eps");
-      c_shower_nhit_energies->SaveAs("shower_nhit_energies_n_"+savetrans+".png");
+      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+".eps");
+      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+".png");
     }
 
     // Shower max, start and end
@@ -1287,7 +1287,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_max = new TCanvas("c_shower_nhit_max", "c_shower_nhit_max", 800, 800);
     mg_shower_nhit_max->Draw("AP");
-    mg_shower_nhit_max->SetTitle("Shower max (n hits)");
+    mg_shower_nhit_max->SetTitle("Shower max (n hits) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_max->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_nhit_max->GetXaxis()->SetTitle("E[GeV]");
@@ -1320,7 +1320,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_average = new TCanvas("c_shower_nhit_average", "c_shower_nhit_average", 800, 800);
     mg_shower_nhit_average->Draw("AP");
-    mg_shower_nhit_average->SetTitle("Shower average (n hits)");
+    mg_shower_nhit_average->SetTitle("Shower average (n hits) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_average->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_nhit_average->GetXaxis()->SetTitle("E[GeV]");
@@ -1353,7 +1353,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_max_layer = new TCanvas("c_shower_nhit_max_layer", "c_shower_nhit_max_layer", 800, 800);
     mg_shower_nhit_max_layer->Draw("AP");
-    mg_shower_nhit_max_layer->SetTitle("N hits shower max layer (avg.)");
+    mg_shower_nhit_max_layer->SetTitle("N hits shower max layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_max_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_nhit_max_layer->GetXaxis()->SetTitle("E[GeV]");
@@ -1386,7 +1386,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_start_layer = new TCanvas("c_shower_nhit_start_layer", "c_shower_nhit_start_layer", 800, 800);
     mg_shower_nhit_start_layer->Draw("AP");
-    mg_shower_nhit_start_layer->SetTitle("N hits shower start layer (avg.)");
+    mg_shower_nhit_start_layer->SetTitle("N hits shower start layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_start_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_nhit_start_layer->GetXaxis()->SetTitle("E[GeV]");
@@ -1419,7 +1419,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_nhit_end_layer = new TCanvas("c_shower_nhit_end_layer", "c_shower_nhit_end_layer", 800, 800);
     mg_shower_nhit_end_layer->Draw("AP");
-    mg_shower_nhit_end_layer->SetTitle("N hits shower end layer (avg.)");
+    mg_shower_nhit_end_layer->SetTitle("N hits shower end layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_end_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_nhit_end_layer->GetXaxis()->SetTitle("E[GeV]");
@@ -1456,11 +1456,11 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_weight_layer_3 = new TCanvas("c_weight_layer_3", "c_weight_layer_3", 800, 800);
     mg_weight_layer_3->Draw("AP");
-    mg_weight_layer_3->SetTitle("Weighted energy in layer 3");
+    mg_weight_layer_3->SetTitle("Weighted energy in layer 3 ("+partstring+")");
 
     if (transformed) mg_weight_layer_3->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_weight_layer_3->GetXaxis()->SetTitle("E[GeV]");
-    mg_weight_layer_3->GetYaxis()->SetTitle("Weighted energy (a.u.)");
+    mg_weight_layer_3->GetYaxis()->SetTitle("Weighted energy (MIPs)");
     mg_weight_layer_3->GetYaxis()->SetTitleOffset(1.4);
     mg_weight_layer_3->GetYaxis()->SetRangeUser(0,200);
 
@@ -1515,7 +1515,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     if (transformed) mg_shower_weight_energies->GetXaxis()->SetTitle("Layer");
     else mg_shower_weight_energies->GetXaxis()->SetTitle("Layer");
-    mg_shower_weight_energies->GetYaxis()->SetTitle("Weighted energy (a.u.)");
+    mg_shower_weight_energies->GetYaxis()->SetTitle("Weighted energy (MIPs)");
     mg_shower_weight_energies->GetYaxis()->SetTitleOffset(1.4);
     mg_shower_weight_energies->GetYaxis()->SetRangeUser(0,7000);
 
@@ -1553,11 +1553,11 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_weight_layer_n_3 = new TCanvas("c_weight_layer_n_3", "c_weight_layer_n_3", 800, 800);
     mg_weights_layer_n_3->Draw("AP");
-    mg_weights_layer_n_3->SetTitle("Weighted energy in layer 3 (normalized)");
+    mg_weights_layer_n_3->SetTitle("W. energy in layer 3 (normalized) ("+partstring+")");
 
     if (transformed) mg_weights_layer_n_3->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_weights_layer_n_3->GetXaxis()->SetTitle("E[GeV]");
-    mg_weights_layer_n_3->GetYaxis()->SetTitle("Weighted energy (a.u.)");
+    mg_weights_layer_n_3->GetYaxis()->SetTitle("Weighted energy (MIPs)");
     mg_weights_layer_n_3->GetYaxis()->SetTitleOffset(1.4);
     mg_weights_layer_n_3->GetYaxis()->SetRangeUser(0.,0.3);
 
@@ -1607,7 +1607,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_energies_n = new TCanvas("c_shower_weight_energies_n", "c_shower_weight_energies_n", 800, 800);
     mg_shower_weight_energies_n->Draw("AP");
-    mg_shower_weight_energies_n->SetTitle("Shower profile (normalized)");
+    mg_shower_weight_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_weight_energies_n->GetXaxis()->SetTitle("Layer");
     else mg_shower_weight_energies_n->GetXaxis()->SetTitle("Layer");
@@ -1634,8 +1634,8 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     leg_shower_weight_energies_n->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_weight_energies->SaveAs("shower_weight_energies_n_"+savetrans+".eps");
-      c_shower_weight_energies->SaveAs("shower_weight_energies_n_"+savetrans+".png");
+      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+".eps");
+      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+".png");
     }
 
     // Shower max, start and end
@@ -1648,7 +1648,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_max = new TCanvas("c_shower_weight_max", "c_shower_weight_max", 800, 800);
     mg_shower_weight_max->Draw("AP");
-    mg_shower_weight_max->SetTitle("Shower max (w. energy)");
+    mg_shower_weight_max->SetTitle("Shower max (w. energy) ("+partstring+")");
 
     if (transformed) mg_shower_weight_max->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_weight_max->GetXaxis()->SetTitle("E[GeV]");
@@ -1681,7 +1681,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_average = new TCanvas("c_shower_weight_average", "c_shower_weight_average", 800, 800);
     mg_shower_weight_average->Draw("AP");
-    mg_shower_weight_average->SetTitle("Shower average (w. energy)");
+    mg_shower_weight_average->SetTitle("Shower average (w. energy) ("+partstring+")");
 
     if (transformed) mg_shower_weight_average->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_weight_average->GetXaxis()->SetTitle("E[GeV]");
@@ -1714,7 +1714,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_max_layer = new TCanvas("c_shower_weight_max_layer", "c_shower_weight_max_layer", 800, 800);
     mg_shower_weight_max_layer->Draw("AP");
-    mg_shower_weight_max_layer->SetTitle("Weighted energy shower max layer (avg.)");
+    mg_shower_weight_max_layer->SetTitle("W. energy shower max layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_weight_max_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_weight_max_layer->GetXaxis()->SetTitle("E[GeV]");
@@ -1747,7 +1747,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_start_layer = new TCanvas("c_shower_weight_start_layer", "c_shower_weight_start_layer", 800, 800);
     mg_shower_weight_start_layer->Draw("AP");
-    mg_shower_weight_start_layer->SetTitle("W. energy shower start layer (avg.)");
+    mg_shower_weight_start_layer->SetTitle("W. energy shower start layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_weight_start_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_weight_start_layer->GetXaxis()->SetTitle("E[GeV]");
@@ -1781,7 +1781,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     auto c_shower_weight_end_layer = new TCanvas("c_shower_weight_end_layer", "c_shower_weight_end_layer", 800, 800);
     mg_shower_weight_end_layer->Draw("AP");
-    mg_shower_weight_end_layer->SetTitle("W. energy shower end layer (avg.)");
+    mg_shower_weight_end_layer->SetTitle("W. energy shower end layer (avg.) ("+partstring+")");
 
     if (transformed) mg_shower_weight_end_layer->GetXaxis()->SetTitle("1/#sqrt{E[GeV]}");
     else mg_shower_weight_end_layer->GetXaxis()->SetTitle("E[GeV]");
