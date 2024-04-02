@@ -17,5 +17,5 @@ for particle in e- pi- mu-
 do
     root -q analysis.C\(\"$particle\"\)
 done
-
+rm analysis.C
 cd -

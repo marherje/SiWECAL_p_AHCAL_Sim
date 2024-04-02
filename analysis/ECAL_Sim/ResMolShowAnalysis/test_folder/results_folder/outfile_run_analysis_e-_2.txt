@@ -1,0 +1,55 @@
+/var/lib/condor/execute/dir_37190
+running e- 2 GeV
+   ------------------------------------------------------------
+  | Welcome to ROOT 6.18/04                  https://root.cern |
+  |                               (c) 1995-2019, The ROOT Team |
+  | Built for linuxx8664gcc on Sep 11 2019, 15:38:23           |
+  | From tags/v6-18-04@v6-18-04                                |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q' |
+   ------------------------------------------------------------
+
+
+Processing analysis_2.C("e-")...
+Energy = 2 GeV
+nentries: 30000
+Event 0
+Event 1000
+Event 2000
+Event 3000
+Event 4000
+Event 5000
+Event 6000
+Event 7000
+Event 8000
+Event 9000
+Event 10000
+Event 11000
+Event 12000
+Event 13000
+Event 14000
+Event 15000
+Event 16000
+Event 17000
+Event 18000
+Event 19000
+Event 20000
+Event 21000
+Event 22000
+Event 23000
+Event 24000
+Event 25000
+Event 26000
+Event 27000
+Event 28000
+Event 29000
+FITTING: Radius90_e-_2GeV
+ FCN=1108.29 FROM MIGRAD    STATUS=CONVERGED     116 CALLS         117 TOTAL
+                     EDM=9.22334e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.4 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.28560e+00   3.70758e-02   2.28159e-04   2.55683e-02
+   2  p1           2.25859e+01   8.14627e-02   1.02991e-03   8.82281e-03
+   3  p2           3.06880e+04   1.77830e+02  -1.00358e+01   3.91119e-06
+   4  p3           6.42853e+00   6.50000e-02   1.30863e-03   1.86125e-02
+                               ERR DEF= 0.5
+My value: 24.5991 +- 8.76178

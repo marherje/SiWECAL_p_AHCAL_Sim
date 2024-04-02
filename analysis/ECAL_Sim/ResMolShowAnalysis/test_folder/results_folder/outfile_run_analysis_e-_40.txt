@@ -1,0 +1,55 @@
+/var/lib/condor/execute/dir_79220
+running e- 40 GeV
+   ------------------------------------------------------------
+  | Welcome to ROOT 6.18/04                  https://root.cern |
+  |                               (c) 1995-2019, The ROOT Team |
+  | Built for linuxx8664gcc on Sep 11 2019, 15:38:23           |
+  | From tags/v6-18-04@v6-18-04                                |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q' |
+   ------------------------------------------------------------
+
+
+Processing analysis_40.C("e-")...
+Energy = 40 GeV
+nentries: 30000
+Event 0
+Event 1000
+Event 2000
+Event 3000
+Event 4000
+Event 5000
+Event 6000
+Event 7000
+Event 8000
+Event 9000
+Event 10000
+Event 11000
+Event 12000
+Event 13000
+Event 14000
+Event 15000
+Event 16000
+Event 17000
+Event 18000
+Event 19000
+Event 20000
+Event 21000
+Event 22000
+Event 23000
+Event 24000
+Event 25000
+Event 26000
+Event 27000
+Event 28000
+Event 29000
+FITTING: Radius90_e-_40GeV
+ FCN=12106.1 FROM MIGRAD    STATUS=CONVERGED     148 CALLS         149 TOTAL
+                     EDM=1.27248e-06    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.44561e+00   4.40547e-02   9.52949e-04   4.74626e-03
+   2  p1           2.61699e+01   4.07110e-02   2.40318e-03  -2.51044e-02
+   3  p2           3.51726e+04   2.50785e+02   1.54122e+01   4.18009e-06
+   4  p3           5.49611e+00   4.48659e-02   9.55805e-04   2.28877e-02
+                               ERR DEF= 0.5
+My value: 28 +- 3.44598

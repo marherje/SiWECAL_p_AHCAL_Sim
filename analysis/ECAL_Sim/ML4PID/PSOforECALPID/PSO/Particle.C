@@ -84,9 +84,9 @@ std::vector<Float_t> KS_AD_Test(){
 
   for(int i=0;i<test_entries;i++){
     TestTree->GetEntry(i);
-    Float_t value_B=TestTree->GetBranch("myMVA")->GetLeaf("jet_B")->GetValue(0);
-    Float_t value_C=TestTree->GetBranch("myMVA")->GetLeaf("jet_C")->GetValue(0);
-    Float_t value_O=TestTree->GetBranch("myMVA")->GetLeaf("jet_O")->GetValue(0);
+    Float_t value_B=TestTree->GetBranch("myMVA")->GetLeaf("Sample_A")->GetValue(0);
+    Float_t value_C=TestTree->GetBranch("myMVA")->GetLeaf("Sample_B")->GetValue(0);
+    Float_t value_O=TestTree->GetBranch("myMVA")->GetLeaf("Sample_C")->GetValue(0);
     test_B_histo->Fill(value_B);
     test_C_histo->Fill(value_C);
     test_O_histo->Fill(value_O);
@@ -109,9 +109,9 @@ std::vector<Float_t> KS_AD_Test(){
   for(int i=0;i<train_entries;i++){
     TrainTree->GetEntry(i);
 
-    Float_t value_B=TrainTree->GetBranch("myMVA")->GetLeaf("jet_B")->GetValue(0);
-    Float_t value_C=TrainTree->GetBranch("myMVA")->GetLeaf("jet_C")->GetValue(0);
-    Float_t value_O=TrainTree->GetBranch("myMVA")->GetLeaf("jet_O")->GetValue(0);
+    Float_t value_B=TrainTree->GetBranch("myMVA")->GetLeaf("Sample_A")->GetValue(0);
+    Float_t value_C=TrainTree->GetBranch("myMVA")->GetLeaf("Sample_B")->GetValue(0);
+    Float_t value_O=TrainTree->GetBranch("myMVA")->GetLeaf("Sample_C")->GetValue(0);
     train_B_histo->Fill(value_B);
     train_C_histo->Fill(value_C);
     train_O_histo->Fill(value_O);
@@ -286,14 +286,14 @@ void DoTraining(std::vector<BDTVar*> UsedVars,std::vector<BDTVar*> UnUsedVars,TS
      TreeC = (TTree*) inputC->Get(CTreeName);
      TreeO = (TTree*) inputO->Get(OTreeName);
 
-     dataloader->AddTree(TreeB,"jet_B",1.0,"");
-     dataloader->AddTree(TreeC,"jet_C" ,1.0,"");
-     dataloader->AddTree(TreeO,"jet_O" ,1.0,"");
+     dataloader->AddTree(TreeB,"Sample_A",1.0,"");
+     dataloader->AddTree(TreeC,"Sample_B" ,1.0,"");
+     dataloader->AddTree(TreeO,"Sample_C" ,1.0,"");
    }
 
-   dataloader->SetWeightExpression( BWeight,"jet_B");
-   dataloader->SetWeightExpression( CWeight,"jet_C");
-   dataloader->SetWeightExpression( OWeight,"jet_O");
+   dataloader->SetWeightExpression( BWeight,"Sample_A");
+   dataloader->SetWeightExpression( CWeight,"Sample_B");
+   dataloader->SetWeightExpression( OWeight,"Sample_C");
 
    std::cout << "Running TMVA::DataLoader::PrepareTrainingAndTestTree(\"\", \"\", \""+PrepString+"\")" << std::endl;
    

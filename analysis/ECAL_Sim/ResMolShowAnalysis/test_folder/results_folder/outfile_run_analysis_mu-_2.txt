@@ -1,0 +1,55 @@
+/var/lib/condor/execute/dir_22460
+running mu- 2 GeV
+   ------------------------------------------------------------
+  | Welcome to ROOT 6.18/04                  https://root.cern |
+  |                               (c) 1995-2019, The ROOT Team |
+  | Built for linuxx8664gcc on Sep 11 2019, 15:38:23           |
+  | From tags/v6-18-04@v6-18-04                                |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q' |
+   ------------------------------------------------------------
+
+
+Processing analysis_2.C("mu-")...
+Energy = 2 GeV
+nentries: 30000
+Event 0
+Event 1000
+Event 2000
+Event 3000
+Event 4000
+Event 5000
+Event 6000
+Event 7000
+Event 8000
+Event 9000
+Event 10000
+Event 11000
+Event 12000
+Event 13000
+Event 14000
+Event 15000
+Event 16000
+Event 17000
+Event 18000
+Event 19000
+Event 20000
+Event 21000
+Event 22000
+Event 23000
+Event 24000
+Event 25000
+Event 26000
+Event 27000
+Event 28000
+Event 29000
+FITTING: Radius90_mu-_2GeV
+ FCN=11154.1 FROM MIGRAD    STATUS=FAILED        563 CALLS         564 TOTAL
+                     EDM=6314.39    STRATEGY= 1      ERR MATRIX APPROXIMATE
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.50942e-02   4.60928e-04   2.20002e-05   1.50660e-01
+   2  p1          -9.95140e+00   2.75237e-03   4.14111e-05  -4.32745e-02
+   3  p2           1.30122e+05   1.27500e+03   5.38392e+01   6.23238e-02
+   4  p3           1.22925e+01   2.31496e-03   3.69278e-05  -1.39610e-02
+                               ERR DEF= 0.5
+My value: 4 +- 3.77767

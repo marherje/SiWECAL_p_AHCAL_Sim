@@ -1,0 +1,55 @@
+/var/lib/condor/execute/dir_6415
+running e- 100 GeV
+   ------------------------------------------------------------
+  | Welcome to ROOT 6.18/04                  https://root.cern |
+  |                               (c) 1995-2019, The ROOT Team |
+  | Built for linuxx8664gcc on Sep 11 2019, 15:38:23           |
+  | From tags/v6-18-04@v6-18-04                                |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q' |
+   ------------------------------------------------------------
+
+
+Processing analysis_100.C("e-")...
+Energy = 100 GeV
+nentries: 30000
+Event 0
+Event 1000
+Event 2000
+Event 3000
+Event 4000
+Event 5000
+Event 6000
+Event 7000
+Event 8000
+Event 9000
+Event 10000
+Event 11000
+Event 12000
+Event 13000
+Event 14000
+Event 15000
+Event 16000
+Event 17000
+Event 18000
+Event 19000
+Event 20000
+Event 21000
+Event 22000
+Event 23000
+Event 24000
+Event 25000
+Event 26000
+Event 27000
+Event 28000
+Event 29000
+FITTING: Radius90_e-_100GeV
+ FCN=14611.5 FROM MIGRAD    STATUS=CONVERGED     169 CALLS         170 TOTAL
+                     EDM=8.46989e-09    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.05972e+00   5.19208e-02   1.44145e-03   2.09877e-03
+   2  p1           2.77961e+01   6.45071e-02   3.08592e-03   2.88019e-05
+   3  p2           5.21546e+04   5.20028e+02   2.50680e+01   5.75691e-08
+   4  p3           4.27177e+00   4.68193e-02   1.74538e-03   1.33546e-03
+                               ERR DEF= 0.5
+My value: 28 +- 2.77941

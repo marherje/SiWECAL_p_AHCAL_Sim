@@ -30,11 +30,7 @@ vector<size_t> sort_indexes(const vector<T> &v) {
 #define N_ENERGIES 18 //18
 #define N_ECAL_LAYERS 15
 
-void get_res(int &nhit,     int &nhit_masked,
-             float &sume,   float &sume_masked,
-             float &weight, float &weight_masked,
-             vector<float> * hit_energy, vector<int> *hit_slab, vector<int> *hit_isMasked,
-             TVectorD W_thicknesses) {
+void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
   if(hit_energy->size() > 0){    
     //cout<<W_thicknesses.Min()<<endl;
     // First option: use the minimum of the used
@@ -43,15 +39,11 @@ void get_res(int &nhit,     int &nhit_masked,
     // New version ?
     
    for (int j = 0; j < hit_energy->size(); j++) {
-            if (hit_isMasked->at(j) == 0) {
-                nhit_masked += 1;
-                sume_masked += hit_energy->at(j);
-                weight_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
-            }
+     if( masked && hit_isMasked->at(j) == 1 ) continue;
             nhit += 1;
             sume += hit_energy->at(j);
             weight += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
-        }
+   }
   }
     return;
 }
@@ -120,22 +112,20 @@ void shower_variables(float entries, float array[N_ECAL_LAYERS], float array_n[N
   float percentage = 0.1;
 
   if(count_type == "nhit") threshold = 2.;
-  if(count_type == "weight") threshold = 10.;  
+  if(count_type == "weight") threshold = 2.;  
   /*
   cout<<count_type<<" shower variables"<<endl;
   for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++)cout<<array[ilayer]<<" ";
   cout<<""<<endl;
   */
-  if(entries > N_ECAL_LAYERS){
+  if(entries > 0){
     for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++){
       float thislayer = array[ilayer];
       float thislayer_n = array_n[ilayer];
-      if(thislayer > threshold) {
-	if(thislayer > shower_maxvalue){
-	  shower_maxvalue = thislayer;
-	  shower_maxvalue_n = thislayer_n;
-	  ilayermax = ilayer;
-	}
+      if(thislayer > shower_maxvalue){
+	shower_maxvalue = thislayer;
+	shower_maxvalue_n = thislayer_n;
+	ilayermax = ilayer;
       }
     }
 
@@ -320,9 +310,16 @@ void bary_layer(float blv[N_ECAL_LAYERS][2], vector<float> * hit_energy, vector<
 }
 
 void fit_bar(TH1 * h, double &mu, double &sig){
-  h->Fit("gaus", "q");
-  mu = h->GetFunction("gaus")->GetParameter("Mean");
-  sig = h->GetFunction("gaus")->GetParameter("Sigma");
+  mu = 0.;
+  sig = 0.;
+
+  if(h->GetEntries() > 10) {
+    h->Fit("gaus", "q");
+    mu = h->GetFunction("gaus")->GetParameter("Mean");
+    sig = h->GetFunction("gaus")->GetParameter("Sigma");
+  }
+  //cout<<"Fit bar"<<endl;
+  //cout<<"Gaus fit value: "<<mu<<" +- "<<sig<<endl;
   return;
 }
 
@@ -334,123 +331,126 @@ void fit_res(TH1 * h, double &mu, double &sig, double &res){
     return;
 }
 
-void fit_mol(TH1 * h, double &G_mu, double &G_sig, double &L_mpv, double &L_fwhm, double &MPV, double &FWHM, double &xmin, double &xmax){
+double langaufun(double *x, double *par) {
+ 
+  //Fit parameters:
+  //par[0]=Width (scale) parameter of Landau density
+  //par[1]=Most Probable (MP, location) parameter of Landau density
+  //par[2]=Total area (integral -inf to inf, normalization constant)
+  //par[3]=Width (sigma) of convoluted Gaussian function
+  //
+  //In the Landau distribution (represented by the CERNLIB approximation),
+  //the maximum is located at x=-0.22278298 with the location parameter=0.
+  //This shift is corrected within this function, so that the actual
+  //maximum is identical to the MP parameter.
+ 
+  // Numeric constants
+  double invsq2pi = 0.3989422804014;   // (2 pi)^(-1/2)
+  double mpshift  = -0.22278298;       // Landau maximum location
+ 
+  // Control constants
+  double np = 200.0;      // number of convolution steps
+  double sc =   3.0;      // convolution extends to +-sc Gaussian sigmas
+ 
+  // Variables
+  double xx;
+  double mpc;
+  double fland;
+  double sum = 0.0;
+  double xlow,xupp;
+  double step;
+  double i;
+ 
+ 
+  // MP shift correction
+  mpc = par[1] - mpshift * par[0];
+ 
+  // Range of convolution integral
+  xlow = x[0] - sc * par[3];
+  xupp = x[0] + sc * par[3];
+ 
+  step = (xupp-xlow) / np;
+ 
+  // Convolution integral of Landau and Gaussian by sum
+  for(i=1.0; i<=np/2; i++) {
+    xx = xlow + (i-.5) * step;
+    fland = TMath::Landau(xx,mpc,par[0]) / par[0];
+    sum += fland * TMath::Gaus(x[0],xx,par[3]);
+ 
+    xx = xupp - (i-.5) * step;
+    fland = TMath::Landau(xx,mpc,par[0]) / par[0];
+    sum += fland * TMath::Gaus(x[0],xx,par[3]);
+  }
+ 
+  return (par[2] * step * sum * invsq2pi / par[3]);
+}
 
-  /*
-  TF1 *GaussDist = new TF1("GaussDist","[0]*exp((-0.5*((x-[1])/[2])^2))/([2]*sqrt(2*3.14159265358979323846))",5.,100.);
-  GaussDist->SetParameter(0,mu*5000);
-  GaussDist->SetParameter(1,mu);
-  GaussDist->SetParameter(2,sig);
-  
-  TF1 *LandauDist = new TF1("LandauDist","TMath::Landau(x,[3],[4])",5.,100.);
-  LandauDist->SetParameter(3,mpv);
-  LandauDist->SetParameter(4,fwhm);
-  */
+void fit_langaus(TH1 * h, double &MPV, double &MPV_error, double &FWHM){
+
+
+  MPV = 0.;
+  MPV_error = 0.;
+  FWHM = 0.;
 
   int h_binmax = h->GetMaximumBin();
   int h_NBINS = h->GetNbinsX();
   //double h_xmaxvalue = h->GetXaxis()->GetBinCenter(h_binmax);
   double h_MEAN = h->GetMean();
   double h_maxvalue = h->GetBinContent(h_binmax);
+  double h_mpv = h->GetXaxis()->GetBinCenter(h_binmax);
   double h_RMS = h->GetRMS();
+  double xmin = h->GetXaxis()->GetBinCenter(h->FindFirstBinAbove(1));
+  double xmax = h->GetXaxis()->GetBinCenter(h->FindLastBinAbove(1));
   
-  TF1 *LandauGaussDist = new TF1("LandauGaussDist","[0]*exp((-0.5*((x-[1])/[2])^2))/([2]*sqrt(2*TMath::Pi()))*TMath::Landau(x,[3],[4])",xmin,xmax);
-  //cout<<"Par. mol.: "<<0.5*h_NBINS*h_maxvalue<<", "<<h_MEAN<<", "<<h_RMS<<", "<<h_MEAN<<", "<<h_RMS<<endl;
-  LandauGaussDist->SetParameter(0,0.5*h_NBINS*h_maxvalue);
-  LandauGaussDist->SetParameter(1,0.);
-  LandauGaussDist->SetParameter(2,h_RMS);
-  LandauGaussDist->SetParameter(3,h_MEAN);
-  LandauGaussDist->SetParameter(4,h_RMS);
-
-  h->Fit(LandauGaussDist,"LRq");
-  G_mu = LandauGaussDist->GetParameter(1);
-  G_sig = LandauGaussDist->GetParameter(2);
-  L_mpv = LandauGaussDist->GetParameter(3);
-  L_fwhm = LandauGaussDist->GetParameter(4);
-
-  MPV = LandauGaussDist->GetMaximumX();
-  
-  double maxvalue = LandauGaussDist->Eval(MPV);
-  //cout<<"Max. Value: "<<maxvalue<<", at x= "<<MPV<<endl;
-  double x1=0.;
-  double x2=MPV;
-  for(int i=0;i<10000000;i++){
-    x1 += 0.00001;
-    double value = LandauGaussDist->Eval(x1);
-    double distance = abs(maxvalue/2 - value);
-    //cout<<distance<<endl;
-    if(distance < 0.01) break;
+  //cout<<"FITTING: "<<h->GetName()<<endl;
+  if(h_mpv > 0.) { 
+    TF1 *LandauGaussDist = new TF1("LandauGaussDist",langaufun,xmin,xmax,4);
+    LandauGaussDist->SetParameters(h_RMS,h_mpv,0.25*abs(xmax-xmin)*h_maxvalue,h_RMS);
+    
+    h->Fit(LandauGaussDist,"LRq");
+    
+    MPV = LandauGaussDist->GetMaximumX();
+    MPV_error = LandauGaussDist->GetParError(1);
+    
+    double maxvalue = LandauGaussDist->Eval(MPV);
+    //cout<<"Max. Value: "<<maxvalue<<", at x= "<<MPV<<endl;
+    double x1=0.;
+    double x2=MPV;
+    for(int i=0;i<10000000;i++){
+      x1 += 0.00001;
+      double value = LandauGaussDist->Eval(x1);
+      double distance = abs(maxvalue/2 - value);
+      //cout<<distance<<endl;
+      if(distance < 0.01) break;
+    }
+    for(int i=0;i<10000000;i++){
+      x2 += 0.00001;
+      double value = LandauGaussDist->Eval(x2);
+      double distance = abs(maxvalue/2 - value);
+      //cout<<distance<<endl;
+      if(abs(maxvalue/2-value) < 0.01) break;
+    }
+    
+    //cout<<"x1: "<<x1<<", x2: "<<x2<<endl;
+    FWHM = x2 - x1;
+        
+    if((FWHM > 2.5*h_RMS) || (FWHM < h_RMS) || (MPV > 1.5*h_MEAN) || (MPV < 0.5*h_MEAN)) {
+      MPV_error = 0.;
+      MPV = h_mpv;
+      FWHM = 2*h_RMS;
+    }
   }
-  for(int i=0;i<10000000;i++){
-    x2 += 0.00001;
-    double value = LandauGaussDist->Eval(x2);
-    double distance = abs(maxvalue/2 - value);
-    //cout<<distance<<endl;
-    if(abs(maxvalue/2-value) < 0.01) break;
+  else{
+    MPV_error = 0.;
+    MPV = 0.;
+    FWHM = 0.;
   }
-  
-  //cout<<"x1: "<<x1<<", x2: "<<x2<<endl;
-  FWHM = x2 - x1;
-  
+
+  //cout<<"My value: "<<MPV<<" +- "<<FWHM/2<<endl;
+
   return; 
 }
 
-void fit_shower(TH1 * h, double &G_mu, double &G_sig, double &L_mpv, double &L_fwhm, double &MPV, double &FWHM, double &xmin, double &xmax){
-
-  int h_binmax = h->GetMaximumBin();
-  int h_NBINS = h->GetNbinsX();
-  //double h_xmaxvalue = h->GetXaxis()->GetBinCenter(h_binmax);
-  double h_MEAN= h->GetMean();
-  double h_maxvalue = h->GetBinContent(h_binmax);
-  double h_RMS = h->GetRMS();
-  
-  TF1 *LandauGaussDist = new TF1("LandauGaussDist","[0]*exp((-0.5*((x-[1])/[2])^2))/([2]*sqrt(2*TMath::Pi()))*TMath::Landau(x,[3],[4])",xmin,xmax);
-  cout<<"Par. shower: "<<0.5*h_NBINS*h_maxvalue<<", "<<h_MEAN<<", "<<h_RMS<<", "<<h_MEAN<<", "<<h_RMS<<endl;
-  LandauGaussDist->SetParameter(0,0.5*h_NBINS*h_maxvalue);
-  LandauGaussDist->SetParameter(1,h_MEAN);
-  LandauGaussDist->SetParameter(2,h_RMS);
-  LandauGaussDist->SetParameter(3,h_MEAN/2);
-  LandauGaussDist->SetParameter(4,h_RMS);
-
-  h->Fit(LandauGaussDist,"LRq");
-  G_mu = LandauGaussDist->GetParameter(1);
-  G_sig = LandauGaussDist->GetParameter(2);
-  L_mpv = LandauGaussDist->GetParameter(3);
-  L_fwhm = LandauGaussDist->GetParameter(4);
-
-  MPV = LandauGaussDist->GetMaximumX();
-
-  double maxvalue = LandauGaussDist->Eval(MPV);
-  //cout<<"Max. Value: "<<maxvalue<<", at x= "<<MPV<<endl;
-  double x1=0.;
-  double x2=MPV;
-  for(int i=0;i<10000000;i++){
-    x1 += 0.00001;
-    double value = LandauGaussDist->Eval(x1);
-    double distance = abs(maxvalue/2 - value);
-    //cout<<distance<<endl;                                                                                                                                                                                                                                                                   
-    if(distance < 0.01) break;
-  }
-  for(int i=0;i<10000000;i++){
-    x2 += 0.00001;
-    double value = LandauGaussDist->Eval(x2);
-    double distance = abs(maxvalue/2 - value);
-    //cout<<distance<<endl;                                                                                                                                                                                                                                                                   
-    if(abs(maxvalue/2-value) < 0.01) break;
-  }
-
-  //cout<<"x1: "<<x1<<", x2: "<<x2<<endl;
-  FWHM = x2 - x1;
-  
-  // Patch in case it's not converging
-  if((FWHM > 2.5*h_RMS) || (FWHM < h_RMS) || (MPV > 1.5*h_MEAN) || (MPV < 0.5*h_MEAN)) {
-    MPV = h_MEAN;
-    FWHM = 2*h_RMS;
-  }
-  
-
-  return;
-}
 
 void graph_setup_add(TGraph *g, string title, Color_t color){
     g->SetTitle(title.c_str());
@@ -459,74 +459,8 @@ void graph_setup_add(TGraph *g, string title, Color_t color){
     return;
 }
 
-void cheap_trick_sigma(double shower_fit_result[N_ECAL_LAYERS][2], string type) {
 
-  double maxerror = 99999.;
-  if(type == "nhit") maxerror = 40.;
-  if(type == "nhit_n") maxerror = 0.5;
-  if(type == "weight") maxerror = 2000.;
-  if(type == "weight_n") maxerror = 0.5;
-  if(type == "bar") maxerror = 40.;
-
-
-  double shower_fit_result_new[N_ECAL_LAYERS][2];
-  cout<<type<<" fit values: ";
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    cout<<abs(shower_fit_result[ilayer][0])<<" ";
-  }
-  cout<<""<<endl;
-  cout<<"fwhm before: ";
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    cout<<0.5*abs(shower_fit_result[ilayer][1])<<" ";
-  }
-  cout<<""<<endl;
-  
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    shower_fit_result_new[ilayer][1] = 0.;
-  }
-  
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    double temp = abs(shower_fit_result[ilayer][1]);
-    double temp1 = 999.;
-    if( (temp == 0.) || (temp < maxerror) ) shower_fit_result_new[ilayer][1] = temp;
-    else {
-      if(ilayer < 7) {
-	for(int ilayertemp = ilayer; ilayertemp<N_ECAL_LAYERS; ilayertemp++) {
-	  if(ilayertemp == ilayer) continue;
-	  temp1 = abs(shower_fit_result[ilayertemp][1]);
-	  if( (temp1 == 0.) || (temp1 < maxerror) ) {
-	    shower_fit_result_new[ilayer][1] = temp1;
-	    break;
-	  }
-	}
-      }
-      else {
-	for(int ilayertemp = ilayer; ilayertemp>0; ilayertemp--) {
-          if(ilayertemp == ilayer) continue;
-          temp1 = abs(shower_fit_result[ilayertemp][1]);
-          if( (temp1 == 0.) || (temp1 < maxerror) ) {
-            shower_fit_result_new[ilayer][1] = temp1;
-            break;
-          }
-	}
-      }
-    }
-  }
-
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    shower_fit_result[ilayer][1] = shower_fit_result_new[ilayer][1];
-  }
-  
-  cout<<"sigma after: ";
-  for(int ilayer = 0; ilayer<N_ECAL_LAYERS; ilayer++) {
-    cout<<0.5*abs(shower_fit_result[ilayer][1])<<" ";
-  }
-  cout<<""<<endl;
-  
-  return;
-}
-
-void analysis (string particle) {
+void analysis (string particle, bool masked=false) {
     
     // double energies[N_ENERGIES] = {1, 2, 5, 8, 10, 20, 40, 60, 80, 100, 150};
     //double test_e[N_ENERGIES]={150.};
@@ -550,114 +484,118 @@ void analysis (string particle) {
     //double test_zeros[N_ENERGIES]={0.};
     //double test_zeros[N_ENERGIES] = {0., 0.};
     //double test_zeros[N_ENERGIES]={0., 0., 0.};
-    double test_zeros[N_ENERGIES] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // output_LCIO2Build_e_200GeV.root
+    double test_zeros[N_ENERGIES];
+    for(int i = 0 ; i < N_ENERGIES ; i++) test_zeros[i] = 0;
+    
     TVectorD zeros(N_ENERGIES, test_zeros);
     
-    TVectorD mu_nhit(N_ENERGIES), mu_nhit_masked(N_ENERGIES), mu_sume(N_ENERGIES), mu_sume_masked(N_ENERGIES), mu_weight(N_ENERGIES), mu_weight_masked(N_ENERGIES);
-    TVectorD sig_nhit(N_ENERGIES), sig_nhit_masked(N_ENERGIES), sig_sume(N_ENERGIES), sig_sume_masked(N_ENERGIES), sig_weight(N_ENERGIES), sig_weight_masked(N_ENERGIES);
-    TVectorD res_nhit(N_ENERGIES), res_nhit_masked(N_ENERGIES), res_sume(N_ENERGIES), res_sume_masked(N_ENERGIES), res_weight(N_ENERGIES), res_weight_masked(N_ENERGIES);
+    TVectorD mu_nhit(N_ENERGIES), mu_sume(N_ENERGIES), mu_weight(N_ENERGIES);
+    TVectorD sig_nhit(N_ENERGIES), sig_sume(N_ENERGIES), sig_weight(N_ENERGIES);
+    TVectorD res_nhit(N_ENERGIES), res_sume(N_ENERGIES), res_weight(N_ENERGIES);
 
-    TVectorD mu_mol(N_ENERGIES), mu_mol_masked(N_ENERGIES);
-    TVectorD sig_mol(N_ENERGIES), sig_mol_masked(N_ENERGIES);
+    TVectorD mu_mol(N_ENERGIES);
+    TVectorD mu_error_mol(N_ENERGIES);
+    TVectorD sig_mol(N_ENERGIES);
     
-    TVectorD barycenter_x(N_ENERGIES), barycenter_y(N_ENERGIES), barycenter_z(N_ENERGIES);
-    TVectorD barycenter_x_masked(N_ENERGIES), barycenter_y_masked(N_ENERGIES), barycenter_z_masked(N_ENERGIES);
 
-    TVectorD mu_barycenter_x_layer_0(N_ENERGIES), sig_barycenter_x_layer_0(N_ENERGIES), mu_barycenter_x_layer_masked_0(N_ENERGIES), sig_barycenter_x_layer_masked_0(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_1(N_ENERGIES), sig_barycenter_x_layer_1(N_ENERGIES), mu_barycenter_x_layer_masked_1(N_ENERGIES), sig_barycenter_x_layer_masked_1(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_2(N_ENERGIES), sig_barycenter_x_layer_2(N_ENERGIES), mu_barycenter_x_layer_masked_2(N_ENERGIES), sig_barycenter_x_layer_masked_2(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_3(N_ENERGIES), sig_barycenter_x_layer_3(N_ENERGIES), mu_barycenter_x_layer_masked_3(N_ENERGIES), sig_barycenter_x_layer_masked_3(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_4(N_ENERGIES), sig_barycenter_x_layer_4(N_ENERGIES), mu_barycenter_x_layer_masked_4(N_ENERGIES), sig_barycenter_x_layer_masked_4(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_5(N_ENERGIES), sig_barycenter_x_layer_5(N_ENERGIES), mu_barycenter_x_layer_masked_5(N_ENERGIES), sig_barycenter_x_layer_masked_5(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_6(N_ENERGIES), sig_barycenter_x_layer_6(N_ENERGIES), mu_barycenter_x_layer_masked_6(N_ENERGIES), sig_barycenter_x_layer_masked_6(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_7(N_ENERGIES), sig_barycenter_x_layer_7(N_ENERGIES), mu_barycenter_x_layer_masked_7(N_ENERGIES), sig_barycenter_x_layer_masked_7(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_8(N_ENERGIES), sig_barycenter_x_layer_8(N_ENERGIES), mu_barycenter_x_layer_masked_8(N_ENERGIES), sig_barycenter_x_layer_masked_8(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_9(N_ENERGIES), sig_barycenter_x_layer_9(N_ENERGIES), mu_barycenter_x_layer_masked_9(N_ENERGIES), sig_barycenter_x_layer_masked_9(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_10(N_ENERGIES), sig_barycenter_x_layer_10(N_ENERGIES), mu_barycenter_x_layer_masked_10(N_ENERGIES), sig_barycenter_x_layer_masked_10(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_11(N_ENERGIES), sig_barycenter_x_layer_11(N_ENERGIES), mu_barycenter_x_layer_masked_11(N_ENERGIES), sig_barycenter_x_layer_masked_11(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_12(N_ENERGIES), sig_barycenter_x_layer_12(N_ENERGIES), mu_barycenter_x_layer_masked_12(N_ENERGIES), sig_barycenter_x_layer_masked_12(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_13(N_ENERGIES), sig_barycenter_x_layer_13(N_ENERGIES), mu_barycenter_x_layer_masked_13(N_ENERGIES), sig_barycenter_x_layer_masked_13(N_ENERGIES);
-    TVectorD mu_barycenter_x_layer_14(N_ENERGIES), sig_barycenter_x_layer_14(N_ENERGIES), mu_barycenter_x_layer_masked_14(N_ENERGIES), sig_barycenter_x_layer_masked_14(N_ENERGIES);
+    TVectorD mu_barycenter_x(N_ENERGIES), mu_barycenter_y(N_ENERGIES), mu_barycenter_z(N_ENERGIES);
+    TVectorD sig_barycenter_x(N_ENERGIES), sig_barycenter_y(N_ENERGIES), sig_barycenter_z(N_ENERGIES);
 
-    TVectorD mu_barycenter_y_layer_0(N_ENERGIES), sig_barycenter_y_layer_0(N_ENERGIES), mu_barycenter_y_layer_masked_0(N_ENERGIES), sig_barycenter_y_layer_masked_0(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_1(N_ENERGIES), sig_barycenter_y_layer_1(N_ENERGIES), mu_barycenter_y_layer_masked_1(N_ENERGIES), sig_barycenter_y_layer_masked_1(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_2(N_ENERGIES), sig_barycenter_y_layer_2(N_ENERGIES), mu_barycenter_y_layer_masked_2(N_ENERGIES), sig_barycenter_y_layer_masked_2(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_3(N_ENERGIES), sig_barycenter_y_layer_3(N_ENERGIES), mu_barycenter_y_layer_masked_3(N_ENERGIES), sig_barycenter_y_layer_masked_3(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_4(N_ENERGIES), sig_barycenter_y_layer_4(N_ENERGIES), mu_barycenter_y_layer_masked_4(N_ENERGIES), sig_barycenter_y_layer_masked_4(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_5(N_ENERGIES), sig_barycenter_y_layer_5(N_ENERGIES), mu_barycenter_y_layer_masked_5(N_ENERGIES), sig_barycenter_y_layer_masked_5(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_6(N_ENERGIES), sig_barycenter_y_layer_6(N_ENERGIES), mu_barycenter_y_layer_masked_6(N_ENERGIES), sig_barycenter_y_layer_masked_6(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_7(N_ENERGIES), sig_barycenter_y_layer_7(N_ENERGIES), mu_barycenter_y_layer_masked_7(N_ENERGIES), sig_barycenter_y_layer_masked_7(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_8(N_ENERGIES), sig_barycenter_y_layer_8(N_ENERGIES), mu_barycenter_y_layer_masked_8(N_ENERGIES), sig_barycenter_y_layer_masked_8(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_9(N_ENERGIES), sig_barycenter_y_layer_9(N_ENERGIES), mu_barycenter_y_layer_masked_9(N_ENERGIES), sig_barycenter_y_layer_masked_9(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_10(N_ENERGIES), sig_barycenter_y_layer_10(N_ENERGIES), mu_barycenter_y_layer_masked_10(N_ENERGIES), sig_barycenter_y_layer_masked_10(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_11(N_ENERGIES), sig_barycenter_y_layer_11(N_ENERGIES), mu_barycenter_y_layer_masked_11(N_ENERGIES), sig_barycenter_y_layer_masked_11(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_12(N_ENERGIES), sig_barycenter_y_layer_12(N_ENERGIES), mu_barycenter_y_layer_masked_12(N_ENERGIES), sig_barycenter_y_layer_masked_12(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_13(N_ENERGIES), sig_barycenter_y_layer_13(N_ENERGIES), mu_barycenter_y_layer_masked_13(N_ENERGIES), sig_barycenter_y_layer_masked_13(N_ENERGIES);
-    TVectorD mu_barycenter_y_layer_14(N_ENERGIES), sig_barycenter_y_layer_14(N_ENERGIES), mu_barycenter_y_layer_masked_14(N_ENERGIES), sig_barycenter_y_layer_masked_14(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_0(N_ENERGIES), sig_barycenter_x_layer_0(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_1(N_ENERGIES), sig_barycenter_x_layer_1(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_2(N_ENERGIES), sig_barycenter_x_layer_2(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_3(N_ENERGIES), sig_barycenter_x_layer_3(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_4(N_ENERGIES), sig_barycenter_x_layer_4(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_5(N_ENERGIES), sig_barycenter_x_layer_5(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_6(N_ENERGIES), sig_barycenter_x_layer_6(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_7(N_ENERGIES), sig_barycenter_x_layer_7(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_8(N_ENERGIES), sig_barycenter_x_layer_8(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_9(N_ENERGIES), sig_barycenter_x_layer_9(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_10(N_ENERGIES), sig_barycenter_x_layer_10(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_11(N_ENERGIES), sig_barycenter_x_layer_11(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_12(N_ENERGIES), sig_barycenter_x_layer_12(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_13(N_ENERGIES), sig_barycenter_x_layer_13(N_ENERGIES);
+    TVectorD mu_barycenter_x_layer_14(N_ENERGIES), sig_barycenter_x_layer_14(N_ENERGIES);
 
-    TVectorD mu_nhit_layer_0(N_ENERGIES), sig_nhit_layer_0(N_ENERGIES), mu_nhit_layer_masked_0(N_ENERGIES), sig_nhit_layer_masked_0(N_ENERGIES);
-    TVectorD mu_nhit_layer_1(N_ENERGIES), sig_nhit_layer_1(N_ENERGIES), mu_nhit_layer_masked_1(N_ENERGIES), sig_nhit_layer_masked_1(N_ENERGIES);
-    TVectorD mu_nhit_layer_2(N_ENERGIES), sig_nhit_layer_2(N_ENERGIES), mu_nhit_layer_masked_2(N_ENERGIES), sig_nhit_layer_masked_2(N_ENERGIES);
-    TVectorD mu_nhit_layer_3(N_ENERGIES), sig_nhit_layer_3(N_ENERGIES), mu_nhit_layer_masked_3(N_ENERGIES), sig_nhit_layer_masked_3(N_ENERGIES);
-    TVectorD mu_nhit_layer_4(N_ENERGIES), sig_nhit_layer_4(N_ENERGIES), mu_nhit_layer_masked_4(N_ENERGIES), sig_nhit_layer_masked_4(N_ENERGIES);
-    TVectorD mu_nhit_layer_5(N_ENERGIES), sig_nhit_layer_5(N_ENERGIES), mu_nhit_layer_masked_5(N_ENERGIES), sig_nhit_layer_masked_5(N_ENERGIES);
-    TVectorD mu_nhit_layer_6(N_ENERGIES), sig_nhit_layer_6(N_ENERGIES), mu_nhit_layer_masked_6(N_ENERGIES), sig_nhit_layer_masked_6(N_ENERGIES);
-    TVectorD mu_nhit_layer_7(N_ENERGIES), sig_nhit_layer_7(N_ENERGIES), mu_nhit_layer_masked_7(N_ENERGIES), sig_nhit_layer_masked_7(N_ENERGIES);
-    TVectorD mu_nhit_layer_8(N_ENERGIES), sig_nhit_layer_8(N_ENERGIES), mu_nhit_layer_masked_8(N_ENERGIES), sig_nhit_layer_masked_8(N_ENERGIES);
-    TVectorD mu_nhit_layer_9(N_ENERGIES), sig_nhit_layer_9(N_ENERGIES), mu_nhit_layer_masked_9(N_ENERGIES), sig_nhit_layer_masked_9(N_ENERGIES);
-    TVectorD mu_nhit_layer_10(N_ENERGIES), sig_nhit_layer_10(N_ENERGIES), mu_nhit_layer_masked_10(N_ENERGIES), sig_nhit_layer_masked_10(N_ENERGIES);
-    TVectorD mu_nhit_layer_11(N_ENERGIES), sig_nhit_layer_11(N_ENERGIES), mu_nhit_layer_masked_11(N_ENERGIES), sig_nhit_layer_masked_11(N_ENERGIES);
-    TVectorD mu_nhit_layer_12(N_ENERGIES), sig_nhit_layer_12(N_ENERGIES), mu_nhit_layer_masked_12(N_ENERGIES), sig_nhit_layer_masked_12(N_ENERGIES);
-    TVectorD mu_nhit_layer_13(N_ENERGIES), sig_nhit_layer_13(N_ENERGIES), mu_nhit_layer_masked_13(N_ENERGIES), sig_nhit_layer_masked_13(N_ENERGIES);
-    TVectorD mu_nhit_layer_14(N_ENERGIES), sig_nhit_layer_14(N_ENERGIES), mu_nhit_layer_masked_14(N_ENERGIES), sig_nhit_layer_masked_14(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_0(N_ENERGIES), sig_barycenter_y_layer_0(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_1(N_ENERGIES), sig_barycenter_y_layer_1(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_2(N_ENERGIES), sig_barycenter_y_layer_2(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_3(N_ENERGIES), sig_barycenter_y_layer_3(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_4(N_ENERGIES), sig_barycenter_y_layer_4(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_5(N_ENERGIES), sig_barycenter_y_layer_5(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_6(N_ENERGIES), sig_barycenter_y_layer_6(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_7(N_ENERGIES), sig_barycenter_y_layer_7(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_8(N_ENERGIES), sig_barycenter_y_layer_8(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_9(N_ENERGIES), sig_barycenter_y_layer_9(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_10(N_ENERGIES), sig_barycenter_y_layer_10(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_11(N_ENERGIES), sig_barycenter_y_layer_11(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_12(N_ENERGIES), sig_barycenter_y_layer_12(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_13(N_ENERGIES), sig_barycenter_y_layer_13(N_ENERGIES);
+    TVectorD mu_barycenter_y_layer_14(N_ENERGIES), sig_barycenter_y_layer_14(N_ENERGIES);
 
-    TVectorD mu_nhit_layer_n_0(N_ENERGIES), sig_nhit_layer_n_0(N_ENERGIES), mu_nhit_layer_n_masked_0(N_ENERGIES), sig_nhit_layer_n_masked_0(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_1(N_ENERGIES), sig_nhit_layer_n_1(N_ENERGIES), mu_nhit_layer_n_masked_1(N_ENERGIES), sig_nhit_layer_n_masked_1(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_2(N_ENERGIES), sig_nhit_layer_n_2(N_ENERGIES), mu_nhit_layer_n_masked_2(N_ENERGIES), sig_nhit_layer_n_masked_2(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_3(N_ENERGIES), sig_nhit_layer_n_3(N_ENERGIES), mu_nhit_layer_n_masked_3(N_ENERGIES), sig_nhit_layer_n_masked_3(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_4(N_ENERGIES), sig_nhit_layer_n_4(N_ENERGIES), mu_nhit_layer_n_masked_4(N_ENERGIES), sig_nhit_layer_n_masked_4(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_5(N_ENERGIES), sig_nhit_layer_n_5(N_ENERGIES), mu_nhit_layer_n_masked_5(N_ENERGIES), sig_nhit_layer_n_masked_5(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_6(N_ENERGIES), sig_nhit_layer_n_6(N_ENERGIES), mu_nhit_layer_n_masked_6(N_ENERGIES), sig_nhit_layer_n_masked_6(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_7(N_ENERGIES), sig_nhit_layer_n_7(N_ENERGIES), mu_nhit_layer_n_masked_7(N_ENERGIES), sig_nhit_layer_n_masked_7(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_8(N_ENERGIES), sig_nhit_layer_n_8(N_ENERGIES), mu_nhit_layer_n_masked_8(N_ENERGIES), sig_nhit_layer_n_masked_8(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_9(N_ENERGIES), sig_nhit_layer_n_9(N_ENERGIES), mu_nhit_layer_n_masked_9(N_ENERGIES), sig_nhit_layer_n_masked_9(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_10(N_ENERGIES), sig_nhit_layer_n_10(N_ENERGIES), mu_nhit_layer_n_masked_10(N_ENERGIES), sig_nhit_layer_n_masked_10(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_11(N_ENERGIES), sig_nhit_layer_n_11(N_ENERGIES), mu_nhit_layer_n_masked_11(N_ENERGIES), sig_nhit_layer_n_masked_11(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_12(N_ENERGIES), sig_nhit_layer_n_12(N_ENERGIES), mu_nhit_layer_n_masked_12(N_ENERGIES), sig_nhit_layer_n_masked_12(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_13(N_ENERGIES), sig_nhit_layer_n_13(N_ENERGIES), mu_nhit_layer_n_masked_13(N_ENERGIES), sig_nhit_layer_n_masked_13(N_ENERGIES);
-    TVectorD mu_nhit_layer_n_14(N_ENERGIES), sig_nhit_layer_n_14(N_ENERGIES), mu_nhit_layer_n_masked_14(N_ENERGIES), sig_nhit_layer_n_masked_14(N_ENERGIES);
+    TVectorD mu_nhit_layer_0(N_ENERGIES), mu_error_nhit_layer_0(N_ENERGIES), sig_nhit_layer_0(N_ENERGIES);
+    TVectorD mu_nhit_layer_1(N_ENERGIES), mu_error_nhit_layer_1(N_ENERGIES), sig_nhit_layer_1(N_ENERGIES);
+    TVectorD mu_nhit_layer_2(N_ENERGIES), mu_error_nhit_layer_2(N_ENERGIES), sig_nhit_layer_2(N_ENERGIES);
+    TVectorD mu_nhit_layer_3(N_ENERGIES), mu_error_nhit_layer_3(N_ENERGIES), sig_nhit_layer_3(N_ENERGIES);
+    TVectorD mu_nhit_layer_4(N_ENERGIES), mu_error_nhit_layer_4(N_ENERGIES), sig_nhit_layer_4(N_ENERGIES);
+    TVectorD mu_nhit_layer_5(N_ENERGIES), mu_error_nhit_layer_5(N_ENERGIES), sig_nhit_layer_5(N_ENERGIES);
+    TVectorD mu_nhit_layer_6(N_ENERGIES), mu_error_nhit_layer_6(N_ENERGIES), sig_nhit_layer_6(N_ENERGIES);
+    TVectorD mu_nhit_layer_7(N_ENERGIES), mu_error_nhit_layer_7(N_ENERGIES), sig_nhit_layer_7(N_ENERGIES);
+    TVectorD mu_nhit_layer_8(N_ENERGIES), mu_error_nhit_layer_8(N_ENERGIES), sig_nhit_layer_8(N_ENERGIES);
+    TVectorD mu_nhit_layer_9(N_ENERGIES), mu_error_nhit_layer_9(N_ENERGIES), sig_nhit_layer_9(N_ENERGIES);
+    TVectorD mu_nhit_layer_10(N_ENERGIES), mu_error_nhit_layer_10(N_ENERGIES), sig_nhit_layer_10(N_ENERGIES);
+    TVectorD mu_nhit_layer_11(N_ENERGIES), mu_error_nhit_layer_11(N_ENERGIES), sig_nhit_layer_11(N_ENERGIES);
+    TVectorD mu_nhit_layer_12(N_ENERGIES), mu_error_nhit_layer_12(N_ENERGIES), sig_nhit_layer_12(N_ENERGIES);
+    TVectorD mu_nhit_layer_13(N_ENERGIES), mu_error_nhit_layer_13(N_ENERGIES), sig_nhit_layer_13(N_ENERGIES);
+    TVectorD mu_nhit_layer_14(N_ENERGIES), mu_error_nhit_layer_14(N_ENERGIES), sig_nhit_layer_14(N_ENERGIES);
 
-    TVectorD mu_weight_layer_0(N_ENERGIES), sig_weight_layer_0(N_ENERGIES), mu_weight_layer_masked_0(N_ENERGIES), sig_weight_layer_masked_0(N_ENERGIES);
-    TVectorD mu_weight_layer_1(N_ENERGIES), sig_weight_layer_1(N_ENERGIES), mu_weight_layer_masked_1(N_ENERGIES), sig_weight_layer_masked_1(N_ENERGIES);
-    TVectorD mu_weight_layer_2(N_ENERGIES), sig_weight_layer_2(N_ENERGIES), mu_weight_layer_masked_2(N_ENERGIES), sig_weight_layer_masked_2(N_ENERGIES);
-    TVectorD mu_weight_layer_3(N_ENERGIES), sig_weight_layer_3(N_ENERGIES), mu_weight_layer_masked_3(N_ENERGIES), sig_weight_layer_masked_3(N_ENERGIES);
-    TVectorD mu_weight_layer_4(N_ENERGIES), sig_weight_layer_4(N_ENERGIES), mu_weight_layer_masked_4(N_ENERGIES), sig_weight_layer_masked_4(N_ENERGIES);
-    TVectorD mu_weight_layer_5(N_ENERGIES), sig_weight_layer_5(N_ENERGIES), mu_weight_layer_masked_5(N_ENERGIES), sig_weight_layer_masked_5(N_ENERGIES);
-    TVectorD mu_weight_layer_6(N_ENERGIES), sig_weight_layer_6(N_ENERGIES), mu_weight_layer_masked_6(N_ENERGIES), sig_weight_layer_masked_6(N_ENERGIES);
-    TVectorD mu_weight_layer_7(N_ENERGIES), sig_weight_layer_7(N_ENERGIES), mu_weight_layer_masked_7(N_ENERGIES), sig_weight_layer_masked_7(N_ENERGIES);
-    TVectorD mu_weight_layer_8(N_ENERGIES), sig_weight_layer_8(N_ENERGIES), mu_weight_layer_masked_8(N_ENERGIES), sig_weight_layer_masked_8(N_ENERGIES);
-    TVectorD mu_weight_layer_9(N_ENERGIES), sig_weight_layer_9(N_ENERGIES), mu_weight_layer_masked_9(N_ENERGIES), sig_weight_layer_masked_9(N_ENERGIES);
-    TVectorD mu_weight_layer_10(N_ENERGIES), sig_weight_layer_10(N_ENERGIES), mu_weight_layer_masked_10(N_ENERGIES), sig_weight_layer_masked_10(N_ENERGIES);
-    TVectorD mu_weight_layer_11(N_ENERGIES), sig_weight_layer_11(N_ENERGIES), mu_weight_layer_masked_11(N_ENERGIES), sig_weight_layer_masked_11(N_ENERGIES);
-    TVectorD mu_weight_layer_12(N_ENERGIES), sig_weight_layer_12(N_ENERGIES), mu_weight_layer_masked_12(N_ENERGIES), sig_weight_layer_masked_12(N_ENERGIES);
-    TVectorD mu_weight_layer_13(N_ENERGIES), sig_weight_layer_13(N_ENERGIES), mu_weight_layer_masked_13(N_ENERGIES), sig_weight_layer_masked_13(N_ENERGIES);
-    TVectorD mu_weight_layer_14(N_ENERGIES), sig_weight_layer_14(N_ENERGIES), mu_weight_layer_masked_14(N_ENERGIES), sig_weight_layer_masked_14(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_0(N_ENERGIES), mu_error_nhit_layer_n_0(N_ENERGIES), sig_nhit_layer_n_0(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_1(N_ENERGIES), mu_error_nhit_layer_n_1(N_ENERGIES), sig_nhit_layer_n_1(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_2(N_ENERGIES), mu_error_nhit_layer_n_2(N_ENERGIES), sig_nhit_layer_n_2(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_3(N_ENERGIES), mu_error_nhit_layer_n_3(N_ENERGIES), sig_nhit_layer_n_3(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_4(N_ENERGIES), mu_error_nhit_layer_n_4(N_ENERGIES), sig_nhit_layer_n_4(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_5(N_ENERGIES), mu_error_nhit_layer_n_5(N_ENERGIES), sig_nhit_layer_n_5(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_6(N_ENERGIES), mu_error_nhit_layer_n_6(N_ENERGIES), sig_nhit_layer_n_6(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_7(N_ENERGIES), mu_error_nhit_layer_n_7(N_ENERGIES), sig_nhit_layer_n_7(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_8(N_ENERGIES), mu_error_nhit_layer_n_8(N_ENERGIES), sig_nhit_layer_n_8(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_9(N_ENERGIES), mu_error_nhit_layer_n_9(N_ENERGIES), sig_nhit_layer_n_9(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_10(N_ENERGIES), mu_error_nhit_layer_n_10(N_ENERGIES), sig_nhit_layer_n_10(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_11(N_ENERGIES), mu_error_nhit_layer_n_11(N_ENERGIES), sig_nhit_layer_n_11(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_12(N_ENERGIES), mu_error_nhit_layer_n_12(N_ENERGIES), sig_nhit_layer_n_12(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_13(N_ENERGIES), mu_error_nhit_layer_n_13(N_ENERGIES), sig_nhit_layer_n_13(N_ENERGIES);
+    TVectorD mu_nhit_layer_n_14(N_ENERGIES), mu_error_nhit_layer_n_14(N_ENERGIES), sig_nhit_layer_n_14(N_ENERGIES);
 
-    TVectorD mu_weight_layer_n_0(N_ENERGIES), sig_weight_layer_n_0(N_ENERGIES), mu_weight_layer_masked_n_0(N_ENERGIES), sig_weight_layer_masked_n_0(N_ENERGIES);
-    TVectorD mu_weight_layer_n_1(N_ENERGIES), sig_weight_layer_n_1(N_ENERGIES), mu_weight_layer_masked_n_1(N_ENERGIES), sig_weight_layer_masked_n_1(N_ENERGIES);
-    TVectorD mu_weight_layer_n_2(N_ENERGIES), sig_weight_layer_n_2(N_ENERGIES), mu_weight_layer_masked_n_2(N_ENERGIES), sig_weight_layer_masked_n_2(N_ENERGIES);
-    TVectorD mu_weight_layer_n_3(N_ENERGIES), sig_weight_layer_n_3(N_ENERGIES), mu_weight_layer_masked_n_3(N_ENERGIES), sig_weight_layer_masked_n_3(N_ENERGIES);
-    TVectorD mu_weight_layer_n_4(N_ENERGIES), sig_weight_layer_n_4(N_ENERGIES), mu_weight_layer_masked_n_4(N_ENERGIES), sig_weight_layer_masked_n_4(N_ENERGIES);
-    TVectorD mu_weight_layer_n_5(N_ENERGIES), sig_weight_layer_n_5(N_ENERGIES), mu_weight_layer_masked_n_5(N_ENERGIES), sig_weight_layer_masked_n_5(N_ENERGIES);
-    TVectorD mu_weight_layer_n_6(N_ENERGIES), sig_weight_layer_n_6(N_ENERGIES), mu_weight_layer_masked_n_6(N_ENERGIES), sig_weight_layer_masked_n_6(N_ENERGIES);
-    TVectorD mu_weight_layer_n_7(N_ENERGIES), sig_weight_layer_n_7(N_ENERGIES), mu_weight_layer_masked_n_7(N_ENERGIES), sig_weight_layer_masked_n_7(N_ENERGIES);
-    TVectorD mu_weight_layer_n_8(N_ENERGIES), sig_weight_layer_n_8(N_ENERGIES), mu_weight_layer_masked_n_8(N_ENERGIES), sig_weight_layer_masked_n_8(N_ENERGIES);
-    TVectorD mu_weight_layer_n_9(N_ENERGIES), sig_weight_layer_n_9(N_ENERGIES), mu_weight_layer_masked_n_9(N_ENERGIES), sig_weight_layer_masked_n_9(N_ENERGIES);
-    TVectorD mu_weight_layer_n_10(N_ENERGIES), sig_weight_layer_n_10(N_ENERGIES), mu_weight_layer_masked_n_10(N_ENERGIES), sig_weight_layer_masked_n_10(N_ENERGIES);
-    TVectorD mu_weight_layer_n_11(N_ENERGIES), sig_weight_layer_n_11(N_ENERGIES), mu_weight_layer_masked_n_11(N_ENERGIES), sig_weight_layer_masked_n_11(N_ENERGIES);
-    TVectorD mu_weight_layer_n_12(N_ENERGIES), sig_weight_layer_n_12(N_ENERGIES), mu_weight_layer_masked_n_12(N_ENERGIES), sig_weight_layer_masked_n_12(N_ENERGIES);
-    TVectorD mu_weight_layer_n_13(N_ENERGIES), sig_weight_layer_n_13(N_ENERGIES), mu_weight_layer_masked_n_13(N_ENERGIES), sig_weight_layer_masked_n_13(N_ENERGIES);
-    TVectorD mu_weight_layer_n_14(N_ENERGIES), sig_weight_layer_n_14(N_ENERGIES), mu_weight_layer_masked_n_14(N_ENERGIES), sig_weight_layer_masked_n_14(N_ENERGIES);
+    TVectorD mu_weight_layer_0(N_ENERGIES), mu_error_weight_layer_0(N_ENERGIES), sig_weight_layer_0(N_ENERGIES);
+    TVectorD mu_weight_layer_1(N_ENERGIES), mu_error_weight_layer_1(N_ENERGIES), sig_weight_layer_1(N_ENERGIES);
+    TVectorD mu_weight_layer_2(N_ENERGIES), mu_error_weight_layer_2(N_ENERGIES), sig_weight_layer_2(N_ENERGIES);
+    TVectorD mu_weight_layer_3(N_ENERGIES), mu_error_weight_layer_3(N_ENERGIES), sig_weight_layer_3(N_ENERGIES);
+    TVectorD mu_weight_layer_4(N_ENERGIES), mu_error_weight_layer_4(N_ENERGIES), sig_weight_layer_4(N_ENERGIES);
+    TVectorD mu_weight_layer_5(N_ENERGIES), mu_error_weight_layer_5(N_ENERGIES), sig_weight_layer_5(N_ENERGIES);
+    TVectorD mu_weight_layer_6(N_ENERGIES), mu_error_weight_layer_6(N_ENERGIES), sig_weight_layer_6(N_ENERGIES);
+    TVectorD mu_weight_layer_7(N_ENERGIES), mu_error_weight_layer_7(N_ENERGIES), sig_weight_layer_7(N_ENERGIES);
+    TVectorD mu_weight_layer_8(N_ENERGIES), mu_error_weight_layer_8(N_ENERGIES), sig_weight_layer_8(N_ENERGIES);
+    TVectorD mu_weight_layer_9(N_ENERGIES), mu_error_weight_layer_9(N_ENERGIES), sig_weight_layer_9(N_ENERGIES);
+    TVectorD mu_weight_layer_10(N_ENERGIES), mu_error_weight_layer_10(N_ENERGIES), sig_weight_layer_10(N_ENERGIES);
+    TVectorD mu_weight_layer_11(N_ENERGIES), mu_error_weight_layer_11(N_ENERGIES), sig_weight_layer_11(N_ENERGIES);
+    TVectorD mu_weight_layer_12(N_ENERGIES), mu_error_weight_layer_12(N_ENERGIES), sig_weight_layer_12(N_ENERGIES);
+    TVectorD mu_weight_layer_13(N_ENERGIES), mu_error_weight_layer_13(N_ENERGIES), sig_weight_layer_13(N_ENERGIES);
+    TVectorD mu_weight_layer_14(N_ENERGIES), mu_error_weight_layer_14(N_ENERGIES), sig_weight_layer_14(N_ENERGIES);
+
+    TVectorD mu_weight_layer_n_0(N_ENERGIES), mu_error_weight_layer_n_0(N_ENERGIES), sig_weight_layer_n_0(N_ENERGIES);
+    TVectorD mu_weight_layer_n_1(N_ENERGIES), mu_error_weight_layer_n_1(N_ENERGIES), sig_weight_layer_n_1(N_ENERGIES);
+    TVectorD mu_weight_layer_n_2(N_ENERGIES), mu_error_weight_layer_n_2(N_ENERGIES), sig_weight_layer_n_2(N_ENERGIES);
+    TVectorD mu_weight_layer_n_3(N_ENERGIES), mu_error_weight_layer_n_3(N_ENERGIES), sig_weight_layer_n_3(N_ENERGIES);
+    TVectorD mu_weight_layer_n_4(N_ENERGIES), mu_error_weight_layer_n_4(N_ENERGIES), sig_weight_layer_n_4(N_ENERGIES);
+    TVectorD mu_weight_layer_n_5(N_ENERGIES), mu_error_weight_layer_n_5(N_ENERGIES), sig_weight_layer_n_5(N_ENERGIES);
+    TVectorD mu_weight_layer_n_6(N_ENERGIES), mu_error_weight_layer_n_6(N_ENERGIES), sig_weight_layer_n_6(N_ENERGIES);
+    TVectorD mu_weight_layer_n_7(N_ENERGIES), mu_error_weight_layer_n_7(N_ENERGIES), sig_weight_layer_n_7(N_ENERGIES);
+    TVectorD mu_weight_layer_n_8(N_ENERGIES), mu_error_weight_layer_n_8(N_ENERGIES), sig_weight_layer_n_8(N_ENERGIES);
+    TVectorD mu_weight_layer_n_9(N_ENERGIES), mu_error_weight_layer_n_9(N_ENERGIES), sig_weight_layer_n_9(N_ENERGIES);
+    TVectorD mu_weight_layer_n_10(N_ENERGIES), mu_error_weight_layer_n_10(N_ENERGIES), sig_weight_layer_n_10(N_ENERGIES);
+    TVectorD mu_weight_layer_n_11(N_ENERGIES), mu_error_weight_layer_n_11(N_ENERGIES), sig_weight_layer_n_11(N_ENERGIES);
+    TVectorD mu_weight_layer_n_12(N_ENERGIES), mu_error_weight_layer_n_12(N_ENERGIES), sig_weight_layer_n_12(N_ENERGIES);
+    TVectorD mu_weight_layer_n_13(N_ENERGIES), mu_error_weight_layer_n_13(N_ENERGIES), sig_weight_layer_n_13(N_ENERGIES);
+    TVectorD mu_weight_layer_n_14(N_ENERGIES), mu_error_weight_layer_n_14(N_ENERGIES), sig_weight_layer_n_14(N_ENERGIES);
 
     TVectorD shower_nhit_max_layer(N_ENERGIES), shower_nhit_start_layer(N_ENERGIES), shower_nhit_end_layer(N_ENERGIES), shower_nhit_start_10_layer(N_ENERGIES), shower_nhit_end_10_layer(N_ENERGIES), shower_nhit_average(N_ENERGIES), shower_nhit_max(N_ENERGIES);
     TVectorD shower_weight_max_layer(N_ENERGIES), shower_weight_start_layer(N_ENERGIES), shower_weight_end_layer(N_ENERGIES), shower_weight_start_10_layer(N_ENERGIES), shower_weight_end_10_layer(N_ENERGIES), shower_weight_average(N_ENERGIES), shower_weight_max(N_ENERGIES);
@@ -702,139 +640,85 @@ void analysis (string particle) {
         string e_str = to_string((int)round(energies[i_energy])) + "GeV";
 	string part_string = particle;
 	
-        TH1F *h_nhit = new TH1F(("NumHits_" + part_string + "_" + e_str).c_str(), ("Number of hits " + part_string + " " + e_str).c_str(), 4000, 0, 4000);
-        TH1F *h_nhit_masked = new TH1F(("NumHitsMask_" + part_string + "_" + e_str).c_str(), ("Number of hits, masked " + part_string + " " + e_str).c_str(), 4000, 0, 4000);
-        TH1F *h_sume = new TH1F(("SumEnergy_" + part_string + "_" + e_str).c_str(), ("Sum Energy " + part_string + " " + e_str).c_str(), 500, 0, 15000);
-        TH1F *h_sume_masked = new TH1F(("SumEnergyMask_" + part_string + "_" + e_str).c_str(), ("Sum Energy, masked " + part_string + " " + e_str).c_str(), 500, 0, 15000);
-        TH1F *h_weight = new TH1F(("WSumEnergy_" + part_string + "_" + e_str).c_str(), ("W Sum Energy " + part_string + " " + e_str).c_str(), 500, 0, 70000);
-        TH1F *h_weight_masked = new TH1F(("WSumEnergyMask_" + part_string + "_" + e_str).c_str(), ("W Sum Energy, masked " + part_string + " " + e_str).c_str(), 500, 0, 70000);
-        
+        TH1F *h_nhit = new TH1F(("NumHits_" + part_string + "_" + e_str).c_str(), ("Number of hits " + part_string + " " + e_str).c_str(), 4001, -0.5, 4000.5);
+	TH1F *h_sume = new TH1F(("SumEnergy_" + part_string + "_" + e_str).c_str(), ("Sum Energy " + part_string + " " + e_str).c_str(), 5001, -0.5, 15000.5);
+	TH1F *h_weight = new TH1F(("WSumEnergy_" + part_string + "_" + e_str).c_str(), ("W Sum Energy " + part_string + " " + e_str).c_str(), 5001, -0.5, 50000.5);
+                
 	// Barycenter histos
-        TH1F *h_bar_x = new TH1F(("Barycenter_x_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_x_masked = new TH1F(("Barycenter_x_masked_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y = new TH1F(("Barycenter_y_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_masked = new TH1F(("Barycenter_y_masked_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
+        TH1F *h_bar_x = new TH1F(("Barycenter_x_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y = new TH1F(("Barycenter_y_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 	TH1F *h_bar_z = new TH1F(("Barycenter_z_" + part_string + "_" + e_str).c_str(), ("Barycenter (z-axis) " + part_string + " " + e_str).c_str(), 1000, -500., 500.);
-        TH1F *h_bar_z_masked = new TH1F(("Barycenter_z_masked_" + part_string + "_" + e_str).c_str(), ("Barycenter (z-axis) masked " + part_string + " " + e_str).c_str(), 1000, -500., 500.);
-
+        
 	// Barycenter per layer
-	TH1F *h_bar_x_layer_0 = new TH1F(("Barycenter_x_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 0 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_1 = new TH1F(("Barycenter_x_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 1 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_2 = new TH1F(("Barycenter_x_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_3 = new TH1F(("Barycenter_x_layer_3_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 3 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_4 = new TH1F(("Barycenter_x_layer_4_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 4 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_5 = new TH1F(("Barycenter_x_layer_5_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 5 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_6 = new TH1F(("Barycenter_x_layer_6_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 6 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_7 = new TH1F(("Barycenter_x_layer_7_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 7 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_8 = new TH1F(("Barycenter_x_layer_8_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 8 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_9 = new TH1F(("Barycenter_x_layer_9_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 9 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_10 = new TH1F(("Barycenter_x_layer_10_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 10 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_11 = new TH1F(("Barycenter_x_layer_11_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 11 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_12 = new TH1F(("Barycenter_x_layer_12_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 12 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_13 = new TH1F(("Barycenter_x_layer_13_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 13 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_14 = new TH1F(("Barycenter_x_layer_14_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 14 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
+	TH1F *h_bar_x_layer_0 = new TH1F(("Barycenter_x_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 0 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_1 = new TH1F(("Barycenter_x_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 1 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_2 = new TH1F(("Barycenter_x_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_3 = new TH1F(("Barycenter_x_layer_3_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 3 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_4 = new TH1F(("Barycenter_x_layer_4_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 4 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_5 = new TH1F(("Barycenter_x_layer_5_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 5 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_6 = new TH1F(("Barycenter_x_layer_6_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 6 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_7 = new TH1F(("Barycenter_x_layer_7_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 7 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_8 = new TH1F(("Barycenter_x_layer_8_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 8 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_9 = new TH1F(("Barycenter_x_layer_9_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 9 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_10 = new TH1F(("Barycenter_x_layer_10_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 10 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_11 = new TH1F(("Barycenter_x_layer_11_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 11 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_12 = new TH1F(("Barycenter_x_layer_12_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 12 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_13 = new TH1F(("Barycenter_x_layer_13_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 13 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_x_layer_14 = new TH1F(("Barycenter_x_layer_14_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 14 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 
-	TH1F *h_bar_y_layer_0 = new TH1F(("Barycenter_y_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 0 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_1 = new TH1F(("Barycenter_y_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 1 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_2 = new TH1F(("Barycenter_y_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_3 = new TH1F(("Barycenter_y_layer_3_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 3 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_4 = new TH1F(("Barycenter_y_layer_4_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 4 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_5 = new TH1F(("Barycenter_y_layer_5_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 5 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_6 = new TH1F(("Barycenter_y_layer_6_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 6 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_7 = new TH1F(("Barycenter_y_layer_7_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 7 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_8 = new TH1F(("Barycenter_y_layer_8_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 8 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_9 = new TH1F(("Barycenter_y_layer_9_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 9 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_10 = new TH1F(("Barycenter_y_layer_10_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 10 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_11 = new TH1F(("Barycenter_y_layer_11_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 11 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_12 = new TH1F(("Barycenter_y_layer_12_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 12 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_13 = new TH1F(("Barycenter_y_layer_13_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 13 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_14 = new TH1F(("Barycenter_y_layer_14_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 14 " + part_string + " " + e_str).c_str(), 200, -100., 100.);
+	TH1F *h_bar_y_layer_0 = new TH1F(("Barycenter_y_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 0 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_1 = new TH1F(("Barycenter_y_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 1 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_2 = new TH1F(("Barycenter_y_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_y_layer_3 = new TH1F(("Barycenter_y_layer_3_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 3 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_4 = new TH1F(("Barycenter_y_layer_4_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 4 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_y_layer_5 = new TH1F(("Barycenter_y_layer_5_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 5 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_6 = new TH1F(("Barycenter_y_layer_6_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 6 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_7 = new TH1F(("Barycenter_y_layer_7_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 7 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_8 = new TH1F(("Barycenter_y_layer_8_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 8 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_y_layer_9 = new TH1F(("Barycenter_y_layer_9_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 9 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_10 = new TH1F(("Barycenter_y_layer_10_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 10 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_11 = new TH1F(("Barycenter_y_layer_11_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 11 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_12 = new TH1F(("Barycenter_y_layer_12_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 12 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_13 = new TH1F(("Barycenter_y_layer_13_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 13 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_y_layer_14 = new TH1F(("Barycenter_y_layer_14_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 14 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 
-	TH1F *h_bar_x_layer_0_masked = new TH1F(("Barycenter_x_layer_0_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 0 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_1_masked  = new TH1F(("Barycenter_x_layer_1_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 1 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_2_masked  = new TH1F(("Barycenter_x_layer_2_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_x_layer_3_masked  = new TH1F(("Barycenter_x_layer_3_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 3 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_4_masked  = new TH1F(("Barycenter_x_layer_4_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 4 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_x_layer_5_masked  = new TH1F(("Barycenter_x_layer_5_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 5 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_6_masked  = new TH1F(("Barycenter_x_layer_6_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 6 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_7_masked  = new TH1F(("Barycenter_x_layer_7_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 7 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_8_masked  = new TH1F(("Barycenter_x_layer_8_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 8 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_x_layer_9_masked  = new TH1F(("Barycenter_x_layer_9_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 9 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_10_masked  = new TH1F(("Barycenter_x_layer_10_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 10 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_11_masked  = new TH1F(("Barycenter_x_layer_11_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 11 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_12_masked  = new TH1F(("Barycenter_x_layer_12_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 12 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_13_masked  = new TH1F(("Barycenter_x_layer_13_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 13 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_x_layer_14_masked  = new TH1F(("Barycenter_x_layer_14_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 14 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-
-	TH1F *h_bar_y_layer_0_masked  = new TH1F(("Barycenter_y_layer_0_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 0 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_1_masked  = new TH1F(("Barycenter_y_layer_1_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 1 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-	TH1F *h_bar_y_layer_2_masked  = new TH1F(("Barycenter_y_layer_2_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_3_masked  = new TH1F(("Barycenter_y_layer_3_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 3 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_4_masked  = new TH1F(("Barycenter_y_layer_4_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 4 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_5_masked  = new TH1F(("Barycenter_y_layer_5_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 5 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_6_masked  = new TH1F(("Barycenter_y_layer_6_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 6 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_7_masked  = new TH1F(("Barycenter_y_layer_7_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 7 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_8_masked  = new TH1F(("Barycenter_y_layer_8_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 8 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_9_masked  = new TH1F(("Barycenter_y_layer_9_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 9 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_10_masked  = new TH1F(("Barycenter_y_layer_10_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 10 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_11_masked  = new TH1F(("Barycenter_y_layer_11_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 11 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_12_masked  = new TH1F(("Barycenter_y_layer_12_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 12 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_13_masked  = new TH1F(("Barycenter_y_layer_13_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 13 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-        TH1F *h_bar_y_layer_14_masked  = new TH1F(("Barycenter_y_layer_14_masked _" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) layer 14 masked " + part_string + " " + e_str).c_str(), 200, -100., 100.);
-
-        // Moliere histos
-        TH1F *h_mol = new TH1F(("Radius90_" + part_string + "_" + e_str).c_str(), ("Radius containing 90% of energy " + part_string + " " + e_str).c_str(), 100, 0., 100.);
-        TH1F *h_mol_masked = new TH1F(("Radius90Masked_" + part_string + "_" + e_str).c_str(), ("Radius containing 90% of energy Masked " + part_string + " " + e_str).c_str(), 100, 0., 100.);
-
+	// Moliere histos
+        TH1F *h_mol = new TH1F(("Radius90_" + part_string + "_" + e_str).c_str(), ("Radius containing 90% of energy " + part_string + " " + e_str).c_str(), 101, -0.5, 100.5);
+        
 	// Shower profile characteristics
 	TH1F *h_shower_nhit_max_layer = new TH1F(("ShowerNhitMaxLayer_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Max. (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
 	TH1F *h_shower_nhit_start_layer = new TH1F(("ShowerNhitStartLayer_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Start (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
 	TH1F *h_shower_nhit_end_layer = new TH1F(("ShowerNhitEndLayer_" + part_string + "_" + e_str).c_str(), ("Shower Nhit End (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
 	TH1F *h_shower_nhit_start_10_layer = new TH1F(("ShowerNhitStart10Layer_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Start 0.1*Max (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
         TH1F *h_shower_nhit_end_10_layer = new TH1F(("ShowerNhitEnd10Layer_" + part_string + "_" + e_str).c_str(), ("Shower Nhit End 0.1*Max (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
-	TH1F *h_shower_nhit_average= new TH1F(("ShowerNhitAverage_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Average  " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_shower_nhit_max= new TH1F(("ShowerNhitMax_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Max  " + part_string + " " + e_str).c_str(), 200, 0, 200);
+	TH1F *h_shower_nhit_average= new TH1F(("ShowerNhitAverage_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Average  " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_shower_nhit_max= new TH1F(("ShowerNhitMax_" + part_string + "_" + e_str).c_str(), ("Shower Nhit Max  " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
 
 	TH1F *h_shower_weight_max_layer = new TH1F(("ShowerWeightMaxLayer_" + part_string + "_" + e_str).c_str(), ("Shower Weight Max. (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
         TH1F *h_shower_weight_start_layer = new TH1F(("ShowerWeightStartLayer_" + part_string + "_" + e_str).c_str(), ("Shower Weight Start (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
         TH1F *h_shower_weight_end_layer = new TH1F(("ShowerWeightEndLayer_" + part_string + "_" + e_str).c_str(), ("Shower Weight End (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
         TH1F *h_shower_weight_start_10_layer = new TH1F(("ShowerWeightStart10Layer_" + part_string + "_" + e_str).c_str(), ("Shower Weight Start 0.1*Max (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
         TH1F *h_shower_weight_end_10_layer = new TH1F(("ShowerWeightEnd10Layer_" + part_string + "_" + e_str).c_str(), ("Shower Weight End 0.1*Max (layer) " + part_string + " " + e_str).c_str(), 16, -1.5, 14.5);
-	TH1F *h_shower_weight_average= new TH1F(("ShowerWeightAverage_" + part_string + "_" + e_str).c_str(), ("Shower Weight Average  " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_shower_weight_max= new TH1F(("ShowerWeightMax_" + part_string + "_" + e_str).c_str(), ("Shower Weight Max  " + part_string + " " + e_str).c_str(), 200, 0, 200);
+	TH1F *h_shower_weight_average= new TH1F(("ShowerWeightAverage_" + part_string + "_" + e_str).c_str(), ("Shower Weight Average  " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_shower_weight_max= new TH1F(("ShowerWeightMax_" + part_string + "_" + e_str).c_str(), ("Shower Weight Max  " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
 	
 	// Shower profile per layer
-	TH1F *h_nhit_layer_0 = new TH1F(("NumHits_layer_0_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 0) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_1 = new TH1F(("NumHits_layer_1_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 1) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_2 = new TH1F(("NumHits_layer_2_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 2) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_3 = new TH1F(("NumHits_layer_3_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 3) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_4 = new TH1F(("NumHits_layer_4_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 4) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_5 = new TH1F(("NumHits_layer_5_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 5) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_6 = new TH1F(("NumHits_layer_6_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 6) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_7 = new TH1F(("NumHits_layer_7_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 7) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_8 = new TH1F(("NumHits_layer_8_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 8) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_9 = new TH1F(("NumHits_layer_9_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 9) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_10 = new TH1F(("NumHits_layer_10_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 10) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_11 = new TH1F(("NumHits_layer_11_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 11) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_12 = new TH1F(("NumHits_layer_12_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 12) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_13 = new TH1F(("NumHits_layer_13_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 13) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_14 = new TH1F(("NumHits_layer_14_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 14) " + part_string + " " + e_str).c_str(), 200, 0, 200);
-	TH1F *h_nhit_layer_0_masked = new TH1F(("NumHits_layer_0_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 0) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_1_masked = new TH1F(("NumHits_layer_1_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 1) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_2_masked = new TH1F(("NumHits_layer_2_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 2) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_3_masked = new TH1F(("NumHits_layer_3_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 3) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_4_masked = new TH1F(("NumHits_layer_4_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 4) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_5_masked = new TH1F(("NumHits_layer_5_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 5) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_6_masked = new TH1F(("NumHits_layer_6_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 6) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_7_masked = new TH1F(("NumHits_layer_7_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 7) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_8_masked = new TH1F(("NumHits_layer_8_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 8) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_9_masked = new TH1F(("NumHits_layer_9_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 9) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_10_masked = new TH1F(("NumHits_layer_10_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 10) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_11_masked = new TH1F(("NumHits_layer_11_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 11) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_12_masked = new TH1F(("NumHits_layer_12_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 12) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_13_masked = new TH1F(("NumHits_layer_13_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 13) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-        TH1F *h_nhit_layer_14_masked = new TH1F(("NumHits_layer_14_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 14) masked " + part_string + " " + e_str).c_str(), 200, 0, 200);
-
+	TH1F *h_nhit_layer_0 = new TH1F(("NumHits_layer_0_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 0) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_1 = new TH1F(("NumHits_layer_1_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 1) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_2 = new TH1F(("NumHits_layer_2_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 2) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_3 = new TH1F(("NumHits_layer_3_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 3) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_4 = new TH1F(("NumHits_layer_4_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 4) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_5 = new TH1F(("NumHits_layer_5_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 5) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_6 = new TH1F(("NumHits_layer_6_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 6) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_7 = new TH1F(("NumHits_layer_7_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 7) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_8 = new TH1F(("NumHits_layer_8_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 8) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_9 = new TH1F(("NumHits_layer_9_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 9) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_10 = new TH1F(("NumHits_layer_10_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 10) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_11 = new TH1F(("NumHits_layer_11_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 11) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_12 = new TH1F(("NumHits_layer_12_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 12) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_13 = new TH1F(("NumHits_layer_13_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 13) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+        TH1F *h_nhit_layer_14 = new TH1F(("NumHits_layer_14_" + part_string + "_" + e_str).c_str(), ("Number of hits (layer 14) " + part_string + " " + e_str).c_str(), 201, -0.5, 200.5);
+	
 	TH1F *h_nhit_layer_n_0 = new TH1F(("NumHits_layer_n_0_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 0) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_nhit_layer_n_1 = new TH1F(("NumHits_layer_n_1_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 1) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_nhit_layer_n_2 = new TH1F(("NumHits_layer_n_2_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 2) " + part_string + " " + e_str).c_str(), 100, 0, 1);
@@ -850,53 +734,23 @@ void analysis (string particle) {
         TH1F *h_nhit_layer_n_12 = new TH1F(("NumHits_layer_n_12_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 12) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_nhit_layer_n_13 = new TH1F(("NumHits_layer_n_13_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 13) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_nhit_layer_n_14 = new TH1F(("NumHits_layer_n_14_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 14) " + part_string + " " + e_str).c_str(), 100, 0, 1);
-	TH1F *h_nhit_layer_n_0_masked = new TH1F(("NumHits_layer_n_0_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 0) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_1_masked = new TH1F(("NumHits_layer_n_1_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 1) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_2_masked = new TH1F(("NumHits_layer_n_2_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 2) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_3_masked = new TH1F(("NumHits_layer_n_3_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 3) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_4_masked = new TH1F(("NumHits_layer_n_4_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 4) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_5_masked = new TH1F(("NumHits_layer_n_5_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 5) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_6_masked = new TH1F(("NumHits_layer_n_6_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 6) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_7_masked = new TH1F(("NumHits_layer_n_7_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 7) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_8_masked = new TH1F(("NumHits_layer_n_8_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 8) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_9_masked = new TH1F(("NumHits_layer_n_9_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 9) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_10_masked = new TH1F(("NumHits_layer_n_10_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 10) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_11_masked = new TH1F(("NumHits_layer_n_11_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 11) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_12_masked = new TH1F(("NumHits_layer_n_12_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 12) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_13_masked = new TH1F(("NumHits_layer_n_13_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 13) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_nhit_layer_n_14_masked = new TH1F(("NumHits_layer_n_14_masked_" + part_string + "_" + e_str).c_str(), ("Number of hits normalized (layer 14) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-	
-	TH1F *h_weight_layer_0 = new TH1F(("Weight_layer_0_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 0) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_1 = new TH1F(("Weight_layer_1_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 1) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_2 = new TH1F(("Weight_layer_2_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 2) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_3 = new TH1F(("Weight_layer_3_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 3) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_4 = new TH1F(("Weight_layer_4_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 4) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_5 = new TH1F(("Weight_layer_5_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 5) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_6 = new TH1F(("Weight_layer_6_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 6) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_7 = new TH1F(("Weight_layer_7_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 7) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_8 = new TH1F(("Weight_layer_8_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 8) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_9 = new TH1F(("Weight_layer_9_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 9) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_10 = new TH1F(("Weight_layer_10_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 10) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_11 = new TH1F(("Weight_layer_11_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 11) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_12 = new TH1F(("Weight_layer_12_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 12) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_13 = new TH1F(("Weight_layer_13_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 13) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_14 = new TH1F(("Weight_layer_14_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 14) " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_0_masked = new TH1F(("Weight_layer_0_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 0) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_1_masked = new TH1F(("Weight_layer_1_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 1) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_2_masked = new TH1F(("Weight_layer_2_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 2) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_3_masked = new TH1F(("Weight_layer_3_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 3) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_4_masked = new TH1F(("Weight_layer_4_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 4) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_5_masked = new TH1F(("Weight_layer_5_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 5) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_6_masked = new TH1F(("Weight_layer_6_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 6) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_7_masked = new TH1F(("Weight_layer_7_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 7) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_8_masked = new TH1F(("Weight_layer_8_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 8) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_9_masked = new TH1F(("Weight_layer_9_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 9) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_10_masked = new TH1F(("Weight_layer_10_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 10) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_11_masked = new TH1F(("Weight_layer_11_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 11) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_12_masked = new TH1F(("Weight_layer_12_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 12) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_13_masked = new TH1F(("Weight_layer_13_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 13) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-        TH1F *h_weight_layer_14_masked = new TH1F(("Weight_layer_14_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 14) masked " + part_string + " " + e_str).c_str(), 1000, 0, 10000);
-
+		
+	TH1F *h_weight_layer_0 = new TH1F(("Weight_layer_0_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 0) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_1 = new TH1F(("Weight_layer_1_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 1) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_2 = new TH1F(("Weight_layer_2_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 2) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_3 = new TH1F(("Weight_layer_3_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 3) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_4 = new TH1F(("Weight_layer_4_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 4) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_5 = new TH1F(("Weight_layer_5_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 5) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_6 = new TH1F(("Weight_layer_6_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 6) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_7 = new TH1F(("Weight_layer_7_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 7) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_8 = new TH1F(("Weight_layer_8_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 8) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_9 = new TH1F(("Weight_layer_9_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 9) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_10 = new TH1F(("Weight_layer_10_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 10) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_11 = new TH1F(("Weight_layer_11_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 11) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_12 = new TH1F(("Weight_layer_12_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 12) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_13 = new TH1F(("Weight_layer_13_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 13) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        TH1F *h_weight_layer_14 = new TH1F(("Weight_layer_14_" + part_string + "_" + e_str).c_str(), ("Weighted energy (layer 14) " + part_string + " " + e_str).c_str(), 1001, -0.5, 10000.5);
+        
 	TH1F *h_weight_layer_n_0 = new TH1F(("Weight_layer_n_0_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 0) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_weight_layer_n_1 = new TH1F(("Weight_layer_n_1_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 1) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_weight_layer_n_2 = new TH1F(("Weight_layer_n_2_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 2) " + part_string + " " + e_str).c_str(), 100, 0, 1);
@@ -912,83 +766,47 @@ void analysis (string particle) {
         TH1F *h_weight_layer_n_12 = new TH1F(("Weight_layer_n_12_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 12) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_weight_layer_n_13 = new TH1F(("Weight_layer_n_13_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 13) " + part_string + " " + e_str).c_str(), 100, 0, 1);
         TH1F *h_weight_layer_n_14 = new TH1F(("Weight_layer_n_14_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 14) " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_0_masked = new TH1F(("Weight_layer_n_0_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 0) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_1_masked = new TH1F(("Weight_layer_n_1_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 1) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_2_masked = new TH1F(("Weight_layer_n_2_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 2) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_3_masked = new TH1F(("Weight_layer_n_3_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 3) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_4_masked = new TH1F(("Weight_layer_n_4_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 4) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_5_masked = new TH1F(("Weight_layer_n_5_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 5) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_6_masked = new TH1F(("Weight_layer_n_6_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 6) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_7_masked = new TH1F(("Weight_layer_n_7_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 7) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_8_masked = new TH1F(("Weight_layer_n_8_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 8) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_9_masked = new TH1F(("Weight_layer_n_9_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 9) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_10_masked = new TH1F(("Weight_layer_n_10_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 10) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_11_masked = new TH1F(("Weight_layer_n_11_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 11) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_12_masked = new TH1F(("Weight_layer_n_12_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 12) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_13_masked = new TH1F(("Weight_layer_n_13_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 13) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-        TH1F *h_weight_layer_n_14_masked = new TH1F(("Weight_layer_n_14_masked_" + part_string + "_" + e_str).c_str(), ("Weighted energy normalized (layer 14) masked " + part_string + " " + e_str).c_str(), 100, 0, 1);
-
-	
+        	
 	for (int i_event = 0; i_event < (int)nentries; i_event++) {
 	  // Resolution
-	  int nhit = 0;      int nhit_masked = 0;
-	  float sume = 0;    float sume_masked = 0;
-	  float weight = 0;  float weight_masked = 0;
+	  int nhit = 0;     
+	  float sume = 0;   
+	  float weight = 0; 
 	  
 	  float bar_xyz[3];
-	  float bar_xyz_masked[3];
 	  
 	  float nhit_layer_array[N_ECAL_LAYERS];
-	  float nhit_layer_array_masked[N_ECAL_LAYERS];
 	  float nhit_layer_n_array[N_ECAL_LAYERS];
-          float nhit_layer_n_array_masked[N_ECAL_LAYERS];
 
 	  float weight_layer_array[N_ECAL_LAYERS];
-          float weight_layer_array_masked[N_ECAL_LAYERS];
           float weight_layer_n_array[N_ECAL_LAYERS];
-          float weight_layer_n_array_masked[N_ECAL_LAYERS];
 
 	  float bar_layer_array[N_ECAL_LAYERS][2]; // 2 for (x,y)
-	  float bar_layer_array_masked[N_ECAL_LAYERS][2];
 
 	  tree->GetEntry(i_event);
 	  if(i_event % 1000 == 0) cout << "Event " << to_string(i_event) << endl;
 	  
-	  get_res(nhit, nhit_masked,
-		  sume, sume_masked,
-		  weight, weight_masked,
-		  hit_energy, hit_slab, hit_isMasked,
-		  W_thicknesses);
-	    
+	  get_res(nhit,	sume, weight, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked);
+
 	  h_nhit->Fill(nhit);        
-	  h_nhit_masked->Fill(nhit_masked);
 	  h_sume->Fill(sume);         
-	  h_sume_masked->Fill(sume_masked);
 	  h_weight->Fill(weight);     
-	  h_weight_masked->Fill(weight_masked);
 	  
 	  // Fill barycenter
-	  barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyz, hit_isMasked, false);
-	  barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyz_masked, hit_isMasked, true);
-
+	  barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyz, hit_isMasked, masked);
+	  
 	  h_bar_x->Fill(bar_xyz[0]);
 	  h_bar_y->Fill(bar_xyz[1]);
 	  h_bar_z->Fill(bar_xyz[2]);
-	  h_bar_x_masked->Fill(bar_xyz_masked[0]);
-	  h_bar_y_masked->Fill(bar_xyz_masked[1]);
-	  h_bar_z_masked->Fill(bar_xyz_masked[2]);
-
+	  
 	  // Fill Moliere radii histograms
-	  h_mol->Fill(moliere(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked));
-	  h_mol_masked->Fill(moliere(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, true));
-          
+	  h_mol->Fill(moliere(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked));
+	  
 	  // Fill shower profile 
 	  // Nhit
-	  hits_layer(nhit_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, false, false, "nhit");
-	  hits_layer(nhit_layer_array_masked, hit_energy, hit_slab, W_thicknesses, hit_isMasked, true, false, "nhit");
-	  hits_layer(nhit_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, false, true, "nhit");
-          hits_layer(nhit_layer_n_array_masked, hit_energy, hit_slab, W_thicknesses, hit_isMasked, true, true, "nhit");
-
+	  hits_layer(nhit_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, false, "nhit");
+	  hits_layer(nhit_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, true, "nhit");
+          
 	  h_nhit_layer_0->Fill(nhit_layer_array[0]);
 	  h_nhit_layer_1->Fill(nhit_layer_array[1]);
 	  h_nhit_layer_2->Fill(nhit_layer_array[2]);
@@ -1004,23 +822,7 @@ void analysis (string particle) {
 	  h_nhit_layer_12->Fill(nhit_layer_array[12]);
 	  h_nhit_layer_13->Fill(nhit_layer_array[13]);
 	  h_nhit_layer_14->Fill(nhit_layer_array[14]);
-	  
-	  h_nhit_layer_0_masked->Fill(nhit_layer_array_masked[0]);
-	  h_nhit_layer_1_masked->Fill(nhit_layer_array_masked[1]);
-	  h_nhit_layer_2_masked->Fill(nhit_layer_array_masked[2]);
-	  h_nhit_layer_3_masked->Fill(nhit_layer_array_masked[3]);
-	  h_nhit_layer_4_masked->Fill(nhit_layer_array_masked[4]);
-	  h_nhit_layer_5_masked->Fill(nhit_layer_array_masked[5]);
-	  h_nhit_layer_6_masked->Fill(nhit_layer_array_masked[6]);
-	  h_nhit_layer_7_masked->Fill(nhit_layer_array_masked[7]);
-	  h_nhit_layer_8_masked->Fill(nhit_layer_array_masked[8]);
-	  h_nhit_layer_9_masked->Fill(nhit_layer_array_masked[9]);
-	  h_nhit_layer_10_masked->Fill(nhit_layer_array_masked[10]);
-	  h_nhit_layer_11_masked->Fill(nhit_layer_array_masked[11]);
-	  h_nhit_layer_12_masked->Fill(nhit_layer_array_masked[12]);
-	  h_nhit_layer_13_masked->Fill(nhit_layer_array_masked[13]);
-	  h_nhit_layer_14_masked->Fill(nhit_layer_array_masked[14]);
-	  
+	  	  
 	  h_nhit_layer_n_0->Fill(nhit_layer_n_array[0]);
 	  h_nhit_layer_n_1->Fill(nhit_layer_n_array[1]);
 	  h_nhit_layer_n_2->Fill(nhit_layer_n_array[2]);
@@ -1037,22 +839,7 @@ void analysis (string particle) {
 	  h_nhit_layer_n_13->Fill(nhit_layer_n_array[13]);
 	  h_nhit_layer_n_14->Fill(nhit_layer_n_array[14]);
 	  
-	  h_nhit_layer_n_0_masked->Fill(nhit_layer_n_array_masked[0]);
-	  h_nhit_layer_n_1_masked->Fill(nhit_layer_n_array_masked[1]);
-	  h_nhit_layer_n_2_masked->Fill(nhit_layer_n_array_masked[2]);
-	  h_nhit_layer_n_3_masked->Fill(nhit_layer_n_array_masked[3]);
-	  h_nhit_layer_n_4_masked->Fill(nhit_layer_n_array_masked[4]);
-	  h_nhit_layer_n_5_masked->Fill(nhit_layer_n_array_masked[5]);
-	  h_nhit_layer_n_6_masked->Fill(nhit_layer_n_array_masked[6]);
-	  h_nhit_layer_n_7_masked->Fill(nhit_layer_n_array_masked[7]);
-	  h_nhit_layer_n_8_masked->Fill(nhit_layer_n_array_masked[8]);
-	  h_nhit_layer_n_9_masked->Fill(nhit_layer_n_array_masked[9]);
-	  h_nhit_layer_n_10_masked->Fill(nhit_layer_n_array_masked[10]);
-	  h_nhit_layer_n_11_masked->Fill(nhit_layer_n_array_masked[11]);
-	  h_nhit_layer_n_12_masked->Fill(nhit_layer_n_array_masked[12]);
-	  h_nhit_layer_n_13_masked->Fill(nhit_layer_n_array_masked[13]);
-	  h_nhit_layer_n_14_masked->Fill(nhit_layer_n_array_masked[14]);
-	  
+	  	  
 	  // shower nhit general parameters start
 	  float nhit_shower_maxvalue = 0.;
 	  float nhit_shower_maxvalue_n = 0.;
@@ -1081,11 +868,9 @@ void analysis (string particle) {
 	  h_shower_nhit_max->Fill(nhit_shower_maxvalue);
 	  
 	  // Weighted energy
-          hits_layer(weight_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, false, false, "weight");
-          hits_layer(weight_layer_array_masked, hit_energy, hit_slab, W_thicknesses, hit_isMasked, true, false, "weight");
-          hits_layer(weight_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, false, true, "weight");
-          hits_layer(weight_layer_n_array_masked, hit_energy, hit_slab, W_thicknesses, hit_isMasked, true, true, "weight");
-
+          hits_layer(weight_layer_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, false, "weight");
+	  hits_layer(weight_layer_n_array, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masked, true, "weight");
+          
           h_weight_layer_0->Fill(weight_layer_array[0]);
           h_weight_layer_1->Fill(weight_layer_array[1]);
           h_weight_layer_2->Fill(weight_layer_array[2]);
@@ -1102,23 +887,7 @@ void analysis (string particle) {
           h_weight_layer_13->Fill(weight_layer_array[13]);
           h_weight_layer_14->Fill(weight_layer_array[14]);
 
-          h_weight_layer_0_masked->Fill(weight_layer_array_masked[0]);
-          h_weight_layer_1_masked->Fill(weight_layer_array_masked[1]);
-          h_weight_layer_2_masked->Fill(weight_layer_array_masked[2]);
-          h_weight_layer_3_masked->Fill(weight_layer_array_masked[3]);
-          h_weight_layer_4_masked->Fill(weight_layer_array_masked[4]);
-          h_weight_layer_5_masked->Fill(weight_layer_array_masked[5]);
-          h_weight_layer_6_masked->Fill(weight_layer_array_masked[6]);
-          h_weight_layer_7_masked->Fill(weight_layer_array_masked[7]);
-          h_weight_layer_8_masked->Fill(weight_layer_array_masked[8]);
-          h_weight_layer_9_masked->Fill(weight_layer_array_masked[9]);
-          h_weight_layer_10_masked->Fill(weight_layer_array_masked[10]);
-          h_weight_layer_11_masked->Fill(weight_layer_array_masked[11]);
-          h_weight_layer_12_masked->Fill(weight_layer_array_masked[12]);
-          h_weight_layer_13_masked->Fill(weight_layer_array_masked[13]);
-          h_weight_layer_14_masked->Fill(weight_layer_array_masked[14]);
-
-          h_weight_layer_n_0->Fill(weight_layer_n_array[0]);
+	  h_weight_layer_n_0->Fill(weight_layer_n_array[0]);
           h_weight_layer_n_1->Fill(weight_layer_n_array[1]);
           h_weight_layer_n_2->Fill(weight_layer_n_array[2]);
           h_weight_layer_n_3->Fill(weight_layer_n_array[3]);
@@ -1133,22 +902,6 @@ void analysis (string particle) {
           h_weight_layer_n_12->Fill(weight_layer_n_array[12]);
           h_weight_layer_n_13->Fill(weight_layer_n_array[13]);
           h_weight_layer_n_14->Fill(weight_layer_n_array[14]);
-
-          h_weight_layer_n_0_masked->Fill(weight_layer_n_array_masked[0]);
-          h_weight_layer_n_1_masked->Fill(weight_layer_n_array_masked[1]);
-          h_weight_layer_n_2_masked->Fill(weight_layer_n_array_masked[2]);
-          h_weight_layer_n_3_masked->Fill(weight_layer_n_array_masked[3]);
-          h_weight_layer_n_4_masked->Fill(weight_layer_n_array_masked[4]);
-          h_weight_layer_n_5_masked->Fill(weight_layer_n_array_masked[5]);
-          h_weight_layer_n_6_masked->Fill(weight_layer_n_array_masked[6]);
-          h_weight_layer_n_7_masked->Fill(weight_layer_n_array_masked[7]);
-          h_weight_layer_n_8_masked->Fill(weight_layer_n_array_masked[8]);
-          h_weight_layer_n_9_masked->Fill(weight_layer_n_array_masked[9]);
-          h_weight_layer_n_10_masked->Fill(weight_layer_n_array_masked[10]);
-          h_weight_layer_n_11_masked->Fill(weight_layer_n_array_masked[11]);
-          h_weight_layer_n_12_masked->Fill(weight_layer_n_array_masked[12]);
-          h_weight_layer_n_13_masked->Fill(weight_layer_n_array_masked[13]);
-          h_weight_layer_n_14_masked->Fill(weight_layer_n_array_masked[14]);
 
 	  // shower weight general parameters start
           float weight_shower_maxvalue = 0.;
@@ -1178,9 +931,8 @@ void analysis (string particle) {
           h_shower_weight_max->Fill(weight_shower_maxvalue);
 	  
 	  // Barycenter x and y
-	  bary_layer(bar_layer_array, hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, false);
-	  bary_layer(bar_layer_array_masked, hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, true);
-	    
+	  bary_layer(bar_layer_array, hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked);
+	  
           h_bar_x_layer_0->Fill(bar_layer_array[0][0]);
           h_bar_x_layer_1->Fill(bar_layer_array[1][0]);
           h_bar_x_layer_2->Fill(bar_layer_array[2][0]);
@@ -1196,22 +948,6 @@ void analysis (string particle) {
           h_bar_x_layer_12->Fill(bar_layer_array[12][0]);
           h_bar_x_layer_13->Fill(bar_layer_array[13][0]);
           h_bar_x_layer_14->Fill(bar_layer_array[14][0]);
-
-          h_bar_x_layer_0_masked->Fill(bar_layer_array_masked[0][0]);
-          h_bar_x_layer_1_masked->Fill(bar_layer_array_masked[1][0]);
-          h_bar_x_layer_2_masked->Fill(bar_layer_array_masked[2][0]);
-          h_bar_x_layer_3_masked->Fill(bar_layer_array_masked[3][0]);
-          h_bar_x_layer_4_masked->Fill(bar_layer_array_masked[4][0]);
-          h_bar_x_layer_5_masked->Fill(bar_layer_array_masked[5][0]);
-          h_bar_x_layer_6_masked->Fill(bar_layer_array_masked[6][0]);
-          h_bar_x_layer_7_masked->Fill(bar_layer_array_masked[7][0]);
-          h_bar_x_layer_8_masked->Fill(bar_layer_array_masked[8][0]);
-          h_bar_x_layer_9_masked->Fill(bar_layer_array_masked[9][0]);
-          h_bar_x_layer_10_masked->Fill(bar_layer_array_masked[10][0]);
-          h_bar_x_layer_11_masked->Fill(bar_layer_array_masked[11][0]);
-          h_bar_x_layer_12_masked->Fill(bar_layer_array_masked[12][0]);
-          h_bar_x_layer_13_masked->Fill(bar_layer_array_masked[13][0]);
-          h_bar_x_layer_14_masked->Fill(bar_layer_array_masked[14][0]);
 
 	  h_bar_y_layer_0->Fill(bar_layer_array[0][1]);
           h_bar_y_layer_1->Fill(bar_layer_array[1][1]);
@@ -1229,22 +965,6 @@ void analysis (string particle) {
           h_bar_y_layer_13->Fill(bar_layer_array[13][1]);
           h_bar_y_layer_14->Fill(bar_layer_array[14][1]);
 
-          h_bar_y_layer_0_masked->Fill(bar_layer_array_masked[0][1]);
-          h_bar_y_layer_1_masked->Fill(bar_layer_array_masked[1][1]);
-          h_bar_y_layer_2_masked->Fill(bar_layer_array_masked[2][1]);
-          h_bar_y_layer_3_masked->Fill(bar_layer_array_masked[3][1]);
-          h_bar_y_layer_4_masked->Fill(bar_layer_array_masked[4][1]);
-          h_bar_y_layer_5_masked->Fill(bar_layer_array_masked[5][1]);
-          h_bar_y_layer_6_masked->Fill(bar_layer_array_masked[6][1]);
-          h_bar_y_layer_7_masked->Fill(bar_layer_array_masked[7][1]);
-          h_bar_y_layer_8_masked->Fill(bar_layer_array_masked[8][1]);
-          h_bar_y_layer_9_masked->Fill(bar_layer_array_masked[9][1]);
-          h_bar_y_layer_10_masked->Fill(bar_layer_array_masked[10][1]);
-          h_bar_y_layer_11_masked->Fill(bar_layer_array_masked[11][1]);
-          h_bar_y_layer_12_masked->Fill(bar_layer_array_masked[12][1]);
-          h_bar_y_layer_13_masked->Fill(bar_layer_array_masked[13][1]);
-          h_bar_y_layer_14_masked->Fill(bar_layer_array_masked[14][1]);
-
 	  hit_isMasked->clear();
 	  hit_energy->clear();
 	  hit_slab->clear();
@@ -1255,262 +975,283 @@ void analysis (string particle) {
 	// FITS
         // Resolution
         fit_res(h_nhit, mu_nhit[i_energy], sig_nhit[i_energy], res_nhit[i_energy]);
-        fit_res(h_nhit_masked, mu_nhit_masked[i_energy], sig_nhit_masked[i_energy], res_nhit_masked[i_energy]);
         fit_res(h_sume, mu_sume[i_energy], sig_sume[i_energy], res_sume[i_energy]);
-        fit_res(h_sume_masked, mu_sume_masked[i_energy], sig_sume_masked[i_energy], res_sume_masked[i_energy]);
-        fit_res(h_weight, mu_weight[i_energy], sig_weight[i_energy], res_weight[i_energy]);
-        fit_res(h_weight_masked, mu_weight_masked[i_energy], sig_weight_masked[i_energy], res_weight_masked[i_energy]);
-
-	
+	fit_res(h_weight, mu_weight[i_energy], sig_weight[i_energy], res_weight[i_energy]);
+        
 	// Moliere fits
-	//NEW method
-	// g_mu, g_sig, l_mpv, l_fwhm
-	double parmolfit[4] = {20.,40.,50.,10.};
-	double parmolfit_masked[4] = {20.,40.,50.,10.};
-	// MPV and FWHM
-	double result_molfit[2] = {0.,0.};
-	double result_molfit_masked[2] = {0.,0.};
-	// moliere min and moliere max range
-	double range[2] = {0.1, 100.};
-	
-	//cout<<"before mol fit"<<endl;
-	//fit_mol(h_mol, mu, sig, mpv, fwhm, range[0], range[1]);
-	//h_mol->Fit("gaus");
-	//cout<<"Fit molière"<<endl;
-	fit_mol(h_mol, parmolfit[0], parmolfit[1], parmolfit[2], parmolfit[3], result_molfit[0], result_molfit[1], range[0], range[1]);
+	double result_molfit[3] = {0.,0.,0.};
+	fit_langaus(h_mol, result_molfit[0], result_molfit[1], result_molfit[2]);
 	mu_mol[i_energy] = result_molfit[0];
-	sig_mol[i_energy] = 0.5*result_molfit[1];
+	mu_error_mol[i_energy] = result_molfit[1];
+	sig_mol[i_energy] = 0.5*result_molfit[2];
 	
-	//cout<<"Fit molière masked"<<endl;
-	fit_mol(h_mol_masked, parmolfit_masked[0], parmolfit_masked[1], parmolfit_masked[2], parmolfit_masked[3], result_molfit_masked[0], result_molfit_masked[1], range[0], range[1]);
-        mu_mol_masked[i_energy] = result_molfit_masked[0];
-        sig_mol_masked[i_energy] = 0.5*result_molfit_masked[1];
-
-	cout<<"Molière radius: ("<<mu_mol[i_energy]<<" +- "<<sig_mol[i_energy]<<") mm"<<endl;
-	cout<<"Molière radius (masked): ("<<mu_mol_masked[i_energy]<<" +- "<<sig_mol_masked[i_energy]<<") mm"<<endl;
 	
+	//cout<<"Molière radius: ("<<mu_mol[i_energy]<<" +- "<<sig_mol[i_energy]<<") mm"<<endl;
+		
 	// Shower profile fits
 	// Same method than moliere
 	// g_mu, g_sig, l_mpv, l_fwhm
         // nhit
-	double nhit_shower_fit_par[4] = {4.,2.,2.,2.};
-        double nhit_shower_fit_result[N_ECAL_LAYERS][2];
-	double nhit_range_shower_fit[2] = {0., 200.};
-        //cout<<"Fits shower nhit"<<endl;
-	fit_shower(h_nhit_layer_0, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[0][0], nhit_shower_fit_result[0][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-        fit_shower(h_nhit_layer_1, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[1][0], nhit_shower_fit_result[1][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_2, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[2][0], nhit_shower_fit_result[2][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_3, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[3][0], nhit_shower_fit_result[3][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_4, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[4][0], nhit_shower_fit_result[4][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_5, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[5][0], nhit_shower_fit_result[5][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_6, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[6][0], nhit_shower_fit_result[6][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_7, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[7][0], nhit_shower_fit_result[7][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_8, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[8][0], nhit_shower_fit_result[8][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_9, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[9][0], nhit_shower_fit_result[9][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_10, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[10][0], nhit_shower_fit_result[10][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_11, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[11][0], nhit_shower_fit_result[11][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_12, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[12][0], nhit_shower_fit_result[12][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_13, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[13][0], nhit_shower_fit_result[13][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
-	fit_shower(h_nhit_layer_14, nhit_shower_fit_par[0], nhit_shower_fit_par[1], nhit_shower_fit_par[2], nhit_shower_fit_par[3], nhit_shower_fit_result[14][0], nhit_shower_fit_result[14][1], nhit_range_shower_fit[0], nhit_range_shower_fit[1]);
+	double nhit_shower_fit_result[N_ECAL_LAYERS][3];
+	//cout<<"Fits shower nhit"<<endl;
+	fit_langaus(h_nhit_layer_0, nhit_shower_fit_result[0][0], nhit_shower_fit_result[0][1], nhit_shower_fit_result[0][2]);
+        fit_langaus(h_nhit_layer_1, nhit_shower_fit_result[1][0], nhit_shower_fit_result[1][1], nhit_shower_fit_result[1][2]);
+	fit_langaus(h_nhit_layer_2, nhit_shower_fit_result[2][0], nhit_shower_fit_result[2][1], nhit_shower_fit_result[2][2]);
+	fit_langaus(h_nhit_layer_3, nhit_shower_fit_result[3][0], nhit_shower_fit_result[3][1], nhit_shower_fit_result[3][2]);
+	fit_langaus(h_nhit_layer_4, nhit_shower_fit_result[4][0], nhit_shower_fit_result[4][1], nhit_shower_fit_result[4][2]);
+	fit_langaus(h_nhit_layer_5, nhit_shower_fit_result[5][0], nhit_shower_fit_result[5][1], nhit_shower_fit_result[5][2]);
+	fit_langaus(h_nhit_layer_6, nhit_shower_fit_result[6][0], nhit_shower_fit_result[6][1], nhit_shower_fit_result[6][2]);
+	fit_langaus(h_nhit_layer_7, nhit_shower_fit_result[7][0], nhit_shower_fit_result[7][1], nhit_shower_fit_result[7][2]);
+	fit_langaus(h_nhit_layer_8, nhit_shower_fit_result[8][0], nhit_shower_fit_result[8][1], nhit_shower_fit_result[8][2]);
+	fit_langaus(h_nhit_layer_9, nhit_shower_fit_result[9][0], nhit_shower_fit_result[9][1], nhit_shower_fit_result[9][2]);
+	fit_langaus(h_nhit_layer_10, nhit_shower_fit_result[10][0], nhit_shower_fit_result[10][1], nhit_shower_fit_result[10][2]);
+	fit_langaus(h_nhit_layer_11, nhit_shower_fit_result[11][0], nhit_shower_fit_result[11][1], nhit_shower_fit_result[11][2]);
+	fit_langaus(h_nhit_layer_12, nhit_shower_fit_result[12][0], nhit_shower_fit_result[12][1], nhit_shower_fit_result[12][2]);
+	fit_langaus(h_nhit_layer_13, nhit_shower_fit_result[13][0], nhit_shower_fit_result[13][1], nhit_shower_fit_result[13][2]);
+	fit_langaus(h_nhit_layer_14, nhit_shower_fit_result[14][0], nhit_shower_fit_result[14][1], nhit_shower_fit_result[14][2]);
 	
-	cout<<"calling cheaptrick for nhit_shower"<<endl;
-	cheap_trick_sigma(nhit_shower_fit_result,"nhit");
-	
+		
 	mu_nhit_layer_0[i_energy] = nhit_shower_fit_result[0][0];
-        sig_nhit_layer_0[i_energy] = 0.5*nhit_shower_fit_result[0][1];
+	mu_error_nhit_layer_0[i_energy] = nhit_shower_fit_result[0][1];
+        sig_nhit_layer_0[i_energy] = 0.5*nhit_shower_fit_result[0][2];
 	mu_nhit_layer_1[i_energy] = nhit_shower_fit_result[1][0];
-        sig_nhit_layer_1[i_energy] = 0.5*nhit_shower_fit_result[1][1];
+	mu_error_nhit_layer_1[i_energy] = nhit_shower_fit_result[1][1];
+        sig_nhit_layer_1[i_energy] = 0.5*nhit_shower_fit_result[1][2];
 	mu_nhit_layer_2[i_energy] = nhit_shower_fit_result[2][0];
-        sig_nhit_layer_2[i_energy] = 0.5*nhit_shower_fit_result[2][1];
+        mu_error_nhit_layer_2[i_energy] = nhit_shower_fit_result[2][1];
+	sig_nhit_layer_2[i_energy] = 0.5*nhit_shower_fit_result[2][2];
 	mu_nhit_layer_3[i_energy] = nhit_shower_fit_result[3][0];
-        sig_nhit_layer_3[i_energy] = 0.5*nhit_shower_fit_result[3][1];
+        mu_error_nhit_layer_3[i_energy] = nhit_shower_fit_result[3][1];
+	sig_nhit_layer_3[i_energy] = 0.5*nhit_shower_fit_result[3][2];
 	mu_nhit_layer_4[i_energy] = nhit_shower_fit_result[4][0];
-        sig_nhit_layer_4[i_energy] = 0.5*nhit_shower_fit_result[4][1];
+        mu_error_nhit_layer_4[i_energy] = nhit_shower_fit_result[4][1];
+	sig_nhit_layer_4[i_energy] = 0.5*nhit_shower_fit_result[4][2];
 	mu_nhit_layer_5[i_energy] = nhit_shower_fit_result[5][0];
-        sig_nhit_layer_5[i_energy] = 0.5*nhit_shower_fit_result[5][1];
+        mu_error_nhit_layer_5[i_energy] = nhit_shower_fit_result[5][1];
+	sig_nhit_layer_5[i_energy] = 0.5*nhit_shower_fit_result[5][2];
 	mu_nhit_layer_6[i_energy] = nhit_shower_fit_result[6][0];
-        sig_nhit_layer_6[i_energy] = 0.5*nhit_shower_fit_result[6][1];
+        mu_error_nhit_layer_6[i_energy] = nhit_shower_fit_result[6][1];
+	sig_nhit_layer_6[i_energy] = 0.5*nhit_shower_fit_result[6][2];
 	mu_nhit_layer_7[i_energy] = nhit_shower_fit_result[7][0];
-        sig_nhit_layer_7[i_energy] = 0.5*nhit_shower_fit_result[7][1];
+        mu_error_nhit_layer_7[i_energy] = nhit_shower_fit_result[7][1];
+	sig_nhit_layer_7[i_energy] = 0.5*nhit_shower_fit_result[7][2];
 	mu_nhit_layer_8[i_energy] = nhit_shower_fit_result[8][0];
-        sig_nhit_layer_8[i_energy] = 0.5*nhit_shower_fit_result[8][1];
+        mu_error_nhit_layer_8[i_energy] = nhit_shower_fit_result[8][1];
+	sig_nhit_layer_8[i_energy] = 0.5*nhit_shower_fit_result[8][2];
 	mu_nhit_layer_9[i_energy] = nhit_shower_fit_result[9][0];
-        sig_nhit_layer_9[i_energy] = 0.5*nhit_shower_fit_result[9][1];
+        mu_error_nhit_layer_9[i_energy] = nhit_shower_fit_result[9][1];
+	sig_nhit_layer_9[i_energy] = 0.5*nhit_shower_fit_result[9][2];
 	mu_nhit_layer_10[i_energy] = nhit_shower_fit_result[10][0];
-        sig_nhit_layer_10[i_energy] = 0.5*nhit_shower_fit_result[10][1];
+        mu_error_nhit_layer_10[i_energy] = nhit_shower_fit_result[10][1];
+	sig_nhit_layer_10[i_energy] = 0.5*nhit_shower_fit_result[10][2];
 	mu_nhit_layer_11[i_energy] = nhit_shower_fit_result[11][0];
-        sig_nhit_layer_11[i_energy] = 0.5*nhit_shower_fit_result[11][1];
+        mu_error_nhit_layer_11[i_energy] = nhit_shower_fit_result[11][1];
+	sig_nhit_layer_11[i_energy] = 0.5*nhit_shower_fit_result[11][2];
 	mu_nhit_layer_12[i_energy] = nhit_shower_fit_result[12][0];
-        sig_nhit_layer_12[i_energy] = 0.5*nhit_shower_fit_result[12][1];
+        mu_error_nhit_layer_12[i_energy] = nhit_shower_fit_result[12][1];
+	sig_nhit_layer_12[i_energy] = 0.5*nhit_shower_fit_result[12][2];
 	mu_nhit_layer_13[i_energy] = nhit_shower_fit_result[13][0];
-        sig_nhit_layer_13[i_energy] = 0.5*nhit_shower_fit_result[13][1];
+        mu_error_nhit_layer_13[i_energy] = nhit_shower_fit_result[13][1];
+	sig_nhit_layer_13[i_energy] = 0.5*nhit_shower_fit_result[13][2];
 	mu_nhit_layer_14[i_energy] = nhit_shower_fit_result[14][0];
-        sig_nhit_layer_14[i_energy] = 0.5*nhit_shower_fit_result[14][1];
+        mu_error_nhit_layer_14[i_energy] = nhit_shower_fit_result[14][1];
+	sig_nhit_layer_14[i_energy] = 0.5*nhit_shower_fit_result[14][2];
     
 	// nhit normalized
-	double nhit_shower_fit_par_n[4] = {1.,1.,1.,1.};
-        double nhit_shower_fit_result_n[N_ECAL_LAYERS][2];
-        double nhit_range_shower_fit_n[2] = {0., 1.};
-        //cout<<"Fits shower nhit normalized"<<endl;
-	fit_shower(h_nhit_layer_n_0, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[0][0], nhit_shower_fit_result_n[0][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_1, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[1][0], nhit_shower_fit_result_n[1][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_2, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[2][0], nhit_shower_fit_result_n[2][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_3, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[3][0], nhit_shower_fit_result_n[3][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_4, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[4][0], nhit_shower_fit_result_n[4][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_5, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[5][0], nhit_shower_fit_result_n[5][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_6, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[6][0], nhit_shower_fit_result_n[6][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_7, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[7][0], nhit_shower_fit_result_n[7][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_8, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[8][0], nhit_shower_fit_result_n[8][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_9, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[9][0], nhit_shower_fit_result_n[9][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_10, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[10][0], nhit_shower_fit_result_n[10][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_11, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[11][0], nhit_shower_fit_result_n[11][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_12, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[12][0], nhit_shower_fit_result_n[12][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_13, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[13][0], nhit_shower_fit_result_n[13][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
-        fit_shower(h_nhit_layer_n_14, nhit_shower_fit_par_n[0], nhit_shower_fit_par_n[1], nhit_shower_fit_par_n[2], nhit_shower_fit_par_n[3], nhit_shower_fit_result_n[14][0], nhit_shower_fit_result_n[14][1], nhit_range_shower_fit_n[0], nhit_range_shower_fit_n[1]);
+        double nhit_shower_fit_result_n[N_ECAL_LAYERS][3];
+	//cout<<"Fits shower nhit normalized"<<endl;
+	fit_langaus(h_nhit_layer_n_0, nhit_shower_fit_result_n[0][0], nhit_shower_fit_result_n[0][1], nhit_shower_fit_result_n[0][2]);
+        fit_langaus(h_nhit_layer_n_1, nhit_shower_fit_result_n[1][0], nhit_shower_fit_result_n[1][1], nhit_shower_fit_result_n[1][2]);
+        fit_langaus(h_nhit_layer_n_2, nhit_shower_fit_result_n[2][0], nhit_shower_fit_result_n[2][1], nhit_shower_fit_result_n[2][2]);
+        fit_langaus(h_nhit_layer_n_3, nhit_shower_fit_result_n[3][0], nhit_shower_fit_result_n[3][1], nhit_shower_fit_result_n[3][2]);
+        fit_langaus(h_nhit_layer_n_4, nhit_shower_fit_result_n[4][0], nhit_shower_fit_result_n[4][1], nhit_shower_fit_result_n[4][2]);
+        fit_langaus(h_nhit_layer_n_5, nhit_shower_fit_result_n[5][0], nhit_shower_fit_result_n[5][1], nhit_shower_fit_result_n[5][2]);
+        fit_langaus(h_nhit_layer_n_6, nhit_shower_fit_result_n[6][0], nhit_shower_fit_result_n[6][1], nhit_shower_fit_result_n[6][2]);
+        fit_langaus(h_nhit_layer_n_7, nhit_shower_fit_result_n[7][0], nhit_shower_fit_result_n[7][1], nhit_shower_fit_result_n[7][2]);
+        fit_langaus(h_nhit_layer_n_8, nhit_shower_fit_result_n[8][0], nhit_shower_fit_result_n[8][1], nhit_shower_fit_result_n[8][2]);
+        fit_langaus(h_nhit_layer_n_9, nhit_shower_fit_result_n[9][0], nhit_shower_fit_result_n[9][1], nhit_shower_fit_result_n[9][2]);
+        fit_langaus(h_nhit_layer_n_10, nhit_shower_fit_result_n[10][0], nhit_shower_fit_result_n[10][1], nhit_shower_fit_result_n[10][2]);
+        fit_langaus(h_nhit_layer_n_11, nhit_shower_fit_result_n[11][0], nhit_shower_fit_result_n[11][1], nhit_shower_fit_result_n[11][2]);
+        fit_langaus(h_nhit_layer_n_12, nhit_shower_fit_result_n[12][0], nhit_shower_fit_result_n[12][1], nhit_shower_fit_result_n[12][2]);
+        fit_langaus(h_nhit_layer_n_13, nhit_shower_fit_result_n[13][0], nhit_shower_fit_result_n[13][1], nhit_shower_fit_result_n[13][2]);
+        fit_langaus(h_nhit_layer_n_14, nhit_shower_fit_result_n[14][0], nhit_shower_fit_result_n[14][1], nhit_shower_fit_result_n[14][2]);
 
-	cout<<"calling cheaptrick for nhit_shower_n"<<endl; 
-	cheap_trick_sigma(nhit_shower_fit_result_n,"nhit_n");
-	
+		
         mu_nhit_layer_n_0[i_energy] = nhit_shower_fit_result_n[0][0];
-        sig_nhit_layer_n_0[i_energy] = 0.5*nhit_shower_fit_result_n[0][1];
+	mu_error_nhit_layer_n_0[i_energy] = nhit_shower_fit_result_n[0][1];
+        sig_nhit_layer_n_0[i_energy] = 0.5*nhit_shower_fit_result_n[0][2];
         mu_nhit_layer_n_1[i_energy] = nhit_shower_fit_result_n[1][0];
-        sig_nhit_layer_n_1[i_energy] = 0.5*nhit_shower_fit_result_n[1][1];
+	mu_error_nhit_layer_n_1[i_energy] = nhit_shower_fit_result_n[1][1];
+        sig_nhit_layer_n_1[i_energy] = 0.5*nhit_shower_fit_result_n[1][2];
         mu_nhit_layer_n_2[i_energy] = nhit_shower_fit_result_n[2][0];
-        sig_nhit_layer_n_2[i_energy] = 0.5*nhit_shower_fit_result_n[2][1];
+	mu_error_nhit_layer_n_2[i_energy] = nhit_shower_fit_result_n[2][1];
+        sig_nhit_layer_n_2[i_energy] = 0.5*nhit_shower_fit_result_n[2][2];
         mu_nhit_layer_n_3[i_energy] = nhit_shower_fit_result_n[3][0];
-        sig_nhit_layer_n_3[i_energy] = 0.5*nhit_shower_fit_result_n[3][1];
+	mu_error_nhit_layer_n_3[i_energy] = nhit_shower_fit_result_n[3][1];
+        sig_nhit_layer_n_3[i_energy] = 0.5*nhit_shower_fit_result_n[3][2];
         mu_nhit_layer_n_4[i_energy] = nhit_shower_fit_result_n[4][0];
-        sig_nhit_layer_n_4[i_energy] = 0.5*nhit_shower_fit_result_n[4][1];
+	mu_error_nhit_layer_n_4[i_energy] = nhit_shower_fit_result_n[4][1];
+        sig_nhit_layer_n_4[i_energy] = 0.5*nhit_shower_fit_result_n[4][2];
         mu_nhit_layer_n_5[i_energy] = nhit_shower_fit_result_n[5][0];
-        sig_nhit_layer_n_5[i_energy] = 0.5*nhit_shower_fit_result_n[5][1];
+	mu_error_nhit_layer_n_5[i_energy] = nhit_shower_fit_result_n[5][1];
+        sig_nhit_layer_n_5[i_energy] = 0.5*nhit_shower_fit_result_n[5][2];
         mu_nhit_layer_n_6[i_energy] = nhit_shower_fit_result_n[6][0];
-        sig_nhit_layer_n_6[i_energy] = 0.5*nhit_shower_fit_result_n[6][1];
+	mu_error_nhit_layer_n_6[i_energy] = nhit_shower_fit_result_n[6][1];
+        sig_nhit_layer_n_6[i_energy] = 0.5*nhit_shower_fit_result_n[6][2];
         mu_nhit_layer_n_7[i_energy] = nhit_shower_fit_result_n[7][0];
-        sig_nhit_layer_n_7[i_energy] = 0.5*nhit_shower_fit_result_n[7][1];
+	mu_error_nhit_layer_n_7[i_energy] = nhit_shower_fit_result_n[7][1];
+        sig_nhit_layer_n_7[i_energy] = 0.5*nhit_shower_fit_result_n[7][2];
         mu_nhit_layer_n_8[i_energy] = nhit_shower_fit_result_n[8][0];
-        sig_nhit_layer_n_8[i_energy] = 0.5*nhit_shower_fit_result_n[8][1];
+	mu_error_nhit_layer_n_8[i_energy] = nhit_shower_fit_result_n[8][1];
+        sig_nhit_layer_n_8[i_energy] = 0.5*nhit_shower_fit_result_n[8][2];
         mu_nhit_layer_n_9[i_energy] = nhit_shower_fit_result_n[9][0];
-        sig_nhit_layer_n_9[i_energy] = 0.5*nhit_shower_fit_result_n[9][1];
+	mu_error_nhit_layer_n_9[i_energy] = nhit_shower_fit_result_n[9][1];
+        sig_nhit_layer_n_9[i_energy] = 0.5*nhit_shower_fit_result_n[9][2];
         mu_nhit_layer_n_10[i_energy] = nhit_shower_fit_result_n[10][0];
-        sig_nhit_layer_n_10[i_energy] = 0.5*nhit_shower_fit_result_n[10][1];
+	mu_error_nhit_layer_n_10[i_energy] = nhit_shower_fit_result_n[10][1];
+        sig_nhit_layer_n_10[i_energy] = 0.5*nhit_shower_fit_result_n[10][2];
         mu_nhit_layer_n_11[i_energy] = nhit_shower_fit_result_n[11][0];
-        sig_nhit_layer_n_11[i_energy] = 0.5*nhit_shower_fit_result_n[11][1];
+	mu_error_nhit_layer_n_11[i_energy] = nhit_shower_fit_result_n[11][1];
+        sig_nhit_layer_n_11[i_energy] = 0.5*nhit_shower_fit_result_n[11][2];
         mu_nhit_layer_n_12[i_energy] = nhit_shower_fit_result_n[12][0];
-        sig_nhit_layer_n_12[i_energy] = 0.5*nhit_shower_fit_result_n[12][1];
+        mu_error_nhit_layer_n_12[i_energy] = nhit_shower_fit_result_n[12][1];
+        sig_nhit_layer_n_12[i_energy] = 0.5*nhit_shower_fit_result_n[12][2];
         mu_nhit_layer_n_13[i_energy] = nhit_shower_fit_result_n[13][0];
-        sig_nhit_layer_n_13[i_energy] = 0.5*nhit_shower_fit_result_n[13][1];
+	mu_error_nhit_layer_n_13[i_energy] = nhit_shower_fit_result_n[13][1];
+        sig_nhit_layer_n_13[i_energy] = 0.5*nhit_shower_fit_result_n[13][2];
         mu_nhit_layer_n_14[i_energy] = nhit_shower_fit_result_n[14][0];
-        sig_nhit_layer_n_14[i_energy] = 0.5*nhit_shower_fit_result_n[14][1];
+	mu_error_nhit_layer_n_14[i_energy] = nhit_shower_fit_result_n[14][1];
+        sig_nhit_layer_n_14[i_energy] = 0.5*nhit_shower_fit_result_n[14][2];
 
-	// weight                                                                                                                                                                                                                                                               
-        double weight_shower_fit_par[4] = {4.,2.,2.,2.};
-        double weight_shower_fit_result[N_ECAL_LAYERS][2];
-        double weight_range_shower_fit[2] = {0., 10000.};
-        //cout<<"Fits shower energy weighted"<<endl;
-	fit_shower(h_weight_layer_0, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[0][0], weight_shower_fit_result[0][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_1, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[1][0], weight_shower_fit_result[1][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_2, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[2][0], weight_shower_fit_result[2][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_3, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[3][0], weight_shower_fit_result[3][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_4, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[4][0], weight_shower_fit_result[4][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_5, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[5][0], weight_shower_fit_result[5][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_6, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[6][0], weight_shower_fit_result[6][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_7, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[7][0], weight_shower_fit_result[7][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_8, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[8][0], weight_shower_fit_result[8][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_9, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[9][0], weight_shower_fit_result[9][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_10, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[10][0], weight_shower_fit_result[10][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_11, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[11][0], weight_shower_fit_result[11][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_12, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[12][0], weight_shower_fit_result[12][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_13, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[13][0], weight_shower_fit_result[13][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-        fit_shower(h_weight_layer_14, weight_shower_fit_par[0], weight_shower_fit_par[1], weight_shower_fit_par[2], weight_shower_fit_par[3], weight_shower_fit_result[14][0], weight_shower_fit_result[14][1], weight_range_shower_fit[0], weight_range_shower_fit[1]);
-
-	cout<<"calling cheaptrick for weight_shower"<<endl;
-	cheap_trick_sigma(weight_shower_fit_result,"weight");
-
-        mu_weight_layer_0[i_energy] = weight_shower_fit_result[0][0];
-        sig_weight_layer_0[i_energy] = 0.5*weight_shower_fit_result[0][1];
-        mu_weight_layer_1[i_energy] = weight_shower_fit_result[1][0];
-        sig_weight_layer_1[i_energy] = 0.5*weight_shower_fit_result[1][1];
-        mu_weight_layer_2[i_energy] = weight_shower_fit_result[2][0];
-        sig_weight_layer_2[i_energy] = 0.5*weight_shower_fit_result[2][1];
-        mu_weight_layer_3[i_energy] = weight_shower_fit_result[3][0];
-        sig_weight_layer_3[i_energy] = 0.5*weight_shower_fit_result[3][1];
-        mu_weight_layer_4[i_energy] = weight_shower_fit_result[4][0];
-	sig_weight_layer_4[i_energy] = 0.5*weight_shower_fit_result[4][1];
-        mu_weight_layer_5[i_energy] = weight_shower_fit_result[5][0];
-        sig_weight_layer_5[i_energy] = 0.5*weight_shower_fit_result[5][1];
-        mu_weight_layer_6[i_energy] = weight_shower_fit_result[6][0];
-        sig_weight_layer_6[i_energy] = 0.5*weight_shower_fit_result[6][1];
-        mu_weight_layer_7[i_energy] = weight_shower_fit_result[7][0];
-        sig_weight_layer_7[i_energy] = 0.5*weight_shower_fit_result[7][1];
-        mu_weight_layer_8[i_energy] = weight_shower_fit_result[8][0];
-        sig_weight_layer_8[i_energy] = 0.5*weight_shower_fit_result[8][1];
-        mu_weight_layer_9[i_energy] = weight_shower_fit_result[9][0];
-        sig_weight_layer_9[i_energy] = 0.5*weight_shower_fit_result[9][1];
-        mu_weight_layer_10[i_energy] = weight_shower_fit_result[10][0];
-        sig_weight_layer_10[i_energy] = 0.5*weight_shower_fit_result[10][1];
-        mu_weight_layer_11[i_energy] = weight_shower_fit_result[11][0];
-        sig_weight_layer_11[i_energy] = 0.5*weight_shower_fit_result[11][1];
-        mu_weight_layer_12[i_energy] = weight_shower_fit_result[12][0];
-        sig_weight_layer_12[i_energy] = 0.5*weight_shower_fit_result[12][1];
-        mu_weight_layer_13[i_energy] = weight_shower_fit_result[13][0];
-        sig_weight_layer_13[i_energy] = 0.5*weight_shower_fit_result[13][1];
-        mu_weight_layer_14[i_energy] = weight_shower_fit_result[14][0];
-        sig_weight_layer_14[i_energy] = 0.5*weight_shower_fit_result[14][1];
-
-	// weight normalized                                                                                                                                                                                                                                                             
-        double weight_shower_fit_par_n[4] = {4.,2.,2.,2.};
-        double weight_shower_fit_result_n[N_ECAL_LAYERS][2];
-        double weight_range_shower_fit_n[2] = {0., 1.};
-        //cout<<"Fits shower energy weighted normalized"<<endl;
-	fit_shower(h_weight_layer_n_0, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[0][0], weight_shower_fit_result_n[0][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_1, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[1][0], weight_shower_fit_result_n[1][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_2, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[2][0], weight_shower_fit_result_n[2][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_3, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[3][0], weight_shower_fit_result_n[3][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_4, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[4][0], weight_shower_fit_result_n[4][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_5, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[5][0], weight_shower_fit_result_n[5][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_6, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[6][0], weight_shower_fit_result_n[6][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_7, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[7][0], weight_shower_fit_result_n[7][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_8, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[8][0], weight_shower_fit_result_n[8][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_9, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[9][0], weight_shower_fit_result_n[9][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_10, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[10][0], weight_shower_fit_result_n[10][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_11, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[11][0], weight_shower_fit_result_n[11][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_12, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[12][0], weight_shower_fit_result_n[12][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_13, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[13][0], weight_shower_fit_result_n[13][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-        fit_shower(h_weight_layer_n_14, weight_shower_fit_par_n[0], weight_shower_fit_par_n[1], weight_shower_fit_par_n[2], weight_shower_fit_par_n[3], weight_shower_fit_result_n[14][0], weight_shower_fit_result_n[14][1], weight_range_shower_fit_n[0], weight_range_shower_fit_n[1]);
-
-	cout<<"calling cheaptrick for weight_shower_n"<<endl;
-	cheap_trick_sigma(weight_shower_fit_result_n,"weight_n");
+	// weight
+        double weight_shower_fit_result[N_ECAL_LAYERS][3];
+	//cout<<"Fits shower energy weighted"<<endl;
+	fit_langaus(h_weight_layer_0, weight_shower_fit_result[0][0], weight_shower_fit_result[0][1], weight_shower_fit_result[0][2]);
+        fit_langaus(h_weight_layer_1, weight_shower_fit_result[1][0], weight_shower_fit_result[1][1], weight_shower_fit_result[1][2]);
+        fit_langaus(h_weight_layer_2, weight_shower_fit_result[2][0], weight_shower_fit_result[2][1], weight_shower_fit_result[2][2]);
+        fit_langaus(h_weight_layer_3, weight_shower_fit_result[3][0], weight_shower_fit_result[3][1], weight_shower_fit_result[3][2]);
+        fit_langaus(h_weight_layer_4, weight_shower_fit_result[4][0], weight_shower_fit_result[4][1], weight_shower_fit_result[4][2]);
+	fit_langaus(h_weight_layer_5, weight_shower_fit_result[5][0], weight_shower_fit_result[5][1], weight_shower_fit_result[5][2]);
+        fit_langaus(h_weight_layer_6, weight_shower_fit_result[6][0], weight_shower_fit_result[6][1], weight_shower_fit_result[6][2]);
+        fit_langaus(h_weight_layer_7, weight_shower_fit_result[7][0], weight_shower_fit_result[7][1], weight_shower_fit_result[7][2]);
+        fit_langaus(h_weight_layer_8, weight_shower_fit_result[8][0], weight_shower_fit_result[8][1], weight_shower_fit_result[8][2]);
+        fit_langaus(h_weight_layer_9, weight_shower_fit_result[9][0], weight_shower_fit_result[9][1], weight_shower_fit_result[9][2]);
+        fit_langaus(h_weight_layer_10, weight_shower_fit_result[10][0], weight_shower_fit_result[10][1], weight_shower_fit_result[10][2]);
+        fit_langaus(h_weight_layer_11, weight_shower_fit_result[11][0], weight_shower_fit_result[11][1], weight_shower_fit_result[11][2]);
+        fit_langaus(h_weight_layer_12, weight_shower_fit_result[12][0], weight_shower_fit_result[12][1], weight_shower_fit_result[12][2]);
+        fit_langaus(h_weight_layer_13, weight_shower_fit_result[13][0], weight_shower_fit_result[13][1], weight_shower_fit_result[13][2]);
+        fit_langaus(h_weight_layer_14, weight_shower_fit_result[14][0], weight_shower_fit_result[14][1], weight_shower_fit_result[14][2]);
 	
+        mu_weight_layer_0[i_energy] = weight_shower_fit_result[0][0];
+        mu_error_weight_layer_0[i_energy] = weight_shower_fit_result[0][1];
+        sig_weight_layer_0[i_energy] = 0.5*weight_shower_fit_result[0][2];
+        mu_weight_layer_1[i_energy] = weight_shower_fit_result[1][0];
+        mu_error_weight_layer_1[i_energy] = weight_shower_fit_result[1][1];
+        sig_weight_layer_1[i_energy] = 0.5*weight_shower_fit_result[1][2];
+        mu_weight_layer_2[i_energy] = weight_shower_fit_result[2][0];
+        mu_error_weight_layer_2[i_energy] = weight_shower_fit_result[2][1];
+        sig_weight_layer_2[i_energy] = 0.5*weight_shower_fit_result[2][2];
+        mu_weight_layer_3[i_energy] = weight_shower_fit_result[3][0];
+        mu_error_weight_layer_3[i_energy] = weight_shower_fit_result[3][1];
+        sig_weight_layer_3[i_energy] = 0.5*weight_shower_fit_result[3][2];
+        mu_weight_layer_4[i_energy] = weight_shower_fit_result[4][0];
+        mu_error_weight_layer_4[i_energy] = weight_shower_fit_result[4][1];
+	sig_weight_layer_4[i_energy] = 0.5*weight_shower_fit_result[4][2];
+        mu_weight_layer_5[i_energy] = weight_shower_fit_result[5][0];
+        mu_error_weight_layer_5[i_energy] = weight_shower_fit_result[5][1];
+        sig_weight_layer_5[i_energy] = 0.5*weight_shower_fit_result[5][2];
+        mu_weight_layer_6[i_energy] = weight_shower_fit_result[6][0];
+        mu_error_weight_layer_6[i_energy] = weight_shower_fit_result[6][1];
+        sig_weight_layer_6[i_energy] = 0.5*weight_shower_fit_result[6][2];
+        mu_weight_layer_7[i_energy] = weight_shower_fit_result[7][0];
+        mu_error_weight_layer_7[i_energy] = weight_shower_fit_result[7][1];
+        sig_weight_layer_7[i_energy] = 0.5*weight_shower_fit_result[7][2];
+        mu_weight_layer_8[i_energy] = weight_shower_fit_result[8][0];
+        mu_error_weight_layer_8[i_energy] = weight_shower_fit_result[8][1];
+        sig_weight_layer_8[i_energy] = 0.5*weight_shower_fit_result[8][2];
+        mu_weight_layer_9[i_energy] = weight_shower_fit_result[9][0];
+        mu_error_weight_layer_9[i_energy] = weight_shower_fit_result[9][1];
+        sig_weight_layer_9[i_energy] = 0.5*weight_shower_fit_result[9][2];
+        mu_weight_layer_10[i_energy] = weight_shower_fit_result[10][0];
+        mu_error_weight_layer_10[i_energy] = weight_shower_fit_result[10][1];
+        sig_weight_layer_10[i_energy] = 0.5*weight_shower_fit_result[10][2];
+        mu_weight_layer_11[i_energy] = weight_shower_fit_result[11][0];
+        mu_error_weight_layer_11[i_energy] = weight_shower_fit_result[11][1];
+        sig_weight_layer_11[i_energy] = 0.5*weight_shower_fit_result[11][2];
+        mu_weight_layer_12[i_energy] = weight_shower_fit_result[12][0];
+        mu_error_weight_layer_12[i_energy] = weight_shower_fit_result[12][1];
+        sig_weight_layer_12[i_energy] = 0.5*weight_shower_fit_result[12][2];
+        mu_weight_layer_13[i_energy] = weight_shower_fit_result[13][0];
+        mu_error_weight_layer_13[i_energy] = weight_shower_fit_result[13][1];
+        sig_weight_layer_13[i_energy] = 0.5*weight_shower_fit_result[13][2];
+        mu_weight_layer_14[i_energy] = weight_shower_fit_result[14][0];
+        mu_error_weight_layer_14[i_energy] = weight_shower_fit_result[14][1];
+        sig_weight_layer_14[i_energy] = 0.5*weight_shower_fit_result[14][2];
+
+	// weight normalized
+        double weight_shower_fit_result_n[N_ECAL_LAYERS][3];
+        //cout<<"Fits shower energy weighted normalized"<<endl;
+	fit_langaus(h_weight_layer_n_0, weight_shower_fit_result_n[0][0], weight_shower_fit_result_n[0][1], weight_shower_fit_result_n[0][2]);
+        fit_langaus(h_weight_layer_n_1, weight_shower_fit_result_n[1][0], weight_shower_fit_result_n[1][1], weight_shower_fit_result_n[1][2]);
+        fit_langaus(h_weight_layer_n_2, weight_shower_fit_result_n[2][0], weight_shower_fit_result_n[2][1], weight_shower_fit_result_n[2][2]);
+        fit_langaus(h_weight_layer_n_3, weight_shower_fit_result_n[3][0], weight_shower_fit_result_n[3][1], weight_shower_fit_result_n[3][2]);
+        fit_langaus(h_weight_layer_n_4, weight_shower_fit_result_n[4][0], weight_shower_fit_result_n[4][1], weight_shower_fit_result_n[4][2]);
+        fit_langaus(h_weight_layer_n_5, weight_shower_fit_result_n[5][0], weight_shower_fit_result_n[5][1], weight_shower_fit_result_n[5][2]);
+        fit_langaus(h_weight_layer_n_6, weight_shower_fit_result_n[6][0], weight_shower_fit_result_n[6][1], weight_shower_fit_result_n[6][2]);
+        fit_langaus(h_weight_layer_n_7, weight_shower_fit_result_n[7][0], weight_shower_fit_result_n[7][1], weight_shower_fit_result_n[7][2]);
+        fit_langaus(h_weight_layer_n_8, weight_shower_fit_result_n[8][0], weight_shower_fit_result_n[8][1], weight_shower_fit_result_n[8][2]);
+        fit_langaus(h_weight_layer_n_9, weight_shower_fit_result_n[9][0], weight_shower_fit_result_n[9][1], weight_shower_fit_result_n[9][2]);
+        fit_langaus(h_weight_layer_n_10, weight_shower_fit_result_n[10][0], weight_shower_fit_result_n[10][1], weight_shower_fit_result_n[10][2]);
+        fit_langaus(h_weight_layer_n_11, weight_shower_fit_result_n[11][0], weight_shower_fit_result_n[11][1], weight_shower_fit_result_n[11][2]);
+        fit_langaus(h_weight_layer_n_12, weight_shower_fit_result_n[12][0], weight_shower_fit_result_n[12][1], weight_shower_fit_result_n[12][2]);
+        fit_langaus(h_weight_layer_n_13, weight_shower_fit_result_n[13][0], weight_shower_fit_result_n[13][1], weight_shower_fit_result_n[13][2]);
+        fit_langaus(h_weight_layer_n_14, weight_shower_fit_result_n[14][0], weight_shower_fit_result_n[14][1], weight_shower_fit_result_n[14][2]);
+
         mu_weight_layer_n_0[i_energy] = weight_shower_fit_result_n[0][0];
-        sig_weight_layer_n_0[i_energy] = 0.5*weight_shower_fit_result_n[0][1];
+        mu_error_weight_layer_n_0[i_energy] = weight_shower_fit_result_n[0][1];
+        sig_weight_layer_n_0[i_energy] = 0.5*weight_shower_fit_result_n[0][2];
         mu_weight_layer_n_1[i_energy] = weight_shower_fit_result_n[1][0];
-        sig_weight_layer_n_1[i_energy] = 0.5*weight_shower_fit_result_n[1][1];
+        mu_error_weight_layer_n_1[i_energy] = weight_shower_fit_result_n[1][1];
+        sig_weight_layer_n_1[i_energy] = 0.5*weight_shower_fit_result_n[1][2];
         mu_weight_layer_n_2[i_energy] = weight_shower_fit_result_n[2][0];
-        sig_weight_layer_n_2[i_energy] = 0.5*weight_shower_fit_result_n[2][1];
+        mu_error_weight_layer_n_2[i_energy] = weight_shower_fit_result_n[2][1];
+        sig_weight_layer_n_2[i_energy] = 0.5*weight_shower_fit_result_n[2][2];
         mu_weight_layer_n_3[i_energy] = weight_shower_fit_result_n[3][0];
-        sig_weight_layer_n_3[i_energy] = 0.5*weight_shower_fit_result_n[3][1];
+        mu_error_weight_layer_n_3[i_energy] = weight_shower_fit_result_n[3][1];
+        sig_weight_layer_n_3[i_energy] = 0.5*weight_shower_fit_result_n[3][2];
         mu_weight_layer_n_4[i_energy] = weight_shower_fit_result_n[4][0];
-        sig_weight_layer_n_4[i_energy] = 0.5*weight_shower_fit_result_n[4][1];
+        mu_error_weight_layer_n_4[i_energy] = weight_shower_fit_result_n[4][1];
+        sig_weight_layer_n_4[i_energy] = 0.5*weight_shower_fit_result_n[4][2];
         mu_weight_layer_n_5[i_energy] = weight_shower_fit_result_n[5][0];
-        sig_weight_layer_n_5[i_energy] = 0.5*weight_shower_fit_result_n[5][1];
+        mu_error_weight_layer_n_5[i_energy] = weight_shower_fit_result_n[5][1];
+        sig_weight_layer_n_5[i_energy] = 0.5*weight_shower_fit_result_n[5][2];
         mu_weight_layer_n_6[i_energy] = weight_shower_fit_result_n[6][0];
-        sig_weight_layer_n_6[i_energy] = 0.5*weight_shower_fit_result_n[6][1];
+        mu_error_weight_layer_n_6[i_energy] = weight_shower_fit_result_n[6][1];
+        sig_weight_layer_n_6[i_energy] = 0.5*weight_shower_fit_result_n[6][2];
         mu_weight_layer_n_7[i_energy] = weight_shower_fit_result_n[7][0];
-        sig_weight_layer_n_7[i_energy] = 0.5*weight_shower_fit_result_n[7][1];
+        mu_error_weight_layer_n_7[i_energy] = weight_shower_fit_result_n[7][1];
+        sig_weight_layer_n_7[i_energy] = 0.5*weight_shower_fit_result_n[7][2];
         mu_weight_layer_n_8[i_energy] = weight_shower_fit_result_n[8][0];
-        sig_weight_layer_n_8[i_energy] = 0.5*weight_shower_fit_result_n[8][1];
+        mu_error_weight_layer_n_8[i_energy] = weight_shower_fit_result_n[8][1];
+        sig_weight_layer_n_8[i_energy] = 0.5*weight_shower_fit_result_n[8][2];
         mu_weight_layer_n_9[i_energy] = weight_shower_fit_result_n[9][0];
-        sig_weight_layer_n_9[i_energy] = 0.5*weight_shower_fit_result_n[9][1];
+        mu_error_weight_layer_n_9[i_energy] = weight_shower_fit_result_n[9][1];
+        sig_weight_layer_n_9[i_energy] = 0.5*weight_shower_fit_result_n[9][2];
         mu_weight_layer_n_10[i_energy] = weight_shower_fit_result_n[10][0];
-        sig_weight_layer_n_10[i_energy] = 0.5*weight_shower_fit_result_n[10][1];
+        mu_error_weight_layer_n_10[i_energy] = weight_shower_fit_result_n[10][1];
+        sig_weight_layer_n_10[i_energy] = 0.5*weight_shower_fit_result_n[10][2];
         mu_weight_layer_n_11[i_energy] = weight_shower_fit_result_n[11][0];
-        sig_weight_layer_n_11[i_energy] = 0.5*weight_shower_fit_result_n[11][1];
+        mu_error_weight_layer_n_11[i_energy] = weight_shower_fit_result_n[11][1];
+        sig_weight_layer_n_11[i_energy] = 0.5*weight_shower_fit_result_n[11][2];
         mu_weight_layer_n_12[i_energy] = weight_shower_fit_result_n[12][0];
-        sig_weight_layer_n_12[i_energy] = 0.5*weight_shower_fit_result_n[12][1];
+        mu_error_weight_layer_n_12[i_energy] = weight_shower_fit_result_n[12][1];
+        sig_weight_layer_n_12[i_energy] = 0.5*weight_shower_fit_result_n[12][2];
         mu_weight_layer_n_13[i_energy] = weight_shower_fit_result_n[13][0];
-        sig_weight_layer_n_13[i_energy] = 0.5*weight_shower_fit_result_n[13][1];
+        mu_error_weight_layer_n_13[i_energy] = weight_shower_fit_result_n[13][1];
+        sig_weight_layer_n_13[i_energy] = 0.5*weight_shower_fit_result_n[13][2];
         mu_weight_layer_n_14[i_energy] = weight_shower_fit_result_n[14][0];
-        sig_weight_layer_n_14[i_energy] = 0.5*weight_shower_fit_result_n[14][1];
+        mu_error_weight_layer_n_14[i_energy] = weight_shower_fit_result_n[14][1];
+        sig_weight_layer_n_14[i_energy] = 0.5*weight_shower_fit_result_n[14][2];
 	
 	// barycenter x per layer
         double bar_x_fit_result[N_ECAL_LAYERS][2];
@@ -1531,8 +1272,6 @@ void analysis (string particle) {
 	fit_bar(h_bar_x_layer_13, bar_x_fit_result[13][0], bar_x_fit_result[13][1]);
 	fit_bar(h_bar_x_layer_14, bar_x_fit_result[14][0], bar_x_fit_result[14][1]);
 	
-	cout<<"calling cheaptrick for bar_x"<<endl;
-	cheap_trick_sigma(bar_x_fit_result,"bar");
 
         mu_barycenter_x_layer_0[i_energy] = bar_x_fit_result[0][0];
         sig_barycenter_x_layer_0[i_energy] = bar_x_fit_result[0][1];
@@ -1584,8 +1323,6 @@ void analysis (string particle) {
         fit_bar(h_bar_y_layer_13, bar_y_fit_result[13][0], bar_y_fit_result[13][1]);
         fit_bar(h_bar_y_layer_14, bar_y_fit_result[14][0], bar_y_fit_result[14][1]);
 	
-	cout<<"calling cheaptrick for bar_y"<<endl;
-	cheap_trick_sigma(bar_y_fit_result,"bar");
 
         mu_barycenter_y_layer_0[i_energy] = bar_y_fit_result[0][0];
         sig_barycenter_y_layer_0[i_energy] = bar_y_fit_result[0][1];
@@ -1650,18 +1387,24 @@ void analysis (string particle) {
 	//cout<<"Weight shower layer start (0.1*Max): "<<shower_weight_start_10_layer[i_energy]<<", end (0.1*Max): "<<shower_weight_end_10_layer[i_energy]<<endl;
         //cout<<"Weight shower layer average: "<<shower_weight_average[i_energy]<<", max. value: "<<shower_weight_max[i_energy]<<endl;
 	
-	barycenter_x[i_energy] = h_bar_x->GetMean();
-	barycenter_y[i_energy] = h_bar_y->GetMean();
-	barycenter_z[i_energy] = h_bar_z->GetMean();
-	barycenter_x_masked[i_energy] = h_bar_x_masked->GetMean();
-	barycenter_y_masked[i_energy] = h_bar_y_masked->GetMean();
-	barycenter_z_masked[i_energy] = h_bar_z_masked->GetMean();
-  
+	double bar_fits[3][2];
+
+        fit_bar(h_bar_x, bar_fits[0][0], bar_fits[0][1]);
+	fit_bar(h_bar_y, bar_fits[1][0], bar_fits[1][1]);
+	fit_bar(h_bar_z, bar_fits[2][0], bar_fits[2][1]);
+
+	mu_barycenter_x[i_energy] = bar_fits[0][0];
+	mu_barycenter_y[i_energy] = bar_fits[1][0];
+	mu_barycenter_z[i_energy] = bar_fits[2][0];
+	sig_barycenter_x[i_energy] = bar_fits[0][1];
+        sig_barycenter_y[i_energy] = bar_fits[1][1];
+        sig_barycenter_z[i_energy] = bar_fits[2][1];
+	  
 	//Write objects
-        f.WriteTObject(h_nhit);    f.WriteTObject(h_nhit_masked);
-        f.WriteTObject(h_sume);    f.WriteTObject(h_sume_masked);
-        f.WriteTObject(h_weight);  f.WriteTObject(h_weight_masked);
-        f.WriteTObject(h_mol);     f.WriteTObject(h_mol_masked);
+        f.WriteTObject(h_nhit);    
+        f.WriteTObject(h_sume);    
+        f.WriteTObject(h_weight);  
+        f.WriteTObject(h_mol);     
 	
 	f.WriteTObject(h_nhit_layer_0);
 	f.WriteTObject(h_nhit_layer_1);
@@ -1678,22 +1421,6 @@ void analysis (string particle) {
 	f.WriteTObject(h_nhit_layer_12);
 	f.WriteTObject(h_nhit_layer_13);
 	f.WriteTObject(h_nhit_layer_14);
-
-	f.WriteTObject(h_nhit_layer_0_masked);
-        f.WriteTObject(h_nhit_layer_1_masked);
-        f.WriteTObject(h_nhit_layer_2_masked);
-        f.WriteTObject(h_nhit_layer_3_masked);
-        f.WriteTObject(h_nhit_layer_4_masked);
-        f.WriteTObject(h_nhit_layer_5_masked);
-        f.WriteTObject(h_nhit_layer_6_masked);
-        f.WriteTObject(h_nhit_layer_7_masked);
-        f.WriteTObject(h_nhit_layer_8_masked);
-        f.WriteTObject(h_nhit_layer_9_masked);
-        f.WriteTObject(h_nhit_layer_10_masked);
-        f.WriteTObject(h_nhit_layer_11_masked);
-        f.WriteTObject(h_nhit_layer_12_masked);
-        f.WriteTObject(h_nhit_layer_13_masked);
-        f.WriteTObject(h_nhit_layer_14_masked);
 	
 	f.WriteTObject(h_nhit_layer_n_0);
         f.WriteTObject(h_nhit_layer_n_1);
@@ -1710,22 +1437,6 @@ void analysis (string particle) {
         f.WriteTObject(h_nhit_layer_n_12);
         f.WriteTObject(h_nhit_layer_n_13);
         f.WriteTObject(h_nhit_layer_n_14);
-    
-	f.WriteTObject(h_nhit_layer_n_0_masked);
-        f.WriteTObject(h_nhit_layer_n_1_masked);
-        f.WriteTObject(h_nhit_layer_n_2_masked);
-        f.WriteTObject(h_nhit_layer_n_3_masked);
-        f.WriteTObject(h_nhit_layer_n_4_masked);
-        f.WriteTObject(h_nhit_layer_n_5_masked);
-        f.WriteTObject(h_nhit_layer_n_6_masked);
-        f.WriteTObject(h_nhit_layer_n_7_masked);
-        f.WriteTObject(h_nhit_layer_n_8_masked);
-        f.WriteTObject(h_nhit_layer_n_9_masked);
-        f.WriteTObject(h_nhit_layer_n_10_masked);
-        f.WriteTObject(h_nhit_layer_n_11_masked);
-        f.WriteTObject(h_nhit_layer_n_12_masked);
-        f.WriteTObject(h_nhit_layer_n_13_masked);
-        f.WriteTObject(h_nhit_layer_n_14_masked);
 
 	f.WriteTObject(h_shower_nhit_max_layer);
         f.WriteTObject(h_shower_nhit_start_layer);
@@ -1751,22 +1462,6 @@ void analysis (string particle) {
         f.WriteTObject(h_weight_layer_13);
         f.WriteTObject(h_weight_layer_14);
 
-        f.WriteTObject(h_weight_layer_0_masked);
-        f.WriteTObject(h_weight_layer_1_masked);
-        f.WriteTObject(h_weight_layer_2_masked);
-        f.WriteTObject(h_weight_layer_3_masked);
-        f.WriteTObject(h_weight_layer_4_masked);
-        f.WriteTObject(h_weight_layer_5_masked);
-        f.WriteTObject(h_weight_layer_6_masked);
-        f.WriteTObject(h_weight_layer_7_masked);
-        f.WriteTObject(h_weight_layer_8_masked);
-        f.WriteTObject(h_weight_layer_9_masked);
-        f.WriteTObject(h_weight_layer_10_masked);
-        f.WriteTObject(h_weight_layer_11_masked);
-        f.WriteTObject(h_weight_layer_12_masked);
-        f.WriteTObject(h_weight_layer_13_masked);
-        f.WriteTObject(h_weight_layer_14_masked);
-
         f.WriteTObject(h_weight_layer_n_0);
         f.WriteTObject(h_weight_layer_n_1);
         f.WriteTObject(h_weight_layer_n_2);
@@ -1782,22 +1477,6 @@ void analysis (string particle) {
         f.WriteTObject(h_weight_layer_n_12);
         f.WriteTObject(h_weight_layer_n_13);
         f.WriteTObject(h_weight_layer_n_14);
-
-        f.WriteTObject(h_weight_layer_n_0_masked);
-        f.WriteTObject(h_weight_layer_n_1_masked);
-        f.WriteTObject(h_weight_layer_n_2_masked);
-        f.WriteTObject(h_weight_layer_n_3_masked);
-        f.WriteTObject(h_weight_layer_n_4_masked);
-        f.WriteTObject(h_weight_layer_n_5_masked);
-        f.WriteTObject(h_weight_layer_n_6_masked);
-        f.WriteTObject(h_weight_layer_n_7_masked);
-        f.WriteTObject(h_weight_layer_n_8_masked);
-        f.WriteTObject(h_weight_layer_n_9_masked);
-        f.WriteTObject(h_weight_layer_n_10_masked);
-        f.WriteTObject(h_weight_layer_n_11_masked);
-        f.WriteTObject(h_weight_layer_n_12_masked);
-        f.WriteTObject(h_weight_layer_n_13_masked);
-        f.WriteTObject(h_weight_layer_n_14_masked);
 
         f.WriteTObject(h_shower_weight_max_layer);
         f.WriteTObject(h_shower_weight_start_layer);
@@ -1823,22 +1502,6 @@ void analysis (string particle) {
         f.WriteTObject(h_bar_x_layer_13);
         f.WriteTObject(h_bar_x_layer_14);
 
-        f.WriteTObject(h_bar_x_layer_0_masked);
-        f.WriteTObject(h_bar_x_layer_1_masked);
-        f.WriteTObject(h_bar_x_layer_2_masked);
-        f.WriteTObject(h_bar_x_layer_3_masked);
-        f.WriteTObject(h_bar_x_layer_4_masked);
-        f.WriteTObject(h_bar_x_layer_5_masked);
-        f.WriteTObject(h_bar_x_layer_6_masked);
-        f.WriteTObject(h_bar_x_layer_7_masked);
-        f.WriteTObject(h_bar_x_layer_8_masked);
-        f.WriteTObject(h_bar_x_layer_9_masked);
-        f.WriteTObject(h_bar_x_layer_10_masked);
-        f.WriteTObject(h_bar_x_layer_11_masked);
-        f.WriteTObject(h_bar_x_layer_12_masked);
-        f.WriteTObject(h_bar_x_layer_13_masked);
-        f.WriteTObject(h_bar_x_layer_14_masked);
-
 	f.WriteTObject(h_bar_y_layer_0);
         f.WriteTObject(h_bar_y_layer_1);
         f.WriteTObject(h_bar_y_layer_2);
@@ -1855,37 +1518,15 @@ void analysis (string particle) {
         f.WriteTObject(h_bar_y_layer_13);
         f.WriteTObject(h_bar_y_layer_14);
 
-        f.WriteTObject(h_bar_y_layer_0_masked);
-        f.WriteTObject(h_bar_y_layer_1_masked);
-        f.WriteTObject(h_bar_y_layer_2_masked);
-        f.WriteTObject(h_bar_y_layer_3_masked);
-        f.WriteTObject(h_bar_y_layer_4_masked);
-        f.WriteTObject(h_bar_y_layer_5_masked);
-        f.WriteTObject(h_bar_y_layer_6_masked);
-        f.WriteTObject(h_bar_y_layer_7_masked);
-        f.WriteTObject(h_bar_y_layer_8_masked);
-        f.WriteTObject(h_bar_y_layer_9_masked);
-        f.WriteTObject(h_bar_y_layer_10_masked);
-        f.WriteTObject(h_bar_y_layer_11_masked);
-        f.WriteTObject(h_bar_y_layer_12_masked);
-        f.WriteTObject(h_bar_y_layer_13_masked);
-        f.WriteTObject(h_bar_y_layer_14_masked);
-
 	f.WriteTObject(h_bar_x);
 	f.WriteTObject(h_bar_y);
 	f.WriteTObject(h_bar_z);
-	f.WriteTObject(h_bar_x_masked);
-	f.WriteTObject(h_bar_y_masked);
-	f.WriteTObject(h_bar_z_masked);
     }
     
     f.WriteObject(&mu_nhit, "mu_nhit");                     f.WriteObject(&sig_nhit, "sig_nhit");                   f.WriteObject(&res_nhit, "res_nhit");
-    f.WriteObject(&mu_nhit_masked, "mu_nhit_masked");       f.WriteObject(&sig_nhit_masked, "sig_nhit_masked");     f.WriteObject(&res_nhit_masked, "res_nhit_masked");
     f.WriteObject(&mu_sume, "mu_sume");                     f.WriteObject(&sig_sume, "sig_sume");                   f.WriteObject(&res_sume, "res_sume");
-    f.WriteObject(&mu_sume_masked, "mu_sume_masked");       f.WriteObject(&sig_sume_masked, "sig_sume_masked");     f.WriteObject(&res_sume_masked, "res_sume_masked");
     f.WriteObject(&mu_weight, "mu_weight");                 f.WriteObject(&sig_weight, "sig_weight");               f.WriteObject(&res_weight, "res_weight");
-    f.WriteObject(&mu_weight_masked, "mu_weight_masked");   f.WriteObject(&sig_weight_masked, "sig_weight_masked"); f.WriteObject(&res_weight_masked, "res_weight_masked");
-    f.WriteObject(&mu_mol, "mu_mol");   f.WriteObject(&mu_mol_masked, "mu_mol_masked"); f.WriteObject(&sig_mol, "sig_mol");   f.WriteObject(&sig_mol_masked, "sig_mol_masked");
+    f.WriteObject(&mu_mol, "mu_mol");  f.WriteObject(&sig_mol, "sig_mol");
     
     f.WriteTObject(&mu_nhit_layer_0, "mu_nhit_layer_0");
     f.WriteTObject(&mu_nhit_layer_1, "mu_nhit_layer_1");
@@ -2089,13 +1730,13 @@ void analysis (string particle) {
     f.WriteTObject(&sig_barycenter_y_layer_13, "sig_barycenter_y_layer_13");
     f.WriteTObject(&sig_barycenter_y_layer_14, "sig_barycenter_y_layer_14");
 
-    f.WriteTObject(&barycenter_x, "barycenter_x");
-    f.WriteTObject(&barycenter_y, "barycenter_y");
-    f.WriteTObject(&barycenter_z, "barycenter_z");
-    f.WriteTObject(&barycenter_x_masked, "barycenter_x_masked");
-    f.WriteTObject(&barycenter_y_masked, "barycenter_y_masked");
-    f.WriteTObject(&barycenter_z_masked, "barycenter_z_masked");
-
+    f.WriteTObject(&mu_barycenter_x, "mu_barycenter_x");
+    f.WriteTObject(&mu_barycenter_y, "mu_barycenter_y");
+    f.WriteTObject(&mu_barycenter_z, "mu_barycenter_z");
+    f.WriteTObject(&sig_barycenter_x, "sig_barycenter_x");
+    f.WriteTObject(&sig_barycenter_y, "sig_barycenter_y");
+    f.WriteTObject(&sig_barycenter_z, "sig_barycenter_z");
+    
     f.WriteObject(&energies, "energies");
     f.WriteObject(&energies_tr, "energies_tr");
     f.WriteObject(&W_thicknesses, "W_thicknesses");

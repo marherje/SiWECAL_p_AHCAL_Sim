@@ -30,30 +30,22 @@ vector<size_t> sort_indexes(const vector<T> &v) {
 #define N_ENERGIES XENERGIESX //18
 #define N_ECAL_LAYERS 15
 
-void get_res(int &nhit,     int &nhit_masked,
-             float &sume,   float &sume_masked,
-             float &weighte, float &weighte_masked,
-             vector<float> * hit_energy, vector<int> *hit_slab, vector<int> *hit_isMasked,
-             TVectorD W_thicknesses) {
+void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool &masked) {
   if(hit_energy->size() > 0){    
     //cout<<W_thicknesses.Min()<<endl;
     // First option: use the minimum of the used
     // Second option: use the paper as reference 0.4X0, X0=3.5mm
-    // It was weighte_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
+    // It was weight_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
     // New version ?
     
-   for (int j = 0; j < hit_energy->size(); j++) {
-            if (hit_isMasked->at(j) == 0) {
-                nhit_masked += 1;
-                sume_masked += hit_energy->at(j);
-                weighte_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
-            }
-            nhit += 1;
-            sume += hit_energy->at(j);
-            weighte += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
-        }
+    for (int j = 0; j < hit_energy->size(); j++) {
+      if( masked && hit_isMasked->at(j) == 1 ) continue;
+      nhit += 1;
+      sume += hit_energy->at(j);
+      weight += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
+    }
   }
-    return;
+  return;
 }
 
 void hits_layer(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, vector<int> *hit_isMasked, bool masked=false, bool normalized=false, string count_type="nhit"){
@@ -114,63 +106,61 @@ void hits_layer(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vector<int
 }
 
 void shower_variables(float entries, float array[N_ECAL_LAYERS], float array_n[N_ECAL_LAYERS], float &shower_maxvalue, float &shower_maxvalue_n, int &ilayermax,
-		      int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit") {
+                      int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit") {
   
   float threshold = 0.;
   float percentage = 0.1;
 
   if(count_type == "nhit") threshold = 2.;
-  if(count_type == "weighte") threshold = 10.;  
+  if(count_type == "weight") threshold = 2.;  
   /*
-  cout<<count_type<<" shower variables"<<endl;
-  for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++)cout<<array[ilayer]<<" ";
-  cout<<""<<endl;
+    cout<<count_type<<" shower variables"<<endl;
+    for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++)cout<<array[ilayer]<<" ";
+    cout<<""<<endl;
   */
-  if(entries > N_ECAL_LAYERS){
+  if(entries > 0){
     for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++){
       float thislayer = array[ilayer];
       float thislayer_n = array_n[ilayer];
-      if(thislayer > threshold) {
-	if(thislayer > shower_maxvalue){
-	  shower_maxvalue = thislayer;
-	  shower_maxvalue_n = thislayer_n;
-	  ilayermax = ilayer;
-	}
+      if(thislayer > shower_maxvalue){
+        shower_maxvalue = thislayer;
+        shower_maxvalue_n = thislayer_n;
+        ilayermax = ilayer;
       }
     }
 
     if((shower_maxvalue_n > 1/N_ECAL_LAYERS) && (shower_maxvalue > threshold)){
       for(int ilayer=N_ECAL_LAYERS-1; ilayer>ilayermax; ilayer--){
-	float thislayer = array[ilayer];
-	if((thislayer > threshold) && (thislayer < 0.5*shower_maxvalue)) {
-	  ilayerend = ilayer;
-	  break;
-	}
+        float thislayer = array[ilayer];
+        if((thislayer > threshold) && (thislayer < 0.5*shower_maxvalue)) {
+          ilayerend = ilayer;
+          break;
+        }
       }
       for(int ilayer=N_ECAL_LAYERS-1; ilayer>ilayermax; ilayer--){
         float thislayer = array[ilayer];
-	if((thislayer > threshold) && (thislayer > percentage*shower_maxvalue) && (thislayer < 0.3*shower_maxvalue)) {
-	  ilayerend_10 = ilayer;
-	  break;
-	}
+        if((thislayer > threshold) && (thislayer > percentage*shower_maxvalue) && (thislayer < 0.3*shower_maxvalue)) {
+          ilayerend_10 = ilayer;
+          break;
+        }
       }
       //cout<<count_type<<" end 0.1: "<<ilayerend_10<<", end: "<<ilayerend<<endl;
 
       for(int ilayer=0; ilayer<ilayermax; ilayer++){
-	float thislayer = array[ilayer];
-	//cout<<"|start loop| layer "<<ilayer<<" value: "<<thislayer<<endl;
-	if((thislayer > threshold) && (thislayer < 0.5*shower_maxvalue)) {
-	  ilayerstart = ilayer;
-	  break;
-	}
+        float thislayer = array[ilayer];
+        //cout<<"|start loop| layer "<<ilayer<<" value: "<<thislayer<<endl;
+        if((thislayer > threshold) && (thislayer < 0.5*shower_maxvalue)) {
+          ilayerstart = ilayer;
+          break;
+        }
       }
       for(int ilayer=0; ilayer<ilayermax; ilayer++){
         float thislayer = array[ilayer];
-	//cout<<"|start loop per| layer "<<ilayer<<" value: "<<thislayer<<endl;
+        //cout<<"|start loop per| layer "<<ilayer<<" value: "<<thislayer<<endl;
         if((thislayer > threshold) && (thislayer > percentage*shower_maxvalue) && (thislayer < 0.3*shower_maxvalue)) {
-	  ilayerstart_10 = ilayer;
-	  break;
-	}
+          ilayerstart_10 = ilayer;
+          break;
+        }
       }
       //cout<<count_type<<" start 0.1: "<<ilayerstart_10<<", start: "<<ilayerstart<<endl;
     }
@@ -484,132 +474,134 @@ void analysis (string particle, bool masking=false) {
 
 
     // HISTO definition
-    TH1F *h_nhit = new TH1F("NumHits", "Number of hits", 4000, 0, 4000);
-    TH1F *h_sume = new TH1F("SumEnergy", "Sum Energy", 500, 0, 15000);
-    TH1F *h_weighte = new TH1F("WSumEnergy", "W Sum Energy", 500, 0, 70000);
-    
-    // Barycenter histos
-    TH1F *h_bar_x = new TH1F("Barycenter_x", "Barycenter (x-axis)", 200, -100., 100.);
-    TH1F *h_bar_y = new TH1F("Barycenter_y", "Barycenter (y-axis)", 200, -100., 100.);
-    TH1F *h_bar_z = new TH1F("Barycenter_z", "Barycenter (z-axis)", 1000, -500., 500.);
-    
-    // Barycenter per layer
-    TH1F *h_bar_x_layer_0 = new TH1F("Barycenter_x_layer_0", "Barycenter (x-axis) layer 0", 200, -100., 100.);
-    TH1F *h_bar_x_layer_1 = new TH1F("Barycenter_x_layer_1", "Barycenter (x-axis) layer 1", 200, -100., 100.);
-    TH1F *h_bar_x_layer_2 = new TH1F("Barycenter_x_layer_2", "Barycenter (x-axis) layer 2", 200, -100., 100.);
-    TH1F *h_bar_x_layer_3 = new TH1F("Barycenter_x_layer_3", "Barycenter (x-axis) layer 3", 200, -100., 100.);
-    TH1F *h_bar_x_layer_4 = new TH1F("Barycenter_x_layer_4", "Barycenter (x-axis) layer 4", 200, -100., 100.);
-    TH1F *h_bar_x_layer_5 = new TH1F("Barycenter_x_layer_5", "Barycenter (x-axis) layer 5", 200, -100., 100.);
-    TH1F *h_bar_x_layer_6 = new TH1F("Barycenter_x_layer_6", "Barycenter (x-axis) layer 6", 200, -100., 100.);
-    TH1F *h_bar_x_layer_7 = new TH1F("Barycenter_x_layer_7", "Barycenter (x-axis) layer 7", 200, -100., 100.);
-    TH1F *h_bar_x_layer_8 = new TH1F("Barycenter_x_layer_8", "Barycenter (x-axis) layer 8", 200, -100., 100.);
-    TH1F *h_bar_x_layer_9 = new TH1F("Barycenter_x_layer_9", "Barycenter (x-axis) layer 9", 200, -100., 100.);
-    TH1F *h_bar_x_layer_10 = new TH1F("Barycenter_x_layer_10", "Barycenter (x-axis) layer 10", 200, -100., 100.);
-    TH1F *h_bar_x_layer_11 = new TH1F("Barycenter_x_layer_11", "Barycenter (x-axis) layer 11", 200, -100., 100.);
-    TH1F *h_bar_x_layer_12 = new TH1F("Barycenter_x_layer_12", "Barycenter (x-axis) layer 12", 200, -100., 100.);
-    TH1F *h_bar_x_layer_13 = new TH1F("Barycenter_x_layer_13", "Barycenter (x-axis) layer 13", 200, -100., 100.);
-    TH1F *h_bar_x_layer_14 = new TH1F("Barycenter_x_layer_14", "Barycenter (x-axis) layer 14", 200, -100., 100.);
-    
-    TH1F *h_bar_y_layer_0 = new TH1F("Barycenter_y_layer_0", "Barycenter (y-axis) layer 0", 200, -100., 100.);
-    TH1F *h_bar_y_layer_1 = new TH1F("Barycenter_y_layer_1", "Barycenter (y-axis) layer 1", 200, -100., 100.);
-    TH1F *h_bar_y_layer_2 = new TH1F("Barycenter_y_layer_2", "Barycenter (x-axis) layer 2", 200, -100., 100.);
-    TH1F *h_bar_y_layer_3 = new TH1F("Barycenter_y_layer_3", "Barycenter (y-axis) layer 3", 200, -100., 100.);
-    TH1F *h_bar_y_layer_4 = new TH1F("Barycenter_y_layer_4", "Barycenter (y-axis) layer 4", 200, -100., 100.);
-    TH1F *h_bar_y_layer_5 = new TH1F("Barycenter_y_layer_5", "Barycenter (y-axis) layer 5", 200, -100., 100.);
-    TH1F *h_bar_y_layer_6 = new TH1F("Barycenter_y_layer_6", "Barycenter (y-axis) layer 6", 200, -100., 100.);
-    TH1F *h_bar_y_layer_7 = new TH1F("Barycenter_y_layer_7", "Barycenter (y-axis) layer 7", 200, -100., 100.);
-    TH1F *h_bar_y_layer_8 = new TH1F("Barycenter_y_layer_8", "Barycenter (y-axis) layer 8", 200, -100., 100.);
-    TH1F *h_bar_y_layer_9 = new TH1F("Barycenter_y_layer_9", "Barycenter (y-axis) layer 9", 200, -100., 100.);
-    TH1F *h_bar_y_layer_10 = new TH1F("Barycenter_y_layer_10", "Barycenter (y-axis) layer 10", 200, -100., 100.);
-    TH1F *h_bar_y_layer_11 = new TH1F("Barycenter_y_layer_11", "Barycenter (y-axis) layer 11", 200, -100., 100.);
-    TH1F *h_bar_y_layer_12 = new TH1F("Barycenter_y_layer_12", "Barycenter (y-axis) layer 12", 200, -100., 100.);
-    TH1F *h_bar_y_layer_13 = new TH1F("Barycenter_y_layer_13", "Barycenter (y-axis) layer 13", 200, -100., 100.);
-    TH1F *h_bar_y_layer_14 = new TH1F("Barycenter_y_layer_14", "Barycenter (y-axis) layer 14", 200, -100., 100.);
-        
-    // Moliere histos
-    TH1F *h_mol = new TH1F("Radius90", "Radius containing 90% of energy", 100, 0., 100.);
-        
-    // Shower profile characteristics
-    TH1F *h_shower_nhit_max_layer = new TH1F("ShowerNhitMaxLayer", "Shower Nhit Max. (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_nhit_start_layer = new TH1F("ShowerNhitStartLayer", "Shower Nhit Start (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_nhit_end_layer = new TH1F("ShowerNhitEndLayer", "Shower Nhit End (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_nhit_start_10_layer = new TH1F("ShowerNhitStart10Layer", "Shower Nhit Start 0.1*Max (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_nhit_end_10_layer = new TH1F("ShowerNhitEnd10Layer", "Shower Nhit End 0.1*Max (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_nhit_average= new TH1F("ShowerNhitAverage", "Shower Nhit Average ", 200, 0, 200);
-    TH1F *h_shower_nhit_max= new TH1F("ShowerNhitMax", "Shower Nhit Max ", 200, 0, 200);
-    
-    TH1F *h_shower_weighte_max_layer = new TH1F("ShowerWeighteMaxLayer", "Shower Weighte Max. (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_weighte_start_layer = new TH1F("ShowerWeighteStartLayer", "Shower Weighte Start (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_weighte_end_layer = new TH1F("ShowerWeighteEndLayer", "Shower Weighte End (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_weighte_start_10_layer = new TH1F("ShowerWeighteStart10Layer", "Shower Weighte Start 0.1*Max (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_weighte_end_10_layer = new TH1F("ShowerWeighteEnd10Layer", "Shower Weighte End 0.1*Max (layer)", 16, -1.5, 14.5);
-    TH1F *h_shower_weighte_average= new TH1F("ShowerWeighteAverage", "Shower Weighte Average ", 200, 0, 200);
-    TH1F *h_shower_weighte_max= new TH1F("ShowerWeighteMax", "Shower Weighte Max ", 200, 0, 200);
-    
-    // Shower profile per layer
-    TH1F *h_nhit_layer_0 = new TH1F("NumHits_layer_0", "Number of hits (layer 0)", 200, 0, 200);
-    TH1F *h_nhit_layer_1 = new TH1F("NumHits_layer_1", "Number of hits (layer 1)", 200, 0, 200);
-    TH1F *h_nhit_layer_2 = new TH1F("NumHits_layer_2", "Number of hits (layer 2)", 200, 0, 200);
-    TH1F *h_nhit_layer_3 = new TH1F("NumHits_layer_3", "Number of hits (layer 3)", 200, 0, 200);
-    TH1F *h_nhit_layer_4 = new TH1F("NumHits_layer_4", "Number of hits (layer 4)", 200, 0, 200);
-    TH1F *h_nhit_layer_5 = new TH1F("NumHits_layer_5", "Number of hits (layer 5)", 200, 0, 200);
-    TH1F *h_nhit_layer_6 = new TH1F("NumHits_layer_6", "Number of hits (layer 6)", 200, 0, 200);
-    TH1F *h_nhit_layer_7 = new TH1F("NumHits_layer_7", "Number of hits (layer 7)", 200, 0, 200);
-    TH1F *h_nhit_layer_8 = new TH1F("NumHits_layer_8", "Number of hits (layer 8)", 200, 0, 200);
-    TH1F *h_nhit_layer_9 = new TH1F("NumHits_layer_9", "Number of hits (layer 9)", 200, 0, 200);
-    TH1F *h_nhit_layer_10 = new TH1F("NumHits_layer_10", "Number of hits (layer 10)", 200, 0, 200);
-    TH1F *h_nhit_layer_11 = new TH1F("NumHits_layer_11", "Number of hits (layer 11)", 200, 0, 200);
-    TH1F *h_nhit_layer_12 = new TH1F("NumHits_layer_12", "Number of hits (layer 12)", 200, 0, 200);
-    TH1F *h_nhit_layer_13 = new TH1F("NumHits_layer_13", "Number of hits (layer 13)", 200, 0, 200);
-    TH1F *h_nhit_layer_14 = new TH1F("NumHits_layer_14", "Number of hits (layer 14)", 200, 0, 200);
-        
-    TH1F *h_nhit_layer_n_0 = new TH1F("NumHits_layer_n_0", "Number of hits normalized (layer 0)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_1 = new TH1F("NumHits_layer_n_1", "Number of hits normalized (layer 1)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_2 = new TH1F("NumHits_layer_n_2", "Number of hits normalized (layer 2)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_3 = new TH1F("NumHits_layer_n_3", "Number of hits normalized (layer 3)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_4 = new TH1F("NumHits_layer_n_4", "Number of hits normalized (layer 4)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_5 = new TH1F("NumHits_layer_n_5", "Number of hits normalized (layer 5)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_6 = new TH1F("NumHits_layer_n_6", "Number of hits normalized (layer 6)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_7 = new TH1F("NumHits_layer_n_7", "Number of hits normalized (layer 7)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_8 = new TH1F("NumHits_layer_n_8", "Number of hits normalized (layer 8)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_9 = new TH1F("NumHits_layer_n_9", "Number of hits normalized (layer 9)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_10 = new TH1F("NumHits_layer_n_10", "Number of hits normalized (layer 10)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_11 = new TH1F("NumHits_layer_n_11", "Number of hits normalized (layer 11)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_12 = new TH1F("NumHits_layer_n_12", "Number of hits normalized (layer 12)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_13 = new TH1F("NumHits_layer_n_13", "Number of hits normalized (layer 13)", 100, 0, 1);
-    TH1F *h_nhit_layer_n_14 = new TH1F("NumHits_layer_n_14", "Number of hits normalized (layer 14)", 100, 0, 1);
-        
-    TH1F *h_weighte_layer_0 = new TH1F("Weighte_layer_0", "Weighted energy (layer 0)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_1 = new TH1F("Weighte_layer_1", "Weighted energy (layer 1)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_2 = new TH1F("Weighte_layer_2", "Weighted energy (layer 2)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_3 = new TH1F("Weighte_layer_3", "Weighted energy (layer 3)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_4 = new TH1F("Weighte_layer_4", "Weighted energy (layer 4)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_5 = new TH1F("Weighte_layer_5", "Weighted energy (layer 5)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_6 = new TH1F("Weighte_layer_6", "Weighted energy (layer 6)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_7 = new TH1F("Weighte_layer_7", "Weighted energy (layer 7)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_8 = new TH1F("Weighte_layer_8", "Weighted energy (layer 8)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_9 = new TH1F("Weighte_layer_9", "Weighted energy (layer 9)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_10 = new TH1F("Weighte_layer_10", "Weighted energy (layer 10)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_11 = new TH1F("Weighte_layer_11", "Weighted energy (layer 11)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_12 = new TH1F("Weighte_layer_12", "Weighted energy (layer 12)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_13 = new TH1F("Weighte_layer_13", "Weighted energy (layer 13)", 1000, 0, 10000);
-    TH1F *h_weighte_layer_14 = new TH1F("Weighte_layer_14", "Weighted energy (layer 14)", 1000, 0, 10000);
-        
-    TH1F *h_weighte_layer_n_0 = new TH1F("Weighte_layer_n_0", "Weighted energy normalized (layer 0)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_1 = new TH1F("Weighte_layer_n_1", "Weighted energy normalized (layer 1)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_2 = new TH1F("Weighte_layer_n_2", "Weighted energy normalized (layer 2)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_3 = new TH1F("Weighte_layer_n_3", "Weighted energy normalized (layer 3)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_4 = new TH1F("Weighte_layer_n_4", "Weighted energy normalized (layer 4)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_5 = new TH1F("Weighte_layer_n_5", "Weighted energy normalized (layer 5)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_6 = new TH1F("Weighte_layer_n_6", "Weighted energy normalized (layer 6)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_7 = new TH1F("Weighte_layer_n_7", "Weighted energy normalized (layer 7)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_8 = new TH1F("Weighte_layer_n_8", "Weighted energy normalized (layer 8)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_9 = new TH1F("Weighte_layer_n_9", "Weighted energy normalized (layer 9)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_10 = new TH1F("Weighte_layer_n_10", "Weighted energy normalized (layer 10)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_11 = new TH1F("Weighte_layer_n_11", "Weighted energy normalized (layer 11)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_12 = new TH1F("Weighte_layer_n_12", "Weighted energy normalized (layer 12)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_13 = new TH1F("Weighte_layer_n_13", "Weighted energy normalized (layer 13)", 100, 0, 1);
-    TH1F *h_weighte_layer_n_14 = new TH1F("Weighte_layer_n_14", "Weighted energy normalized (layer 14)", 100, 0, 1);
+    string part_string = particle;
+
+    TH1F *h_nhit = new TH1F(("NumHits_" + part_string).c_str(), ("Number of hits " + part_string).c_str(), 4001, -0.5, 4000.5);
+    TH1F *h_sume = new TH1F(("SumEnergy_" + part_string).c_str(), ("Sum Energy " + part_string).c_str(), 5001, -0.5, 15000.5);
+    TH1F *h_weighte = new TH1F(("WSumEnergy_" + part_string).c_str(), ("W Sum Energy " + part_string).c_str(), 5001, -0.5, 50000.5);
+
+    // Barycenter histos                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+    TH1F *h_bar_x = new TH1F(("Barycenter_x_" + part_string).c_str(), ("Barycenter (x-axis) " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y = new TH1F(("Barycenter_y_" + part_string).c_str(), ("Barycenter (y-axis) " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_z = new TH1F(("Barycenter_z_" + part_string).c_str(), ("Barycenter (z-axis) " + part_string).c_str(), 1000, -500., 500.);
+
+    // Barycenter per layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+    TH1F *h_bar_x_layer_0 = new TH1F(("Barycenter_x_layer_0_" + part_string).c_str(), ("Barycenter (x-axis) layer 0 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_1 = new TH1F(("Barycenter_x_layer_1_" + part_string).c_str(), ("Barycenter (x-axis) layer 1 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_2 = new TH1F(("Barycenter_x_layer_2_" + part_string).c_str(), ("Barycenter (x-axis) layer 2 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_3 = new TH1F(("Barycenter_x_layer_3_" + part_string).c_str(), ("Barycenter (x-axis) layer 3 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_4 = new TH1F(("Barycenter_x_layer_4_" + part_string).c_str(), ("Barycenter (x-axis) layer 4 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_5 = new TH1F(("Barycenter_x_layer_5_" + part_string).c_str(), ("Barycenter (x-axis) layer 5 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_6 = new TH1F(("Barycenter_x_layer_6_" + part_string).c_str(), ("Barycenter (x-axis) layer 6 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_7 = new TH1F(("Barycenter_x_layer_7_" + part_string).c_str(), ("Barycenter (x-axis) layer 7 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_8 = new TH1F(("Barycenter_x_layer_8_" + part_string).c_str(), ("Barycenter (x-axis) layer 8 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_9 = new TH1F(("Barycenter_x_layer_9_" + part_string).c_str(), ("Barycenter (x-axis) layer 9 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_10 = new TH1F(("Barycenter_x_layer_10_" + part_string).c_str(), ("Barycenter (x-axis) layer 10 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_11 = new TH1F(("Barycenter_x_layer_11_" + part_string).c_str(), ("Barycenter (x-axis) layer 11 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_12 = new TH1F(("Barycenter_x_layer_12_" + part_string).c_str(), ("Barycenter (x-axis) layer 12 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_13 = new TH1F(("Barycenter_x_layer_13_" + part_string).c_str(), ("Barycenter (x-axis) layer 13 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_x_layer_14 = new TH1F(("Barycenter_x_layer_14_" + part_string).c_str(), ("Barycenter (x-axis) layer 14 " + part_string).c_str(), 201, -100.5, 100.5);
+
+    TH1F *h_bar_y_layer_0 = new TH1F(("Barycenter_y_layer_0_" + part_string).c_str(), ("Barycenter (y-axis) layer 0 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_1 = new TH1F(("Barycenter_y_layer_1_" + part_string).c_str(), ("Barycenter (y-axis) layer 1 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_2 = new TH1F(("Barycenter_y_layer_2_" + part_string).c_str(), ("Barycenter (x-axis) layer 2 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_3 = new TH1F(("Barycenter_y_layer_3_" + part_string).c_str(), ("Barycenter (y-axis) layer 3 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_4 = new TH1F(("Barycenter_y_layer_4_" + part_string).c_str(), ("Barycenter (y-axis) layer 4 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_5 = new TH1F(("Barycenter_y_layer_5_" + part_string).c_str(), ("Barycenter (y-axis) layer 5 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_6 = new TH1F(("Barycenter_y_layer_6_" + part_string).c_str(), ("Barycenter (y-axis) layer 6 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_7 = new TH1F(("Barycenter_y_layer_7_" + part_string).c_str(), ("Barycenter (y-axis) layer 7 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_8 = new TH1F(("Barycenter_y_layer_8_" + part_string).c_str(), ("Barycenter (y-axis) layer 8 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_9 = new TH1F(("Barycenter_y_layer_9_" + part_string).c_str(), ("Barycenter (y-axis) layer 9 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_10 = new TH1F(("Barycenter_y_layer_10_" + part_string).c_str(), ("Barycenter (y-axis) layer 10 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_11 = new TH1F(("Barycenter_y_layer_11_" + part_string).c_str(), ("Barycenter (y-axis) layer 11 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_12 = new TH1F(("Barycenter_y_layer_12_" + part_string).c_str(), ("Barycenter (y-axis) layer 12 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_13 = new TH1F(("Barycenter_y_layer_13_" + part_string).c_str(), ("Barycenter (y-axis) layer 13 " + part_string).c_str(), 201, -100.5, 100.5);
+    TH1F *h_bar_y_layer_14 = new TH1F(("Barycenter_y_layer_14_" + part_string).c_str(), ("Barycenter (y-axis) layer 14 " + part_string).c_str(), 201, -100.5, 100.5);
+
+    // Moliere histos                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    TH1F *h_mol = new TH1F(("Radius90_" + part_string).c_str(), ("Radius containing 90% of energy " + part_string).c_str(), 101, -0.5, 100.5);
+
+    // Shower profile characteristics                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+    TH1F *h_shower_nhit_max_layer = new TH1F(("ShowerNhitMaxLayer_" + part_string).c_str(), ("Shower Nhit Max. (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_nhit_start_layer = new TH1F(("ShowerNhitStartLayer_" + part_string).c_str(), ("Shower Nhit Start (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_nhit_end_layer = new TH1F(("ShowerNhitEndLayer_" + part_string).c_str(), ("Shower Nhit End (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_nhit_start_10_layer = new TH1F(("ShowerNhitStart10Layer_" + part_string).c_str(), ("Shower Nhit Start 0.1*Max (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_nhit_end_10_layer = new TH1F(("ShowerNhitEnd10Layer_" + part_string).c_str(), ("Shower Nhit End 0.1*Max (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_nhit_average= new TH1F(("ShowerNhitAverage_" + part_string).c_str(), ("Shower Nhit Average  " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_shower_nhit_max= new TH1F(("ShowerNhitMax_" + part_string).c_str(), ("Shower Nhit Max  " + part_string).c_str(), 201, -0.5, 200.5);
+
+    TH1F *h_shower_weighte_max_layer = new TH1F(("ShowerWeightEMaxLayer_" + part_string).c_str(), ("Shower W. Energy Max. (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_weighte_start_layer = new TH1F(("ShowerWeightEStartLayer_" + part_string).c_str(), ("Shower W. Energy Start (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_weighte_end_layer = new TH1F(("ShowerWeightEEndLayer_" + part_string).c_str(), ("Shower W. Energy End (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_weighte_start_10_layer = new TH1F(("ShowerWeightEStart10Layer_" + part_string).c_str(), ("Shower W. Energy Start 0.1*Max (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_weighte_end_10_layer = new TH1F(("ShowerWeightEEnd10Layer_" + part_string).c_str(), ("Shower W. Energy End 0.1*Max (layer) " + part_string).c_str(), 16, -1.5, 14.5);
+    TH1F *h_shower_weighte_average= new TH1F(("ShowerWeightEAverage_" + part_string).c_str(), ("Shower W. Energy Average  " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_shower_weighte_max= new TH1F(("ShowerWeightEMax_" + part_string).c_str(), ("Shower W. Energy Max  " + part_string).c_str(), 201, -0.5, 200.5);
+
+    // Shower profile per layer                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+    TH1F *h_nhit_layer_0 = new TH1F(("NumHits_layer_0_" + part_string).c_str(), ("Number of hits (layer 0) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_1 = new TH1F(("NumHits_layer_1_" + part_string).c_str(), ("Number of hits (layer 1) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_2 = new TH1F(("NumHits_layer_2_" + part_string).c_str(), ("Number of hits (layer 2) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_3 = new TH1F(("NumHits_layer_3_" + part_string).c_str(), ("Number of hits (layer 3) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_4 = new TH1F(("NumHits_layer_4_" + part_string).c_str(), ("Number of hits (layer 4) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_5 = new TH1F(("NumHits_layer_5_" + part_string).c_str(), ("Number of hits (layer 5) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_6 = new TH1F(("NumHits_layer_6_" + part_string).c_str(), ("Number of hits (layer 6) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_7 = new TH1F(("NumHits_layer_7_" + part_string).c_str(), ("Number of hits (layer 7) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_8 = new TH1F(("NumHits_layer_8_" + part_string).c_str(), ("Number of hits (layer 8) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_9 = new TH1F(("NumHits_layer_9_" + part_string).c_str(), ("Number of hits (layer 9) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_10 = new TH1F(("NumHits_layer_10_" + part_string).c_str(), ("Number of hits (layer 10) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_11 = new TH1F(("NumHits_layer_11_" + part_string).c_str(), ("Number of hits (layer 11) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_12 = new TH1F(("NumHits_layer_12_" + part_string).c_str(), ("Number of hits (layer 12) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_13 = new TH1F(("NumHits_layer_13_" + part_string).c_str(), ("Number of hits (layer 13) " + part_string).c_str(), 201, -0.5, 200.5);
+    TH1F *h_nhit_layer_14 = new TH1F(("NumHits_layer_14_" + part_string).c_str(), ("Number of hits (layer 14) " + part_string).c_str(), 201, -0.5, 200.5);
+
+    TH1F *h_nhit_layer_n_0 = new TH1F(("NumHits_layer_n_0_" + part_string).c_str(), ("Number of hits normalized (layer 0) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_1 = new TH1F(("NumHits_layer_n_1_" + part_string).c_str(), ("Number of hits normalized (layer 1) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_2 = new TH1F(("NumHits_layer_n_2_" + part_string).c_str(), ("Number of hits normalized (layer 2) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_3 = new TH1F(("NumHits_layer_n_3_" + part_string).c_str(), ("Number of hits normalized (layer 3) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_4 = new TH1F(("NumHits_layer_n_4_" + part_string).c_str(), ("Number of hits normalized (layer 4) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_5 = new TH1F(("NumHits_layer_n_5_" + part_string).c_str(), ("Number of hits normalized (layer 5) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_6 = new TH1F(("NumHits_layer_n_6_" + part_string).c_str(), ("Number of hits normalized (layer 6) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_7 = new TH1F(("NumHits_layer_n_7_" + part_string).c_str(), ("Number of hits normalized (layer 7) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_8 = new TH1F(("NumHits_layer_n_8_" + part_string).c_str(), ("Number of hits normalized (layer 8) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_9 = new TH1F(("NumHits_layer_n_9_" + part_string).c_str(), ("Number of hits normalized (layer 9) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_10 = new TH1F(("NumHits_layer_n_10_" + part_string).c_str(), ("Number of hits normalized (layer 10) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_11 = new TH1F(("NumHits_layer_n_11_" + part_string).c_str(), ("Number of hits normalized (layer 11) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_12 = new TH1F(("NumHits_layer_n_12_" + part_string).c_str(), ("Number of hits normalized (layer 12) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_13 = new TH1F(("NumHits_layer_n_13_" + part_string).c_str(), ("Number of hits normalized (layer 13) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_nhit_layer_n_14 = new TH1F(("NumHits_layer_n_14_" + part_string).c_str(), ("Number of hits normalized (layer 14) " + part_string).c_str(), 100, 0, 1);
+
+    TH1F *h_weighte_layer_0 = new TH1F(("Weight_layer_0_" + part_string).c_str(), ("Weighted energy (layer 0) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_1 = new TH1F(("Weight_layer_1_" + part_string).c_str(), ("Weighted energy (layer 1) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_2 = new TH1F(("Weight_layer_2_" + part_string).c_str(), ("Weighted energy (layer 2) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_3 = new TH1F(("Weight_layer_3_" + part_string).c_str(), ("Weighted energy (layer 3) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_4 = new TH1F(("Weight_layer_4_" + part_string).c_str(), ("Weighted energy (layer 4) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_5 = new TH1F(("Weight_layer_5_" + part_string).c_str(), ("Weighted energy (layer 5) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_6 = new TH1F(("Weight_layer_6_" + part_string).c_str(), ("Weighted energy (layer 6) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_7 = new TH1F(("Weight_layer_7_" + part_string).c_str(), ("Weighted energy (layer 7) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_8 = new TH1F(("Weight_layer_8_" + part_string).c_str(), ("Weighted energy (layer 8) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_9 = new TH1F(("Weight_layer_9_" + part_string).c_str(), ("Weighted energy (layer 9) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_10 = new TH1F(("Weight_layer_10_" + part_string).c_str(), ("Weighted energy (layer 10) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_11 = new TH1F(("Weight_layer_11_" + part_string).c_str(), ("Weighted energy (layer 11) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_12 = new TH1F(("Weight_layer_12_" + part_string).c_str(), ("Weighted energy (layer 12) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_13 = new TH1F(("Weight_layer_13_" + part_string).c_str(), ("Weighted energy (layer 13) " + part_string).c_str(), 1001, -0.5, 10000.5);
+    TH1F *h_weighte_layer_14 = new TH1F(("Weight_layer_14_" + part_string).c_str(), ("Weighted energy (layer 14) " + part_string).c_str(), 1001, -0.5, 10000.5);
+
+    TH1F *h_weighte_layer_n_0 = new TH1F(("Weight_layer_n_0_" + part_string).c_str(), ("Weighted energy normalized (layer 0) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_1 = new TH1F(("Weight_layer_n_1_" + part_string).c_str(), ("Weighted energy normalized (layer 1) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_2 = new TH1F(("Weight_layer_n_2_" + part_string).c_str(), ("Weighted energy normalized (layer 2) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_3 = new TH1F(("Weight_layer_n_3_" + part_string).c_str(), ("Weighted energy normalized (layer 3) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_4 = new TH1F(("Weight_layer_n_4_" + part_string).c_str(), ("Weighted energy normalized (layer 4) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_5 = new TH1F(("Weight_layer_n_5_" + part_string).c_str(), ("Weighted energy normalized (layer 5) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_6 = new TH1F(("Weight_layer_n_6_" + part_string).c_str(), ("Weighted energy normalized (layer 6) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_7 = new TH1F(("Weight_layer_n_7_" + part_string).c_str(), ("Weighted energy normalized (layer 7) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_8 = new TH1F(("Weight_layer_n_8_" + part_string).c_str(), ("Weighted energy normalized (layer 8) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_9 = new TH1F(("Weight_layer_n_9_" + part_string).c_str(), ("Weighted energy normalized (layer 9) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_10 = new TH1F(("Weight_layer_n_10_" + part_string).c_str(), ("Weighted energy normalized (layer 10) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_11 = new TH1F(("Weight_layer_n_11_" + part_string).c_str(), ("Weighted energy normalized (layer 11) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_12 = new TH1F(("Weight_layer_n_12_" + part_string).c_str(), ("Weighted energy normalized (layer 12) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_13 = new TH1F(("Weight_layer_n_13_" + part_string).c_str(), ("Weighted energy normalized (layer 13) " + part_string).c_str(), 100, 0, 1);
+    TH1F *h_weighte_layer_n_14 = new TH1F(("Weight_layer_n_14_" + part_string).c_str(), ("Weighted energy normalized (layer 14) " + part_string).c_str(), 100, 0, 1);
         
     // Begin of reading files and writing histos
     for (int i_energy = 0; i_energy < N_ENERGIES; i_energy++) {
@@ -646,34 +638,24 @@ void analysis (string particle, bool masking=false) {
       
       for (int i_event = 0; i_event < (int)nentries; i_event++) {
 	// Resolution
-	int nhit = 0;      int nhit_masked = 0;
-	float sume = 0;    float sume_masked = 0;
-	float weighte = 0;  float weighte_masked = 0;
+	int nhit = 0;    
+	float sume = 0;  
+	float weighte = 0; 
 	
 	float bar_xyz[3];
-	float bar_xyz_masked[3];
 	
 	float nhit_layer_array[N_ECAL_LAYERS];
-	float nhit_layer_array_masked[N_ECAL_LAYERS];
 	float nhit_layer_n_array[N_ECAL_LAYERS];
-	float nhit_layer_n_array_masked[N_ECAL_LAYERS];
 	
 	float weighte_layer_array[N_ECAL_LAYERS];
-	float weighte_layer_array_masked[N_ECAL_LAYERS];
 	float weighte_layer_n_array[N_ECAL_LAYERS];
-	float weighte_layer_n_array_masked[N_ECAL_LAYERS];
 	
 	float bar_layer_array[N_ECAL_LAYERS][2]; // 2 for (x,y)
-	float bar_layer_array_masked[N_ECAL_LAYERS][2];
 	
 	tree->GetEntry(i_event);
 	if(i_event % 1000 == 0) cout << "Event " << to_string(i_event) << endl;
 
-	get_res(nhit, nhit_masked,
-		sume, sume_masked,
-		  weighte, weighte_masked,
-		hit_energy, hit_slab, hit_isMasked,
-		W_thicknesses);
+	get_res(nhit, sume, weighte, hit_energy, hit_slab, W_thicknesses, hit_isMasked, masking);
 	
 	h_nhit->Fill(nhit);        
 	h_sume->Fill(sume);         

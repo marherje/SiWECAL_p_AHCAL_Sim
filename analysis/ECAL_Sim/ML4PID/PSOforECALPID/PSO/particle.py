@@ -266,21 +266,23 @@ class Particle:
 
     def ManageJob(self, jobID_dict):
 
+        # delete_test = ['Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 2','Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 1','Error in <TDecompLU::InvertLU>: matrix is singular, 1 diag elements < tolerance of 2.2204e-16']
         # Patch to remove the smoothing bug START
-        delete_test = ['Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 2','Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 1']
-        f = open(str(self.fpath_confHTC_err),'r')
-        lst = []
-        for line in f:
-            for word in delete_test:
-                if word in line:
-                    line = line.replace(word,'')
-            if line != '\n':
-                lst.append(line)
-        f.close()
-        f = open(str(self.fpath_confHTC_err),'w')
-        for line in lst:
-            f.write(line)
-        f.close()
+        if os.path.isfile(self.fpath_confHTC_err) and (os.path.getsize(self.fpath_confHTC_err) != 0):
+            delete_test = ['Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 2','Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 1']
+            f = open(str(self.fpath_confHTC_err),'r')
+            lst = []
+            for line in f:
+                for string in delete_test:
+                    if string in line:
+                        line = line.replace(string,'')
+                        if line != '\n':
+                            lst.append(line)
+            f.close()
+            f = open(str(self.fpath_confHTC_err),'w')
+            for line in lst:
+                f.write(line)
+            f.close()
         # Patch to remove the smoothing bug END
         # Change the condition of !=0 to > 100 so the error is at least one sentence and
 

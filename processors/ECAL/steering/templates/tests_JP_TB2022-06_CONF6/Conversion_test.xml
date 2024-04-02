@@ -122,7 +122,7 @@
     <parameter name="NSlabs" type="int"> 15 </parameter>
     <parameter name="ConvAuxFile" type="string"> output_conv_TB2022-06_conf6_all.root </parameter>
     <!-- MIP fit mode: 1 (Gaus), 2 (Landau), 3 (LanGaus) -->
-    <parameter name="MIPFitMode" type="int"> 1 </parameter>
+    <parameter name="MIPFitMode" type="int"> 3 </parameter>
   </processor>
 
 </marlin>
