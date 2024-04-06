@@ -26,7 +26,3 @@ Warning in <Fit>: Abnormal termination of minimization.
 Warning in <Fit>: Abnormal termination of minimization.
 Warning in <Fit>: Abnormal termination of minimization.
 Warning in <Fit>: Abnormal termination of minimization.
-Warning in <Fit>: Abnormal termination of minimization.
-Warning in <Fit>: Abnormal termination of minimization.
-Warning in <Fit>: Abnormal termination of minimization.
-Warning in <Fit>: Abnormal termination of minimization.

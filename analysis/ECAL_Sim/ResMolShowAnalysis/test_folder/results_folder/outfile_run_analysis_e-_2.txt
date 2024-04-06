@@ -1,4 +1,4 @@
-/var/lib/condor/execute/dir_37190
+/var/lib/condor/execute/dir_3719
 running e- 2 GeV
    ------------------------------------------------------------
   | Welcome to ROOT 6.18/04                  https://root.cern |
@@ -42,14 +42,27 @@ Event 26000
 Event 27000
 Event 28000
 Event 29000
-FITTING: Radius90_e-_2GeV
- FCN=1108.29 FROM MIGRAD    STATUS=CONVERGED     116 CALLS         117 TOTAL
-                     EDM=9.22334e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.4 per cent
+ FCN=649.732 FROM MIGRAD    STATUS=CONVERGED     305 CALLS         306 TOTAL
+                     EDM=7.55817e-09    STRATEGY= 1      ERROR MATRIX ACCURATE 
   EXT PARAMETER                                   STEP         FIRST   
   NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
-   1  p0           1.28560e+00   3.70758e-02   2.28159e-04   2.55683e-02
-   2  p1           2.25859e+01   8.14627e-02   1.02991e-03   8.82281e-03
-   3  p2           3.06880e+04   1.77830e+02  -1.00358e+01   3.91119e-06
-   4  p3           6.42853e+00   6.50000e-02   1.30863e-03   1.86125e-02
+   1  p0           1.54056e+03   1.17424e+01   1.64243e-01   7.83717e-06
+   2  p1           2.53026e+01   4.67829e-02   8.07000e-04  -1.07219e-03
+   3  p2           7.19099e+00   3.72546e-02   5.12823e-04   2.03167e-03
                                ERR DEF= 0.5
-My value: 24.5991 +- 8.76178
+ FCN=112.998 FROM MIGRAD    STATUS=CONVERGED     104 CALLS         105 TOTAL
+                     EDM=9.27522e-11    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   1.8 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.47608e+03   3.48269e+01   5.38605e-02  -2.61295e-07
+   2  p1           6.84904e+00   1.78895e-02  -1.82189e-05   4.03128e-04
+   3  p2           2.57979e+00   1.61626e-02  -2.15340e-05   8.02133e-05
+                               ERR DEF= 0.5
+ FCN=273.925 FROM MIGRAD    STATUS=CONVERGED     450 CALLS         451 TOTAL
+                     EDM=2.61218e-13    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   1.6 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.91382e+03   3.07648e+01   1.45562e-03   4.75288e-09
+   2  p1           5.93630e+01   2.00830e-01  -2.90688e-04   2.50508e-06
+   3  p2           2.96741e+01   1.94549e-01  -9.27509e-05   2.86742e-06
+                               ERR DEF= 0.5

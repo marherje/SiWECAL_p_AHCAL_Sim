@@ -226,7 +226,7 @@ float moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thic
 }
 
 void barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses, 
-		vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyz[3], 
+		vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z, float bar_xyzr[4], 
 		vector<int> * hit_isMasked, bool masked=false) {
   
   float sume = 0.;
@@ -253,14 +253,15 @@ void barycenter(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_th
     }
   }
   
-  bar_xyz[0] = bary_x; 
-  bar_xyz[1] = bary_y;
-  bar_xyz[2] = bary_z;
+  bar_xyzr[0] = bary_x;
+  bar_xyzr[1] = bary_y;
+  bar_xyzr[2] = bary_z;
+  bar_xyzr[3] = pow(pow(bary_x,2)+pow(bary_y,2),0.5);
 
   return 0;
 }
 
-void bary_layer(float blv[N_ECAL_LAYERS][2], vector<float> * hit_energy, vector<int> *hit_slab, 
+void bary_layer(float blv[N_ECAL_LAYERS][3], vector<float> * hit_energy, vector<int> *hit_slab, 
 		TVectorD W_thicknesses, vector<float> * hit_x, vector<float> * hit_y, 
 		vector<float> * hit_z, vector<int> * hit_isMasked, bool masked=false) {
 
@@ -276,6 +277,7 @@ void bary_layer(float blv[N_ECAL_LAYERS][2], vector<float> * hit_energy, vector<
     bary_y[ilayer] = 0.;
     blv[ilayer][0] = 0.;
     blv[ilayer][1] = 0.;
+    blv[ilayer][2] = 0.;
   }
   
   if(hit_energy->size() > 0){
@@ -303,6 +305,7 @@ void bary_layer(float blv[N_ECAL_LAYERS][2], vector<float> * hit_energy, vector<
       }
       blv[ilayer][0] = bary_x[ilayer];
       blv[ilayer][1] = bary_y[ilayer];
+      blv[ilayer][2] = pow(pow(bary_x[ilayer],2) + pow(bary_y[ilayer],2),0.5);
     }
   }
   
@@ -331,6 +334,35 @@ void fit_res(TH1 * h, double &mu, double &sig, double &res){
     return;
 }
 
+void fit_gauss(TH1 * h, double &mu, double &mu_error, double &sig){
+
+  mu = 0.;
+  mu_error = 0.;
+  sig = 0.;
+
+  int h_binmax = h->GetMaximumBin();
+  int h_NBINS = h->GetNbinsX();
+  //double h_xmaxvalue = h->GetXaxis()->GetBinCenter(h_binmax);                                                                                               
+  double h_MEAN = h->GetMean();
+  double h_maxvalue = h->GetBinContent(h_binmax);
+  double h_mpv = h->GetXaxis()->GetBinCenter(h_binmax);
+  double h_std = h->GetStdDev();
+  double xmin = h->GetXaxis()->GetBinCenter(h_binmax)-2*h_std;
+  if(xmin <0.) xmin=0.001;
+  double xmax = h->GetXaxis()->GetBinCenter(h_binmax)+2*h_std;
+
+  TF1 *GaussDist = new TF1("GaussDist","[0]*TMath::Exp(-0.5*pow((x-[1])/[2],2))",xmin,xmax);
+  GaussDist->SetParameters(0.2*abs(xmax-xmin)*h_maxvalue,h_mpv,h_std);
+
+  h->Fit(GaussDist,"LR");
+  mu = GaussDist->GetParameter(1);
+  mu_error = GaussDist->GetParError(1);
+  sig = GaussDist->GetParameter(2);
+
+  return;
+
+}
+
 double langaufun(double *x, double *par) {
  
   //Fit parameters:
@@ -349,8 +381,8 @@ double langaufun(double *x, double *par) {
   double mpshift  = -0.22278298;       // Landau maximum location
  
   // Control constants
-  double np = 300.0;      // number of convolution steps
-  double sc =   4.0;      // convolution extends to +-sc Gaussian sigmas
+  double np = 350.0;      // number of convolution steps
+  double sc =   3.5;      // convolution extends to +-sc Gaussian sigmas
  
   // Variables
   double xx;
@@ -397,54 +429,74 @@ void fit_langaus(TH1 * h, double &MPV, double &MPV_error, double &FWHM){
   double h_MEAN = h->GetMean();
   double h_maxvalue = h->GetBinContent(h_binmax);
   double h_mpv = h->GetXaxis()->GetBinCenter(h_binmax);
-  double h_RMS = h->GetRMS();
-  double xmin = h->GetXaxis()->GetBinCenter(h->FindFirstBinAbove(1));
-  double xmax = h->GetXaxis()->GetBinCenter(h->FindLastBinAbove(1));
+  double h_std = h->GetStdDev();
+  double xmin = h->GetXaxis()->GetBinCenter(h_binmax)-4*h_std;
+  if(xmin < 0) xmin = 0.01;
+  double xmax = h->GetXaxis()->GetBinCenter(h_binmax)+4*h_std;
   
+  double maxvalue = 0.;
+    
   cout<<"FITTING: "<<h->GetName()<<endl;
-  if(h_mpv > 0.) { 
-    TF1 *LandauGaussDist = new TF1("LandauGaussDist",langaufun,xmin,xmax,4);
-    LandauGaussDist->SetParameters(h_RMS,h_mpv,0.25*abs(xmax-xmin)*h_maxvalue,h_RMS);
+    if(h_mpv > 0.) { 
+      if(h_std > 0.15*h_MEAN){
+	cout<<"Landau-Gauss"<<endl;
+	TF1 *LandauGaussDist = new TF1("LandauGaussDist",langaufun,xmin,xmax,4);
+	LandauGaussDist->SetParameters(h_std,h_mpv,0.2*abs(xmax-xmin)*h_maxvalue,h_std);
+	
+	h->Fit(LandauGaussDist,"LR");
+	cout<<"Parameters: "<<LandauGaussDist->GetParameter(0)<<", "<<LandauGaussDist->GetParameter(1)<<", "<<LandauGaussDist->GetParameter(2)<<", "<<LandauGaussDist->GetParameter(3)<<endl;
     
-    h->Fit(LandauGaussDist,"LR");
-    
-    MPV = LandauGaussDist->GetMaximumX();
-    MPV_error = LandauGaussDist->GetParError(1);
-    
-    double maxvalue = LandauGaussDist->Eval(MPV);
-    //cout<<"Max. Value: "<<maxvalue<<", at x= "<<MPV<<endl;
-    double x1=0.;
-    double x2=MPV;
-    for(int i=0;i<10000000;i++){
-      x1 += 0.00001;
-      double value = LandauGaussDist->Eval(x1);
-      double distance = abs(maxvalue/2 - value);
-      //cout<<distance<<endl;
-      if(distance < 0.01) break;
-    }
-    for(int i=0;i<10000000;i++){
-      x2 += 0.00001;
-      double value = LandauGaussDist->Eval(x2);
-      double distance = abs(maxvalue/2 - value);
-      //cout<<distance<<endl;
-      if(abs(maxvalue/2-value) < 0.01) break;
-    }
-    
-    //cout<<"x1: "<<x1<<", x2: "<<x2<<endl;
-    FWHM = x2 - x1;
+	MPV = LandauGaussDist->GetMaximumX();
+	MPV_error = LandauGaussDist->GetParError(1);
+	
+	maxvalue = LandauGaussDist->Eval(MPV);
+     
+	//cout<<"Max. Value: "<<maxvalue<<", at x= "<<MPV<<endl;
+	double x1=0.;
+	double x2=MPV;
+	for(int i=0;i<10000000;i++){
+	  x1 += 0.00001;
+	  double value = LandauGaussDist->Eval(x1);
+	  double distance = abs(maxvalue/2 - value);
+	  //cout<<distance<<endl;
+	  if(distance < 0.01) break;
+	}
+	for(int i=0;i<10000000;i++){
+	  x2 += 0.00001;
+	  double value = LandauGaussDist->Eval(x2);
+	  double distance = abs(maxvalue/2 - value);
+	  //cout<<distance<<endl;
+	  if(abs(maxvalue/2-value) < 0.01) break;
+	}
+	
+	//cout<<"x1: "<<x1<<", x2: "<<x2<<endl;
+	FWHM = x2 - x1;
         
-    if((FWHM > 2.5*h_RMS) || (FWHM < h_RMS) || (MPV > 1.5*h_MEAN) || (MPV < 0.5*h_MEAN)) {
-      MPV_error = 0.;
-      MPV = h_mpv;
-      FWHM = 2*h_RMS;
+	if((FWHM > 2.5*h_std) || (FWHM < h_std) || (MPV > 1.5*h_MEAN) || (MPV < 0.5*h_MEAN)) {
+	  MPV_error = 0.;
+	  MPV = h_mpv;
+	  FWHM = 2*h_std;
+	}
+      }
+      else{
+	// Gaussian
+	cout<<"Bypass to Gauss"<<endl;
+	TF1 *GaussDist = new TF1("GaussDist","[0]*TMath::Exp(-0.5*pow((x-[1])/[2],2))",xmin,xmax);
+        GaussDist->SetParameters(0.2*abs(xmax-xmin)*h_maxvalue,h_mpv,h_std);
+		  
+	h->Fit(GaussDist,"LR");
+	MPV = GaussDist->GetParameter(1);
+	MPV_error = GaussDist->GetParError(1);
+	FWHM = 2*GaussDist->GetParameter(2);
+	cout<<"Parameters: "<<GaussDist->GetParameter(1)<<", "<<GaussDist->GetParameter(2)<<endl;
+      }
     }
-  }
-  else{
-    MPV_error = 0.;
-    MPV = 0.;
-    FWHM = 0.;
-  }
-
+    else{
+      MPV_error = 0.;
+      MPV = 0.;
+      FWHM = 0.;
+    }
+    
   cout<<"My value: "<<MPV<<" +- "<<FWHM/2<<endl;
 
   return; 
@@ -499,6 +551,23 @@ void analysis_70 (string particle, bool masked=false) {
 
     TVectorD mu_barycenter_x(N_ENERGIES), mu_barycenter_y(N_ENERGIES), mu_barycenter_z(N_ENERGIES);
     TVectorD sig_barycenter_x(N_ENERGIES), sig_barycenter_y(N_ENERGIES), sig_barycenter_z(N_ENERGIES);
+    TVectorD mu_barycenter_r(N_ENERGIES), sig_barycenter_r(N_ENERGIES);
+
+    TVectorD mu_barycenter_r_layer_0(N_ENERGIES), sig_barycenter_r_layer_0(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_1(N_ENERGIES), sig_barycenter_r_layer_1(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_2(N_ENERGIES), sig_barycenter_r_layer_2(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_3(N_ENERGIES), sig_barycenter_r_layer_3(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_4(N_ENERGIES), sig_barycenter_r_layer_4(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_5(N_ENERGIES), sig_barycenter_r_layer_5(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_6(N_ENERGIES), sig_barycenter_r_layer_6(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_7(N_ENERGIES), sig_barycenter_r_layer_7(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_8(N_ENERGIES), sig_barycenter_r_layer_8(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_9(N_ENERGIES), sig_barycenter_r_layer_9(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_10(N_ENERGIES), sig_barycenter_r_layer_10(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_11(N_ENERGIES), sig_barycenter_r_layer_11(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_12(N_ENERGIES), sig_barycenter_r_layer_12(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_13(N_ENERGIES), sig_barycenter_r_layer_13(N_ENERGIES);
+    TVectorD mu_barycenter_r_layer_14(N_ENERGIES), sig_barycenter_r_layer_14(N_ENERGIES);
 
     TVectorD mu_barycenter_x_layer_0(N_ENERGIES), sig_barycenter_x_layer_0(N_ENERGIES);
     TVectorD mu_barycenter_x_layer_1(N_ENERGIES), sig_barycenter_x_layer_1(N_ENERGIES);
@@ -647,8 +716,25 @@ void analysis_70 (string particle, bool masked=false) {
         TH1F *h_bar_x = new TH1F(("Barycenter_x_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 	TH1F *h_bar_y = new TH1F(("Barycenter_y_" + part_string + "_" + e_str).c_str(), ("Barycenter (y-axis) " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 	TH1F *h_bar_z = new TH1F(("Barycenter_z_" + part_string + "_" + e_str).c_str(), ("Barycenter (z-axis) " + part_string + " " + e_str).c_str(), 1000, -500., 500.);
-        
+	TH1F *h_bar_r = new TH1F(("Barycenter_r_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+
 	// Barycenter per layer
+	TH1F *h_bar_r_layer_0 = new TH1F(("Barycenter_r_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 0 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_1 = new TH1F(("Barycenter_r_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 1 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_2 = new TH1F(("Barycenter_r_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 2 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_3 = new TH1F(("Barycenter_r_layer_3_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 3 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+	TH1F *h_bar_r_layer_4 = new TH1F(("Barycenter_r_layer_4_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 4 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_5 = new TH1F(("Barycenter_r_layer_5_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 5 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_6 = new TH1F(("Barycenter_r_layer_6_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 6 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_7 = new TH1F(("Barycenter_r_layer_7_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 7 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_8 = new TH1F(("Barycenter_r_layer_8_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 8 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_9 = new TH1F(("Barycenter_r_layer_9_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 9 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_10 = new TH1F(("Barycenter_r_layer_10_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 10 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_11 = new TH1F(("Barycenter_r_layer_11_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 11 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_12 = new TH1F(("Barycenter_r_layer_12_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 12 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_13 = new TH1F(("Barycenter_r_layer_13_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 13 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+        TH1F *h_bar_r_layer_14 = new TH1F(("Barycenter_r_layer_14_" + part_string + "_" + e_str).c_str(), ("Barycenter (radial) layer 14 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
+
 	TH1F *h_bar_x_layer_0 = new TH1F(("Barycenter_x_layer_0_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 0 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 	TH1F *h_bar_x_layer_1 = new TH1F(("Barycenter_x_layer_1_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 1 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
 	TH1F *h_bar_x_layer_2 = new TH1F(("Barycenter_x_layer_2_" + part_string + "_" + e_str).c_str(), ("Barycenter (x-axis) layer 2 " + part_string + " " + e_str).c_str(), 201, -100.5, 100.5);
@@ -772,7 +858,7 @@ void analysis_70 (string particle, bool masked=false) {
 	  float sume = 0;   
 	  float weight = 0; 
 	  
-	  float bar_xyz[3];
+	  float bar_xyzr[4]; // 4 for (x,y,z,r)
 	  
 	  float nhit_layer_array[N_ECAL_LAYERS];
 	  float nhit_layer_n_array[N_ECAL_LAYERS];
@@ -780,7 +866,7 @@ void analysis_70 (string particle, bool masked=false) {
 	  float weight_layer_array[N_ECAL_LAYERS];
           float weight_layer_n_array[N_ECAL_LAYERS];
 
-	  float bar_layer_array[N_ECAL_LAYERS][2]; // 2 for (x,y)
+	  float bar_layer_array[N_ECAL_LAYERS][3]; // 3 for (x,y,z)
 
 	  tree->GetEntry(i_event);
 	  if(i_event % 1000 == 0) cout << "Event " << to_string(i_event) << endl;
@@ -792,11 +878,12 @@ void analysis_70 (string particle, bool masked=false) {
 	  h_weight->Fill(weight);     
 	  
 	  // Fill barycenter
-	  barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyz, hit_isMasked, masked);
+	  barycenter(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, bar_xyzr, hit_isMasked, masked);
 	  
-	  h_bar_x->Fill(bar_xyz[0]);
-	  h_bar_y->Fill(bar_xyz[1]);
-	  h_bar_z->Fill(bar_xyz[2]);
+	  h_bar_x->Fill(bar_xyzr[0]);
+	  h_bar_y->Fill(bar_xyzr[1]);
+	  h_bar_z->Fill(bar_xyzr[2]);
+	  h_bar_r->Fill(bar_xyzr[3]);
 	  
 	  // Fill Moliere radii histograms
 	  h_mol->Fill(moliere(hit_energy, hit_slab, W_thicknesses, hit_x, hit_y, hit_z, hit_isMasked, masked));
@@ -964,6 +1051,22 @@ void analysis_70 (string particle, bool masked=false) {
           h_bar_y_layer_13->Fill(bar_layer_array[13][1]);
           h_bar_y_layer_14->Fill(bar_layer_array[14][1]);
 
+	  h_bar_r_layer_0->Fill(bar_layer_array[0][2]);
+          h_bar_r_layer_1->Fill(bar_layer_array[1][2]);
+          h_bar_r_layer_2->Fill(bar_layer_array[2][2]);
+          h_bar_r_layer_3->Fill(bar_layer_array[3][2]);
+          h_bar_r_layer_4->Fill(bar_layer_array[4][2]);
+          h_bar_r_layer_5->Fill(bar_layer_array[5][2]);
+          h_bar_r_layer_6->Fill(bar_layer_array[6][2]);
+          h_bar_r_layer_7->Fill(bar_layer_array[7][2]);
+          h_bar_r_layer_8->Fill(bar_layer_array[8][2]);
+          h_bar_r_layer_9->Fill(bar_layer_array[9][2]);
+          h_bar_r_layer_10->Fill(bar_layer_array[10][2]);
+          h_bar_r_layer_11->Fill(bar_layer_array[11][2]);
+          h_bar_r_layer_12->Fill(bar_layer_array[12][2]);
+          h_bar_r_layer_13->Fill(bar_layer_array[13][2]);
+          h_bar_r_layer_14->Fill(bar_layer_array[14][2]);
+
 	  hit_isMasked->clear();
 	  hit_energy->clear();
 	  hit_slab->clear();
@@ -979,7 +1082,7 @@ void analysis_70 (string particle, bool masked=false) {
         
 	// Moliere fits
 	double result_molfit[3] = {0.,0.,0.};
-	fit_langaus(h_mol, result_molfit[0], result_molfit[1], result_molfit[2]);
+	fit_gauss(h_mol, result_molfit[0], result_molfit[1], result_molfit[2]);
 	mu_mol[i_energy] = result_molfit[0];
 	mu_error_mol[i_energy] = result_molfit[1];
 	sig_mol[i_energy] = 0.5*result_molfit[2];
@@ -994,23 +1097,22 @@ void analysis_70 (string particle, bool masked=false) {
 	double nhit_shower_fit_result[N_ECAL_LAYERS][3];
 	//cout<<"Fits shower nhit"<<endl;
 	
-	fit_langaus(h_nhit_layer_0, nhit_shower_fit_result[0][0], nhit_shower_fit_result[0][1], nhit_shower_fit_result[0][2]);
-        fit_langaus(h_nhit_layer_1, nhit_shower_fit_result[1][0], nhit_shower_fit_result[1][1], nhit_shower_fit_result[1][2]);
-	fit_langaus(h_nhit_layer_2, nhit_shower_fit_result[2][0], nhit_shower_fit_result[2][1], nhit_shower_fit_result[2][2]);
-	fit_langaus(h_nhit_layer_3, nhit_shower_fit_result[3][0], nhit_shower_fit_result[3][1], nhit_shower_fit_result[3][2]);
-	fit_langaus(h_nhit_layer_4, nhit_shower_fit_result[4][0], nhit_shower_fit_result[4][1], nhit_shower_fit_result[4][2]);
-	fit_langaus(h_nhit_layer_5, nhit_shower_fit_result[5][0], nhit_shower_fit_result[5][1], nhit_shower_fit_result[5][2]);
-	fit_langaus(h_nhit_layer_6, nhit_shower_fit_result[6][0], nhit_shower_fit_result[6][1], nhit_shower_fit_result[6][2]);
-	fit_langaus(h_nhit_layer_7, nhit_shower_fit_result[7][0], nhit_shower_fit_result[7][1], nhit_shower_fit_result[7][2]);
-	fit_langaus(h_nhit_layer_8, nhit_shower_fit_result[8][0], nhit_shower_fit_result[8][1], nhit_shower_fit_result[8][2]);
-	fit_langaus(h_nhit_layer_9, nhit_shower_fit_result[9][0], nhit_shower_fit_result[9][1], nhit_shower_fit_result[9][2]);
-	fit_langaus(h_nhit_layer_10, nhit_shower_fit_result[10][0], nhit_shower_fit_result[10][1], nhit_shower_fit_result[10][2]);
-	fit_langaus(h_nhit_layer_11, nhit_shower_fit_result[11][0], nhit_shower_fit_result[11][1], nhit_shower_fit_result[11][2]);
-	fit_langaus(h_nhit_layer_12, nhit_shower_fit_result[12][0], nhit_shower_fit_result[12][1], nhit_shower_fit_result[12][2]);
-	fit_langaus(h_nhit_layer_13, nhit_shower_fit_result[13][0], nhit_shower_fit_result[13][1], nhit_shower_fit_result[13][2]);
-	fit_langaus(h_nhit_layer_14, nhit_shower_fit_result[14][0], nhit_shower_fit_result[14][1], nhit_shower_fit_result[14][2]);
-	
-		
+	fit_gauss(h_nhit_layer_0, nhit_shower_fit_result[0][0], nhit_shower_fit_result[0][1], nhit_shower_fit_result[0][2]);
+        fit_gauss(h_nhit_layer_1, nhit_shower_fit_result[1][0], nhit_shower_fit_result[1][1], nhit_shower_fit_result[1][2]);
+	fit_gauss(h_nhit_layer_2, nhit_shower_fit_result[2][0], nhit_shower_fit_result[2][1], nhit_shower_fit_result[2][2]);
+	fit_gauss(h_nhit_layer_3, nhit_shower_fit_result[3][0], nhit_shower_fit_result[3][1], nhit_shower_fit_result[3][2]);
+	fit_gauss(h_nhit_layer_4, nhit_shower_fit_result[4][0], nhit_shower_fit_result[4][1], nhit_shower_fit_result[4][2]);
+	fit_gauss(h_nhit_layer_5, nhit_shower_fit_result[5][0], nhit_shower_fit_result[5][1], nhit_shower_fit_result[5][2]);
+	fit_gauss(h_nhit_layer_6, nhit_shower_fit_result[6][0], nhit_shower_fit_result[6][1], nhit_shower_fit_result[6][2]);
+	fit_gauss(h_nhit_layer_7, nhit_shower_fit_result[7][0], nhit_shower_fit_result[7][1], nhit_shower_fit_result[7][2]);
+	fit_gauss(h_nhit_layer_8, nhit_shower_fit_result[8][0], nhit_shower_fit_result[8][1], nhit_shower_fit_result[8][2]);
+	fit_gauss(h_nhit_layer_9, nhit_shower_fit_result[9][0], nhit_shower_fit_result[9][1], nhit_shower_fit_result[9][2]);
+	fit_gauss(h_nhit_layer_10, nhit_shower_fit_result[10][0], nhit_shower_fit_result[10][1], nhit_shower_fit_result[10][2]);
+	fit_gauss(h_nhit_layer_11, nhit_shower_fit_result[11][0], nhit_shower_fit_result[11][1], nhit_shower_fit_result[11][2]);
+	fit_gauss(h_nhit_layer_12, nhit_shower_fit_result[12][0], nhit_shower_fit_result[12][1], nhit_shower_fit_result[12][2]);
+	fit_gauss(h_nhit_layer_13, nhit_shower_fit_result[13][0], nhit_shower_fit_result[13][1], nhit_shower_fit_result[13][2]);
+	fit_gauss(h_nhit_layer_14, nhit_shower_fit_result[14][0], nhit_shower_fit_result[14][1], nhit_shower_fit_result[14][2]);
+			
 	mu_nhit_layer_0[i_energy] = nhit_shower_fit_result[0][0];
 	mu_error_nhit_layer_0[i_energy] = nhit_shower_fit_result[0][1];
         sig_nhit_layer_0[i_energy] = 0.5*nhit_shower_fit_result[0][2];
@@ -1061,21 +1163,21 @@ void analysis_70 (string particle, bool masked=false) {
         double nhit_shower_fit_result_n[N_ECAL_LAYERS][3];
 	//cout<<"Fits shower nhit normalized"<<endl;
 	
-	fit_langaus(h_nhit_layer_n_0, nhit_shower_fit_result_n[0][0], nhit_shower_fit_result_n[0][1], nhit_shower_fit_result_n[0][2]);
-        fit_langaus(h_nhit_layer_n_1, nhit_shower_fit_result_n[1][0], nhit_shower_fit_result_n[1][1], nhit_shower_fit_result_n[1][2]);
-        fit_langaus(h_nhit_layer_n_2, nhit_shower_fit_result_n[2][0], nhit_shower_fit_result_n[2][1], nhit_shower_fit_result_n[2][2]);
-        fit_langaus(h_nhit_layer_n_3, nhit_shower_fit_result_n[3][0], nhit_shower_fit_result_n[3][1], nhit_shower_fit_result_n[3][2]);
-        fit_langaus(h_nhit_layer_n_4, nhit_shower_fit_result_n[4][0], nhit_shower_fit_result_n[4][1], nhit_shower_fit_result_n[4][2]);
-        fit_langaus(h_nhit_layer_n_5, nhit_shower_fit_result_n[5][0], nhit_shower_fit_result_n[5][1], nhit_shower_fit_result_n[5][2]);
-        fit_langaus(h_nhit_layer_n_6, nhit_shower_fit_result_n[6][0], nhit_shower_fit_result_n[6][1], nhit_shower_fit_result_n[6][2]);
-        fit_langaus(h_nhit_layer_n_7, nhit_shower_fit_result_n[7][0], nhit_shower_fit_result_n[7][1], nhit_shower_fit_result_n[7][2]);
-        fit_langaus(h_nhit_layer_n_8, nhit_shower_fit_result_n[8][0], nhit_shower_fit_result_n[8][1], nhit_shower_fit_result_n[8][2]);
-        fit_langaus(h_nhit_layer_n_9, nhit_shower_fit_result_n[9][0], nhit_shower_fit_result_n[9][1], nhit_shower_fit_result_n[9][2]);
-        fit_langaus(h_nhit_layer_n_10, nhit_shower_fit_result_n[10][0], nhit_shower_fit_result_n[10][1], nhit_shower_fit_result_n[10][2]);
-        fit_langaus(h_nhit_layer_n_11, nhit_shower_fit_result_n[11][0], nhit_shower_fit_result_n[11][1], nhit_shower_fit_result_n[11][2]);
-        fit_langaus(h_nhit_layer_n_12, nhit_shower_fit_result_n[12][0], nhit_shower_fit_result_n[12][1], nhit_shower_fit_result_n[12][2]);
-        fit_langaus(h_nhit_layer_n_13, nhit_shower_fit_result_n[13][0], nhit_shower_fit_result_n[13][1], nhit_shower_fit_result_n[13][2]);
-        fit_langaus(h_nhit_layer_n_14, nhit_shower_fit_result_n[14][0], nhit_shower_fit_result_n[14][1], nhit_shower_fit_result_n[14][2]);
+	fit_gauss(h_nhit_layer_n_0, nhit_shower_fit_result_n[0][0], nhit_shower_fit_result_n[0][1], nhit_shower_fit_result_n[0][2]);
+        fit_gauss(h_nhit_layer_n_1, nhit_shower_fit_result_n[1][0], nhit_shower_fit_result_n[1][1], nhit_shower_fit_result_n[1][2]);
+        fit_gauss(h_nhit_layer_n_2, nhit_shower_fit_result_n[2][0], nhit_shower_fit_result_n[2][1], nhit_shower_fit_result_n[2][2]);
+        fit_gauss(h_nhit_layer_n_3, nhit_shower_fit_result_n[3][0], nhit_shower_fit_result_n[3][1], nhit_shower_fit_result_n[3][2]);
+        fit_gauss(h_nhit_layer_n_4, nhit_shower_fit_result_n[4][0], nhit_shower_fit_result_n[4][1], nhit_shower_fit_result_n[4][2]);
+        fit_gauss(h_nhit_layer_n_5, nhit_shower_fit_result_n[5][0], nhit_shower_fit_result_n[5][1], nhit_shower_fit_result_n[5][2]);
+        fit_gauss(h_nhit_layer_n_6, nhit_shower_fit_result_n[6][0], nhit_shower_fit_result_n[6][1], nhit_shower_fit_result_n[6][2]);
+        fit_gauss(h_nhit_layer_n_7, nhit_shower_fit_result_n[7][0], nhit_shower_fit_result_n[7][1], nhit_shower_fit_result_n[7][2]);
+        fit_gauss(h_nhit_layer_n_8, nhit_shower_fit_result_n[8][0], nhit_shower_fit_result_n[8][1], nhit_shower_fit_result_n[8][2]);
+        fit_gauss(h_nhit_layer_n_9, nhit_shower_fit_result_n[9][0], nhit_shower_fit_result_n[9][1], nhit_shower_fit_result_n[9][2]);
+        fit_gauss(h_nhit_layer_n_10, nhit_shower_fit_result_n[10][0], nhit_shower_fit_result_n[10][1], nhit_shower_fit_result_n[10][2]);
+        fit_gauss(h_nhit_layer_n_11, nhit_shower_fit_result_n[11][0], nhit_shower_fit_result_n[11][1], nhit_shower_fit_result_n[11][2]);
+        fit_gauss(h_nhit_layer_n_12, nhit_shower_fit_result_n[12][0], nhit_shower_fit_result_n[12][1], nhit_shower_fit_result_n[12][2]);
+        fit_gauss(h_nhit_layer_n_13, nhit_shower_fit_result_n[13][0], nhit_shower_fit_result_n[13][1], nhit_shower_fit_result_n[13][2]);
+        fit_gauss(h_nhit_layer_n_14, nhit_shower_fit_result_n[14][0], nhit_shower_fit_result_n[14][1], nhit_shower_fit_result_n[14][2]);
 			
         mu_nhit_layer_n_0[i_energy] = nhit_shower_fit_result_n[0][0];
 	mu_error_nhit_layer_n_0[i_energy] = nhit_shower_fit_result_n[0][1];
@@ -1127,21 +1229,21 @@ void analysis_70 (string particle, bool masked=false) {
         double weight_shower_fit_result[N_ECAL_LAYERS][3];
 	//cout<<"Fits shower energy weighted"<<endl;
 	
-	fit_langaus(h_weight_layer_0, weight_shower_fit_result[0][0], weight_shower_fit_result[0][1], weight_shower_fit_result[0][2]);
-        fit_langaus(h_weight_layer_1, weight_shower_fit_result[1][0], weight_shower_fit_result[1][1], weight_shower_fit_result[1][2]);
-        fit_langaus(h_weight_layer_2, weight_shower_fit_result[2][0], weight_shower_fit_result[2][1], weight_shower_fit_result[2][2]);
-        fit_langaus(h_weight_layer_3, weight_shower_fit_result[3][0], weight_shower_fit_result[3][1], weight_shower_fit_result[3][2]);
-        fit_langaus(h_weight_layer_4, weight_shower_fit_result[4][0], weight_shower_fit_result[4][1], weight_shower_fit_result[4][2]);
-	fit_langaus(h_weight_layer_5, weight_shower_fit_result[5][0], weight_shower_fit_result[5][1], weight_shower_fit_result[5][2]);
-        fit_langaus(h_weight_layer_6, weight_shower_fit_result[6][0], weight_shower_fit_result[6][1], weight_shower_fit_result[6][2]);
-        fit_langaus(h_weight_layer_7, weight_shower_fit_result[7][0], weight_shower_fit_result[7][1], weight_shower_fit_result[7][2]);
-        fit_langaus(h_weight_layer_8, weight_shower_fit_result[8][0], weight_shower_fit_result[8][1], weight_shower_fit_result[8][2]);
-        fit_langaus(h_weight_layer_9, weight_shower_fit_result[9][0], weight_shower_fit_result[9][1], weight_shower_fit_result[9][2]);
-        fit_langaus(h_weight_layer_10, weight_shower_fit_result[10][0], weight_shower_fit_result[10][1], weight_shower_fit_result[10][2]);
-        fit_langaus(h_weight_layer_11, weight_shower_fit_result[11][0], weight_shower_fit_result[11][1], weight_shower_fit_result[11][2]);
-        fit_langaus(h_weight_layer_12, weight_shower_fit_result[12][0], weight_shower_fit_result[12][1], weight_shower_fit_result[12][2]);
-        fit_langaus(h_weight_layer_13, weight_shower_fit_result[13][0], weight_shower_fit_result[13][1], weight_shower_fit_result[13][2]);
-        fit_langaus(h_weight_layer_14, weight_shower_fit_result[14][0], weight_shower_fit_result[14][1], weight_shower_fit_result[14][2]);
+	fit_gauss(h_weight_layer_0, weight_shower_fit_result[0][0], weight_shower_fit_result[0][1], weight_shower_fit_result[0][2]);
+        fit_gauss(h_weight_layer_1, weight_shower_fit_result[1][0], weight_shower_fit_result[1][1], weight_shower_fit_result[1][2]);
+        fit_gauss(h_weight_layer_2, weight_shower_fit_result[2][0], weight_shower_fit_result[2][1], weight_shower_fit_result[2][2]);
+        fit_gauss(h_weight_layer_3, weight_shower_fit_result[3][0], weight_shower_fit_result[3][1], weight_shower_fit_result[3][2]);
+        fit_gauss(h_weight_layer_4, weight_shower_fit_result[4][0], weight_shower_fit_result[4][1], weight_shower_fit_result[4][2]);
+	fit_gauss(h_weight_layer_5, weight_shower_fit_result[5][0], weight_shower_fit_result[5][1], weight_shower_fit_result[5][2]);
+        fit_gauss(h_weight_layer_6, weight_shower_fit_result[6][0], weight_shower_fit_result[6][1], weight_shower_fit_result[6][2]);
+        fit_gauss(h_weight_layer_7, weight_shower_fit_result[7][0], weight_shower_fit_result[7][1], weight_shower_fit_result[7][2]);
+        fit_gauss(h_weight_layer_8, weight_shower_fit_result[8][0], weight_shower_fit_result[8][1], weight_shower_fit_result[8][2]);
+        fit_gauss(h_weight_layer_9, weight_shower_fit_result[9][0], weight_shower_fit_result[9][1], weight_shower_fit_result[9][2]);
+        fit_gauss(h_weight_layer_10, weight_shower_fit_result[10][0], weight_shower_fit_result[10][1], weight_shower_fit_result[10][2]);
+        fit_gauss(h_weight_layer_11, weight_shower_fit_result[11][0], weight_shower_fit_result[11][1], weight_shower_fit_result[11][2]);
+        fit_gauss(h_weight_layer_12, weight_shower_fit_result[12][0], weight_shower_fit_result[12][1], weight_shower_fit_result[12][2]);
+        fit_gauss(h_weight_layer_13, weight_shower_fit_result[13][0], weight_shower_fit_result[13][1], weight_shower_fit_result[13][2]);
+        fit_gauss(h_weight_layer_14, weight_shower_fit_result[14][0], weight_shower_fit_result[14][1], weight_shower_fit_result[14][2]);
 	
         mu_weight_layer_0[i_energy] = weight_shower_fit_result[0][0];
         mu_error_weight_layer_0[i_energy] = weight_shower_fit_result[0][1];
@@ -1192,21 +1294,22 @@ void analysis_70 (string particle, bool masked=false) {
 	// weight normalized
         double weight_shower_fit_result_n[N_ECAL_LAYERS][3];
         //cout<<"Fits shower energy weighted normalized"<<endl;
-	fit_langaus(h_weight_layer_n_0, weight_shower_fit_result_n[0][0], weight_shower_fit_result_n[0][1], weight_shower_fit_result_n[0][2]);
-        fit_langaus(h_weight_layer_n_1, weight_shower_fit_result_n[1][0], weight_shower_fit_result_n[1][1], weight_shower_fit_result_n[1][2]);
-        fit_langaus(h_weight_layer_n_2, weight_shower_fit_result_n[2][0], weight_shower_fit_result_n[2][1], weight_shower_fit_result_n[2][2]);
-        fit_langaus(h_weight_layer_n_3, weight_shower_fit_result_n[3][0], weight_shower_fit_result_n[3][1], weight_shower_fit_result_n[3][2]);
-        fit_langaus(h_weight_layer_n_4, weight_shower_fit_result_n[4][0], weight_shower_fit_result_n[4][1], weight_shower_fit_result_n[4][2]);
-        fit_langaus(h_weight_layer_n_5, weight_shower_fit_result_n[5][0], weight_shower_fit_result_n[5][1], weight_shower_fit_result_n[5][2]);
-        fit_langaus(h_weight_layer_n_6, weight_shower_fit_result_n[6][0], weight_shower_fit_result_n[6][1], weight_shower_fit_result_n[6][2]);
-        fit_langaus(h_weight_layer_n_7, weight_shower_fit_result_n[7][0], weight_shower_fit_result_n[7][1], weight_shower_fit_result_n[7][2]);
-        fit_langaus(h_weight_layer_n_8, weight_shower_fit_result_n[8][0], weight_shower_fit_result_n[8][1], weight_shower_fit_result_n[8][2]);
-        fit_langaus(h_weight_layer_n_9, weight_shower_fit_result_n[9][0], weight_shower_fit_result_n[9][1], weight_shower_fit_result_n[9][2]);
-        fit_langaus(h_weight_layer_n_10, weight_shower_fit_result_n[10][0], weight_shower_fit_result_n[10][1], weight_shower_fit_result_n[10][2]);
-        fit_langaus(h_weight_layer_n_11, weight_shower_fit_result_n[11][0], weight_shower_fit_result_n[11][1], weight_shower_fit_result_n[11][2]);
-        fit_langaus(h_weight_layer_n_12, weight_shower_fit_result_n[12][0], weight_shower_fit_result_n[12][1], weight_shower_fit_result_n[12][2]);
-        fit_langaus(h_weight_layer_n_13, weight_shower_fit_result_n[13][0], weight_shower_fit_result_n[13][1], weight_shower_fit_result_n[13][2]);
-        fit_langaus(h_weight_layer_n_14, weight_shower_fit_result_n[14][0], weight_shower_fit_result_n[14][1], weight_shower_fit_result_n[14][2]);
+	
+	fit_gauss(h_weight_layer_n_0, weight_shower_fit_result_n[0][0], weight_shower_fit_result_n[0][1], weight_shower_fit_result_n[0][2]);
+        fit_gauss(h_weight_layer_n_1, weight_shower_fit_result_n[1][0], weight_shower_fit_result_n[1][1], weight_shower_fit_result_n[1][2]);
+        fit_gauss(h_weight_layer_n_2, weight_shower_fit_result_n[2][0], weight_shower_fit_result_n[2][1], weight_shower_fit_result_n[2][2]);
+        fit_gauss(h_weight_layer_n_3, weight_shower_fit_result_n[3][0], weight_shower_fit_result_n[3][1], weight_shower_fit_result_n[3][2]);
+        fit_gauss(h_weight_layer_n_4, weight_shower_fit_result_n[4][0], weight_shower_fit_result_n[4][1], weight_shower_fit_result_n[4][2]);
+        fit_gauss(h_weight_layer_n_5, weight_shower_fit_result_n[5][0], weight_shower_fit_result_n[5][1], weight_shower_fit_result_n[5][2]);
+        fit_gauss(h_weight_layer_n_6, weight_shower_fit_result_n[6][0], weight_shower_fit_result_n[6][1], weight_shower_fit_result_n[6][2]);
+        fit_gauss(h_weight_layer_n_7, weight_shower_fit_result_n[7][0], weight_shower_fit_result_n[7][1], weight_shower_fit_result_n[7][2]);
+        fit_gauss(h_weight_layer_n_8, weight_shower_fit_result_n[8][0], weight_shower_fit_result_n[8][1], weight_shower_fit_result_n[8][2]);
+        fit_gauss(h_weight_layer_n_9, weight_shower_fit_result_n[9][0], weight_shower_fit_result_n[9][1], weight_shower_fit_result_n[9][2]);
+        fit_gauss(h_weight_layer_n_10, weight_shower_fit_result_n[10][0], weight_shower_fit_result_n[10][1], weight_shower_fit_result_n[10][2]);
+        fit_gauss(h_weight_layer_n_11, weight_shower_fit_result_n[11][0], weight_shower_fit_result_n[11][1], weight_shower_fit_result_n[11][2]);
+        fit_gauss(h_weight_layer_n_12, weight_shower_fit_result_n[12][0], weight_shower_fit_result_n[12][1], weight_shower_fit_result_n[12][2]);
+        fit_gauss(h_weight_layer_n_13, weight_shower_fit_result_n[13][0], weight_shower_fit_result_n[13][1], weight_shower_fit_result_n[13][2]);
+        fit_gauss(h_weight_layer_n_14, weight_shower_fit_result_n[14][0], weight_shower_fit_result_n[14][1], weight_shower_fit_result_n[14][2]);
 	
         mu_weight_layer_n_0[i_energy] = weight_shower_fit_result_n[0][0];
         mu_error_weight_layer_n_0[i_energy] = weight_shower_fit_result_n[0][1];
@@ -1356,6 +1459,57 @@ void analysis_70 (string particle, bool masked=false) {
         mu_barycenter_y_layer_14[i_energy] = bar_y_fit_result[14][0];
         sig_barycenter_y_layer_14[i_energy] = bar_y_fit_result[14][1];
 
+	// barycenter r per layer
+        double bar_r_fit_result[N_ECAL_LAYERS][2];
+
+        fit_bar(h_bar_r_layer_0, bar_r_fit_result[0][0], bar_r_fit_result[0][1]);
+        fit_bar(h_bar_r_layer_1, bar_r_fit_result[1][0], bar_r_fit_result[1][1]);
+        fit_bar(h_bar_r_layer_2, bar_r_fit_result[2][0], bar_r_fit_result[2][1]);
+        fit_bar(h_bar_r_layer_3, bar_r_fit_result[3][0], bar_r_fit_result[3][1]);
+        fit_bar(h_bar_r_layer_4, bar_r_fit_result[4][0], bar_r_fit_result[4][1]);
+        fit_bar(h_bar_r_layer_5, bar_r_fit_result[5][0], bar_r_fit_result[5][1]);
+        fit_bar(h_bar_r_layer_6, bar_r_fit_result[6][0], bar_r_fit_result[6][1]);
+        fit_bar(h_bar_r_layer_7, bar_r_fit_result[7][0], bar_r_fit_result[7][1]);
+        fit_bar(h_bar_r_layer_8, bar_r_fit_result[8][0], bar_r_fit_result[8][1]);
+        fit_bar(h_bar_r_layer_9, bar_r_fit_result[9][0], bar_r_fit_result[9][1]);
+        fit_bar(h_bar_r_layer_10, bar_r_fit_result[10][0], bar_r_fit_result[10][1]);
+        fit_bar(h_bar_r_layer_11, bar_r_fit_result[11][0], bar_r_fit_result[11][1]);
+        fit_bar(h_bar_r_layer_12, bar_r_fit_result[12][0], bar_r_fit_result[12][1]);
+        fit_bar(h_bar_r_layer_13, bar_r_fit_result[13][0], bar_r_fit_result[13][1]);
+        fit_bar(h_bar_r_layer_14, bar_r_fit_result[14][0], bar_r_fit_result[14][1]);
+
+
+        mu_barycenter_r_layer_0[i_energy] = bar_r_fit_result[0][0];
+        sig_barycenter_r_layer_0[i_energy] = bar_r_fit_result[0][1];
+        mu_barycenter_r_layer_1[i_energy] = bar_r_fit_result[1][0];
+        sig_barycenter_r_layer_1[i_energy] = bar_r_fit_result[1][1];
+        mu_barycenter_r_layer_2[i_energy] = bar_r_fit_result[2][0];
+        sig_barycenter_r_layer_2[i_energy] = bar_r_fit_result[2][1];
+        mu_barycenter_r_layer_3[i_energy] = bar_r_fit_result[3][0];
+        sig_barycenter_r_layer_3[i_energy] = bar_r_fit_result[3][1];
+        mu_barycenter_r_layer_4[i_energy] = bar_r_fit_result[4][0];
+        sig_barycenter_r_layer_4[i_energy] = bar_r_fit_result[4][1];
+        mu_barycenter_r_layer_5[i_energy] = bar_r_fit_result[5][0];
+        sig_barycenter_r_layer_5[i_energy] = bar_r_fit_result[5][1];
+        mu_barycenter_r_layer_6[i_energy] = bar_r_fit_result[6][0];
+        sig_barycenter_r_layer_6[i_energy] = bar_r_fit_result[6][1];
+        mu_barycenter_r_layer_7[i_energy] = bar_r_fit_result[7][0];
+        sig_barycenter_r_layer_7[i_energy] = bar_r_fit_result[7][1];
+        mu_barycenter_r_layer_8[i_energy] = bar_r_fit_result[8][0];
+        sig_barycenter_r_layer_8[i_energy] = bar_r_fit_result[8][1];
+        mu_barycenter_r_layer_9[i_energy] = bar_r_fit_result[9][0];
+        sig_barycenter_r_layer_9[i_energy] = bar_r_fit_result[9][1];
+        mu_barycenter_r_layer_10[i_energy] = bar_r_fit_result[10][0];
+        sig_barycenter_r_layer_10[i_energy] = bar_r_fit_result[10][1];
+        mu_barycenter_r_layer_11[i_energy] = bar_r_fit_result[11][0];
+        sig_barycenter_r_layer_11[i_energy] = bar_r_fit_result[11][1];
+        mu_barycenter_r_layer_12[i_energy] = bar_r_fit_result[12][0];
+        sig_barycenter_r_layer_12[i_energy] = bar_r_fit_result[12][1];
+        mu_barycenter_r_layer_13[i_energy] = bar_r_fit_result[13][0];
+        sig_barycenter_r_layer_13[i_energy] = bar_r_fit_result[13][1];
+        mu_barycenter_r_layer_14[i_energy] = bar_r_fit_result[14][0];
+        sig_barycenter_r_layer_14[i_energy] = bar_r_fit_result[14][1];
+
 	//cout<<"barycenter x laxer: "<<bar_x_fit_result[0][0]<<", "<<bar_x_fit_result[1][0]<<", "<<bar_x_fit_result[2][0]<<", "<<bar_x_fit_result[3][0]<<", "<<bar_x_fit_result[4][0]<<", "<<bar_x_fit_result[5][0]<<", "<<bar_x_fit_result[6][0]<<", "<<bar_x_fit_result[7][0]<<", "<<bar_x_fit_result[8][0]<<", "<<bar_x_fit_result[9][0]<<", "<<bar_x_fit_result[10][0]<<", "<<bar_x_fit_result[11][0]<<", "<<bar_x_fit_result[12][0]<<", "<<bar_x_fit_result[13][0]<<", "<<bar_x_fit_result[14][0]<<", "<<endl;
 
 	//cout<<"barycenter y layer: "<<bar_y_fit_result[0][0]<<", "<<bar_y_fit_result[1][0]<<", "<<bar_y_fit_result[2][0]<<", "<<bar_y_fit_result[3][0]<<", "<<bar_y_fit_result[4][0]<<", "<<bar_y_fit_result[5][0]<<", "<<bar_y_fit_result[6][0]<<", "<<bar_y_fit_result[7][0]<<", "<<bar_y_fit_result[8][0]<<", "<<bar_y_fit_result[9][0]<<", "<<bar_y_fit_result[10][0]<<", "<<bar_y_fit_result[11][0]<<", "<<bar_y_fit_result[12][0]<<", "<<bar_y_fit_result[13][0]<<", "<<bar_y_fit_result[14][0]<<", "<<endl;
@@ -1388,19 +1542,22 @@ void analysis_70 (string particle, bool masked=false) {
 	//cout<<"Weight shower layer start (0.1*Max): "<<shower_weight_start_10_layer[i_energy]<<", end (0.1*Max): "<<shower_weight_end_10_layer[i_energy]<<endl;
         //cout<<"Weight shower layer average: "<<shower_weight_average[i_energy]<<", max. value: "<<shower_weight_max[i_energy]<<endl;
 	
-	double bar_fits[3][2];
+	double bar_fits[4][2];
 
         fit_bar(h_bar_x, bar_fits[0][0], bar_fits[0][1]);
 	fit_bar(h_bar_y, bar_fits[1][0], bar_fits[1][1]);
 	fit_bar(h_bar_z, bar_fits[2][0], bar_fits[2][1]);
+	fit_bar(h_bar_r, bar_fits[3][0], bar_fits[3][1]);
 
 	mu_barycenter_x[i_energy] = bar_fits[0][0];
 	mu_barycenter_y[i_energy] = bar_fits[1][0];
 	mu_barycenter_z[i_energy] = bar_fits[2][0];
+	mu_barycenter_r[i_energy] = bar_fits[3][0];
 	sig_barycenter_x[i_energy] = bar_fits[0][1];
         sig_barycenter_y[i_energy] = bar_fits[1][1];
         sig_barycenter_z[i_energy] = bar_fits[2][1];
-	  
+	sig_barycenter_r[i_energy] = bar_fits[2][1];
+	
 	//Write objects
         f.WriteTObject(h_nhit);    
         f.WriteTObject(h_sume);    
@@ -1519,15 +1676,32 @@ void analysis_70 (string particle, bool masked=false) {
         f.WriteTObject(h_bar_y_layer_13);
         f.WriteTObject(h_bar_y_layer_14);
 
+	f.WriteTObject(h_bar_r_layer_0);
+        f.WriteTObject(h_bar_r_layer_1);
+        f.WriteTObject(h_bar_r_layer_2);
+        f.WriteTObject(h_bar_r_layer_3);
+        f.WriteTObject(h_bar_r_layer_4);
+        f.WriteTObject(h_bar_r_layer_5);
+        f.WriteTObject(h_bar_r_layer_6);
+        f.WriteTObject(h_bar_r_layer_7);
+        f.WriteTObject(h_bar_r_layer_8);
+        f.WriteTObject(h_bar_r_layer_9);
+        f.WriteTObject(h_bar_r_layer_10);
+        f.WriteTObject(h_bar_r_layer_11);
+        f.WriteTObject(h_bar_r_layer_12);
+        f.WriteTObject(h_bar_r_layer_13);
+        f.WriteTObject(h_bar_r_layer_14);
+
 	f.WriteTObject(h_bar_x);
 	f.WriteTObject(h_bar_y);
 	f.WriteTObject(h_bar_z);
+	f.WriteTObject(h_bar_r);
     }
     
     f.WriteObject(&mu_nhit, "mu_nhit");                     f.WriteObject(&sig_nhit, "sig_nhit");                   f.WriteObject(&res_nhit, "res_nhit");
     f.WriteObject(&mu_sume, "mu_sume");                     f.WriteObject(&sig_sume, "sig_sume");                   f.WriteObject(&res_sume, "res_sume");
     f.WriteObject(&mu_weight, "mu_weight");                 f.WriteObject(&sig_weight, "sig_weight");               f.WriteObject(&res_weight, "res_weight");
-    f.WriteObject(&mu_mol, "mu_mol"); f.WriteObject(&mu_mol, "mu_error_mol"); f.WriteObject(&sig_mol, "sig_mol");
+    f.WriteObject(&mu_mol, "mu_mol");  f.WriteObject(&sig_mol, "sig_mol");
     
     f.WriteTObject(&mu_nhit_layer_0, "mu_nhit_layer_0");
     f.WriteTObject(&mu_nhit_layer_1, "mu_nhit_layer_1");
@@ -1544,21 +1718,6 @@ void analysis_70 (string particle, bool masked=false) {
     f.WriteTObject(&mu_nhit_layer_12, "mu_nhit_layer_12");
     f.WriteTObject(&mu_nhit_layer_13, "mu_nhit_layer_13");
     f.WriteTObject(&mu_nhit_layer_14, "mu_nhit_layer_14");
-    f.WriteTObject(&mu_error_nhit_layer_0, "mu_error_nhit_layer_0");
-    f.WriteTObject(&mu_error_nhit_layer_1, "mu_error_nhit_layer_1");
-    f.WriteTObject(&mu_error_nhit_layer_2, "mu_error_nhit_layer_2");
-    f.WriteTObject(&mu_error_nhit_layer_3, "mu_error_nhit_layer_3");
-    f.WriteTObject(&mu_error_nhit_layer_4, "mu_error_nhit_layer_4");
-    f.WriteTObject(&mu_error_nhit_layer_5, "mu_error_nhit_layer_5");
-    f.WriteTObject(&mu_error_nhit_layer_6, "mu_error_nhit_layer_6");
-    f.WriteTObject(&mu_error_nhit_layer_7, "mu_error_nhit_layer_7");
-    f.WriteTObject(&mu_error_nhit_layer_8, "mu_error_nhit_layer_8");
-    f.WriteTObject(&mu_error_nhit_layer_9, "mu_error_nhit_layer_9");
-    f.WriteTObject(&mu_error_nhit_layer_10, "mu_error_nhit_layer_10");
-    f.WriteTObject(&mu_error_nhit_layer_11, "mu_error_nhit_layer_11");
-    f.WriteTObject(&mu_error_nhit_layer_12, "mu_error_nhit_layer_12");
-    f.WriteTObject(&mu_error_nhit_layer_13, "mu_error_nhit_layer_13");
-    f.WriteTObject(&mu_error_nhit_layer_14, "mu_error_nhit_layer_14");
     f.WriteTObject(&sig_nhit_layer_0, "sig_nhit_layer_0");
     f.WriteTObject(&sig_nhit_layer_1, "sig_nhit_layer_1");
     f.WriteTObject(&sig_nhit_layer_2, "sig_nhit_layer_2");
@@ -1590,21 +1749,6 @@ void analysis_70 (string particle, bool masked=false) {
     f.WriteTObject(&mu_nhit_layer_n_12, "mu_nhit_layer_n_12");
     f.WriteTObject(&mu_nhit_layer_n_13, "mu_nhit_layer_n_13");
     f.WriteTObject(&mu_nhit_layer_n_14, "mu_nhit_layer_n_14");
-    f.WriteTObject(&mu_error_nhit_layer_n_0, "mu_error_nhit_layer_n_0");
-    f.WriteTObject(&mu_error_nhit_layer_n_1, "mu_error_nhit_layer_n_1");
-    f.WriteTObject(&mu_error_nhit_layer_n_2, "mu_error_nhit_layer_n_2");
-    f.WriteTObject(&mu_error_nhit_layer_n_3, "mu_error_nhit_layer_n_3");
-    f.WriteTObject(&mu_error_nhit_layer_n_4, "mu_error_nhit_layer_n_4");
-    f.WriteTObject(&mu_error_nhit_layer_n_5, "mu_error_nhit_layer_n_5");
-    f.WriteTObject(&mu_error_nhit_layer_n_6, "mu_error_nhit_layer_n_6");
-    f.WriteTObject(&mu_error_nhit_layer_n_7, "mu_error_nhit_layer_n_7");
-    f.WriteTObject(&mu_error_nhit_layer_n_8, "mu_error_nhit_layer_n_8");
-    f.WriteTObject(&mu_error_nhit_layer_n_9, "mu_error_nhit_layer_n_9");
-    f.WriteTObject(&mu_error_nhit_layer_n_10, "mu_error_nhit_layer_n_10");
-    f.WriteTObject(&mu_error_nhit_layer_n_11, "mu_error_nhit_layer_n_11");
-    f.WriteTObject(&mu_error_nhit_layer_n_12, "mu_error_nhit_layer_n_12");
-    f.WriteTObject(&mu_error_nhit_layer_n_13, "mu_error_nhit_layer_n_13");
-    f.WriteTObject(&mu_error_nhit_layer_n_14, "mu_error_nhit_layer_n_14");
     f.WriteTObject(&sig_nhit_layer_n_0, "sig_nhit_layer_n_0");
     f.WriteTObject(&sig_nhit_layer_n_1, "sig_nhit_layer_n_1");
     f.WriteTObject(&sig_nhit_layer_n_2, "sig_nhit_layer_n_2");
@@ -1644,21 +1788,6 @@ void analysis_70 (string particle, bool masked=false) {
     f.WriteTObject(&mu_weight_layer_12, "mu_weight_layer_12");
     f.WriteTObject(&mu_weight_layer_13, "mu_weight_layer_13");
     f.WriteTObject(&mu_weight_layer_14, "mu_weight_layer_14");
-    f.WriteTObject(&mu_error_weight_layer_0, "mu_error_weight_layer_0");
-    f.WriteTObject(&mu_error_weight_layer_1, "mu_error_weight_layer_1");
-    f.WriteTObject(&mu_error_weight_layer_2, "mu_error_weight_layer_2");
-    f.WriteTObject(&mu_error_weight_layer_3, "mu_error_weight_layer_3");
-    f.WriteTObject(&mu_error_weight_layer_4, "mu_error_weight_layer_4");
-    f.WriteTObject(&mu_error_weight_layer_5, "mu_error_weight_layer_5");
-    f.WriteTObject(&mu_error_weight_layer_6, "mu_error_weight_layer_6");
-    f.WriteTObject(&mu_error_weight_layer_7, "mu_error_weight_layer_7");
-    f.WriteTObject(&mu_error_weight_layer_8, "mu_error_weight_layer_8");
-    f.WriteTObject(&mu_error_weight_layer_9, "mu_error_weight_layer_9");
-    f.WriteTObject(&mu_error_weight_layer_10, "mu_error_weight_layer_10");
-    f.WriteTObject(&mu_error_weight_layer_11, "mu_error_weight_layer_11");
-    f.WriteTObject(&mu_error_weight_layer_12, "mu_error_weight_layer_12");
-    f.WriteTObject(&mu_error_weight_layer_13, "mu_error_weight_layer_13");
-    f.WriteTObject(&mu_error_weight_layer_14, "mu_error_weight_layer_14");
     f.WriteTObject(&sig_weight_layer_0, "sig_weight_layer_0");
     f.WriteTObject(&sig_weight_layer_1, "sig_weight_layer_1");
     f.WriteTObject(&sig_weight_layer_2, "sig_weight_layer_2");
@@ -1690,21 +1819,6 @@ void analysis_70 (string particle, bool masked=false) {
     f.WriteTObject(&mu_weight_layer_n_12, "mu_weight_layer_n_12");
     f.WriteTObject(&mu_weight_layer_n_13, "mu_weight_layer_n_13");
     f.WriteTObject(&mu_weight_layer_n_14, "mu_weight_layer_n_14");
-    f.WriteTObject(&mu_error_weight_layer_n_0, "mu_error_weight_layer_n_0");
-    f.WriteTObject(&mu_error_weight_layer_n_1, "mu_error_weight_layer_n_1");
-    f.WriteTObject(&mu_error_weight_layer_n_2, "mu_error_weight_layer_n_2");
-    f.WriteTObject(&mu_error_weight_layer_n_3, "mu_error_weight_layer_n_3");
-    f.WriteTObject(&mu_error_weight_layer_n_4, "mu_error_weight_layer_n_4");
-    f.WriteTObject(&mu_error_weight_layer_n_5, "mu_error_weight_layer_n_5");
-    f.WriteTObject(&mu_error_weight_layer_n_6, "mu_error_weight_layer_n_6");
-    f.WriteTObject(&mu_error_weight_layer_n_7, "mu_error_weight_layer_n_7");
-    f.WriteTObject(&mu_error_weight_layer_n_8, "mu_error_weight_layer_n_8");
-    f.WriteTObject(&mu_error_weight_layer_n_9, "mu_error_weight_layer_n_9");
-    f.WriteTObject(&mu_error_weight_layer_n_10, "mu_error_weight_layer_n_10");
-    f.WriteTObject(&mu_error_weight_layer_n_11, "mu_error_weight_layer_n_11");
-    f.WriteTObject(&mu_error_weight_layer_n_12, "mu_error_weight_layer_n_12");
-    f.WriteTObject(&mu_error_weight_layer_n_13, "mu_error_weight_layer_n_13");
-    f.WriteTObject(&mu_error_weight_layer_n_14, "mu_error_weight_layer_n_14");
     f.WriteTObject(&sig_weight_layer_n_0, "sig_weight_layer_n_0");
     f.WriteTObject(&sig_weight_layer_n_1, "sig_weight_layer_n_1");
     f.WriteTObject(&sig_weight_layer_n_2, "sig_weight_layer_n_2");
@@ -1790,14 +1904,46 @@ void analysis_70 (string particle, bool masked=false) {
     f.WriteTObject(&sig_barycenter_y_layer_12, "sig_barycenter_y_layer_12");
     f.WriteTObject(&sig_barycenter_y_layer_13, "sig_barycenter_y_layer_13");
     f.WriteTObject(&sig_barycenter_y_layer_14, "sig_barycenter_y_layer_14");
+    f.WriteTObject(&mu_barycenter_r_layer_0, "mu_barycenter_r_layer_0");
+    f.WriteTObject(&mu_barycenter_r_layer_1, "mu_barycenter_r_layer_1");
+    f.WriteTObject(&mu_barycenter_r_layer_2, "mu_barycenter_r_layer_2");
+    f.WriteTObject(&mu_barycenter_r_layer_3, "mu_barycenter_r_layer_3");
+    f.WriteTObject(&mu_barycenter_r_layer_4, "mu_barycenter_r_layer_4");
+    f.WriteTObject(&mu_barycenter_r_layer_5, "mu_barycenter_r_layer_5");
+    f.WriteTObject(&mu_barycenter_r_layer_6, "mu_barycenter_r_layer_6");
+    f.WriteTObject(&mu_barycenter_r_layer_7, "mu_barycenter_r_layer_7");
+    f.WriteTObject(&mu_barycenter_r_layer_8, "mu_barycenter_r_layer_8");
+    f.WriteTObject(&mu_barycenter_r_layer_9, "mu_barycenter_r_layer_9");
+    f.WriteTObject(&mu_barycenter_r_layer_10, "mu_barycenter_r_layer_10");
+    f.WriteTObject(&mu_barycenter_r_layer_11, "mu_barycenter_r_layer_11");
+    f.WriteTObject(&mu_barycenter_r_layer_12, "mu_barycenter_r_layer_12");
+    f.WriteTObject(&mu_barycenter_r_layer_13, "mu_barycenter_r_layer_13");
+    f.WriteTObject(&mu_barycenter_r_layer_14, "mu_barycenter_r_layer_14");
+    f.WriteTObject(&sig_barycenter_r_layer_0, "sig_barycenter_r_layer_0");
+    f.WriteTObject(&sig_barycenter_r_layer_1, "sig_barycenter_r_layer_1");
+    f.WriteTObject(&sig_barycenter_r_layer_2, "sig_barycenter_r_layer_2");
+    f.WriteTObject(&sig_barycenter_r_layer_3, "sig_barycenter_r_layer_3");
+    f.WriteTObject(&sig_barycenter_r_layer_4, "sig_barycenter_r_layer_4");
+    f.WriteTObject(&sig_barycenter_r_layer_5, "sig_barycenter_r_layer_5");
+    f.WriteTObject(&sig_barycenter_r_layer_6, "sig_barycenter_r_layer_6");
+    f.WriteTObject(&sig_barycenter_r_layer_7, "sig_barycenter_r_layer_7");
+    f.WriteTObject(&sig_barycenter_r_layer_8, "sig_barycenter_r_layer_8");
+    f.WriteTObject(&sig_barycenter_r_layer_9, "sig_barycenter_r_layer_9");
+    f.WriteTObject(&sig_barycenter_r_layer_10, "sig_barycenter_r_layer_10");
+    f.WriteTObject(&sig_barycenter_r_layer_11, "sig_barycenter_r_layer_11");
+    f.WriteTObject(&sig_barycenter_r_layer_12, "sig_barycenter_r_layer_12");
+    f.WriteTObject(&sig_barycenter_r_layer_13, "sig_barycenter_r_layer_13");
+    f.WriteTObject(&sig_barycenter_r_layer_14, "sig_barycenter_r_layer_14");
 
     f.WriteTObject(&mu_barycenter_x, "mu_barycenter_x");
     f.WriteTObject(&mu_barycenter_y, "mu_barycenter_y");
     f.WriteTObject(&mu_barycenter_z, "mu_barycenter_z");
+    f.WriteTObject(&mu_barycenter_r, "mu_barycenter_r");
     f.WriteTObject(&sig_barycenter_x, "sig_barycenter_x");
     f.WriteTObject(&sig_barycenter_y, "sig_barycenter_y");
     f.WriteTObject(&sig_barycenter_z, "sig_barycenter_z");
-    
+    f.WriteTObject(&sig_barycenter_r, "sig_barycenter_r");
+
     f.WriteObject(&energies, "energies");
     f.WriteObject(&energies_tr, "energies_tr");
     f.WriteObject(&W_thicknesses, "W_thicknesses");

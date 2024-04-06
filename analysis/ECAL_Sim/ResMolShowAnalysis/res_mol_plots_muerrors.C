@@ -1439,7 +1439,7 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     
     // Moliere
     // TGraphErrors *g_mol = new TGraphErrors(N_ENERGIES, energies_tr, mol, zeros, mol_sig);   
-    TGraphErrors *g_mol = new TGraphErrors(*energyaxis, *mu_mol, *zeros, *sig_mol);   
+    TGraphErrors *g_mol = new TGraphErrors(*energyaxis, *mu_mol, *zeros, *mu_error_mol);   
     graph_setup_add(g_mol, "Moliere Radius", kBlue);
 
     TMultiGraph *mg_mol = new TMultiGraph();
@@ -1467,8 +1467,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_m->Draw();
     addCaliceLogo();
     if(save == true){
-      c_mol->SaveAs("mol_"+savetrans+".eps");
-      c_mol->SaveAs("mol_"+savetrans+".png");
+      c_mol->SaveAs("mol_"+savetrans+"_w_errors.eps");
+      c_mol->SaveAs("mol_"+savetrans+"_w_errors.png");
     }
 
     // NHITS shower profile
@@ -1534,7 +1534,7 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     mg_shower_nhit_energies->Add(g_shower_nhit_150);
 
     auto c_shower_nhit_energies = new TCanvas("c_shower_nhit_energies", "c_shower_nhit_energies", 800, 800);
-    mg_shower_nhit_energies->Draw("AP");
+    mg_shower_nhit_energies->Draw("ALP");
     mg_shower_nhit_energies->SetTitle("Shower profile ("+partstring+")");
 
     if (transformed) mg_shower_nhit_energies->GetXaxis()->SetTitle("Layer");
@@ -1562,8 +1562,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_shower_nhit_energies->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_nhit_energies->SaveAs("shower_nhit_energies_"+savetrans+".eps");
-      c_shower_nhit_energies->SaveAs("shower_nhit_energies_"+savetrans+".png");
+      c_shower_nhit_energies->SaveAs("shower_nhit_energies_"+savetrans+"_w_errors.eps");
+      c_shower_nhit_energies->SaveAs("shower_nhit_energies_"+savetrans+"_w_errors.png");
     }
 
 
@@ -1597,8 +1597,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_nhit_layer_n_3->Draw();
     addCaliceLogo();
     if(save == true){
-      c_nhit_layer_n_3->SaveAs("nhit_layer_n_3_"+savetrans+".eps");
-      c_nhit_layer_n_3->SaveAs("nhit_layer_n_3_"+savetrans+".png");
+      c_nhit_layer_n_3->SaveAs("nhit_layer_n_3_"+savetrans+"_w_errors.eps");
+      c_nhit_layer_n_3->SaveAs("nhit_layer_n_3_"+savetrans+"_w_errors.png");
     }
 
     // Shower nhit normalized for different energies                                                                                                                                                           
@@ -1630,7 +1630,7 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     mg_shower_nhit_energies_n->Add(g_shower_nhit_n_150);
 
     auto c_shower_nhit_energies_n = new TCanvas("c_shower_nhit_energies_n", "c_shower_nhit_energies_n", 800, 800);
-    mg_shower_nhit_energies_n->Draw("AP");
+    mg_shower_nhit_energies_n->Draw("ALP");
     mg_shower_nhit_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_energies_n->GetXaxis()->SetTitle("Layer");
@@ -1658,8 +1658,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_shower_nhit_energies_n->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+".eps");
-      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+".png");
+      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+"_w_errors.eps");
+      c_shower_nhit_energies_n->SaveAs("shower_nhit_energies_n_"+savetrans+"_w_errors.png");
     }
 
     // Shower max, start and end
@@ -1861,8 +1861,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_weight_layer_3->Draw();
     addCaliceLogo();
     if(save == true){
-      c_weight_layer_3->SaveAs("weight_layer_3_"+savetrans+".eps");
-      c_weight_layer_3->SaveAs("weight_layer_3_"+savetrans+".png");
+      c_weight_layer_3->SaveAs("weight_layer_3_"+savetrans+"_w_errors.eps");
+      c_weight_layer_3->SaveAs("weight_layer_3_"+savetrans+"_w_errors.png");
     }
 
     // Shower different energies
@@ -1894,7 +1894,7 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     mg_shower_weight_energies->Add(g_shower_weight_150);
 
     auto c_shower_weight_energies = new TCanvas("c_shower_weight_energies", "c_shower_weight_energies", 800, 800);
-    mg_shower_weight_energies->Draw("AP");
+    mg_shower_weight_energies->Draw("ALP");
     mg_shower_weight_energies->SetTitle("Shower profile ("+partstring+")");
     mg_shower_weight_energies->GetYaxis()->SetMaxDigits(3);
 
@@ -1923,8 +1923,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_shower_weight_energies->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_weight_energies->SaveAs("shower_weight_energies_"+savetrans+".eps");
-      c_shower_weight_energies->SaveAs("shower_weight_energies_"+savetrans+".png");
+      c_shower_weight_energies->SaveAs("shower_weight_energies_"+savetrans+"_w_errors.eps");
+      c_shower_weight_energies->SaveAs("shower_weight_energies_"+savetrans+"_w_errors.png");
     }
 
 
@@ -1958,8 +1958,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_weight_layer_n_3->Draw();
     addCaliceLogo();
     if(save == true){
-      c_weight_layer_n_3->SaveAs("weight_layer_n_3_"+savetrans+".eps");
-      c_weight_layer_n_3->SaveAs("weight_layer_n_3_"+savetrans+".png");
+      c_weight_layer_n_3->SaveAs("weight_layer_n_3_"+savetrans+"_w_errors.eps");
+      c_weight_layer_n_3->SaveAs("weight_layer_n_3_"+savetrans+"_w_errors.png");
     }
 
     // Shower weight normalized for different energies
@@ -1991,7 +1991,7 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     mg_shower_weight_energies_n->Add(g_shower_weight_n_150);
 
     auto c_shower_weight_energies_n = new TCanvas("c_shower_weight_energies_n", "c_shower_weight_energies_n", 800, 800);
-    mg_shower_weight_energies_n->Draw("AP");
+    mg_shower_weight_energies_n->Draw("ALP");
     mg_shower_weight_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_weight_energies_n->GetXaxis()->SetTitle("Layer");
@@ -2019,8 +2019,8 @@ void res_mol_plots_muerrors(string particle, bool transformed = true, bool save 
     leg_shower_weight_energies_n->Draw();
     addCaliceLogo();
     if(save == true){
-      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+".eps");
-      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+".png");
+      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+"_w_errors.eps");
+      c_shower_weight_energies_n->SaveAs("shower_weight_energies_n_"+savetrans+"_w_errors.png");
     }
 
     // Shower max, start and end

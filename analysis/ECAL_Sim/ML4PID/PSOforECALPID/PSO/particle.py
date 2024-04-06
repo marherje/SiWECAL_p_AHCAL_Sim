@@ -268,6 +268,7 @@ class Particle:
 
         # delete_test = ['Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 2','Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 1','Error in <TDecompLU::InvertLU>: matrix is singular, 1 diag elements < tolerance of 2.2204e-16']
         # Patch to remove the smoothing bug START
+        #
         if os.path.isfile(self.fpath_confHTC_err) and (os.path.getsize(self.fpath_confHTC_err) != 0):
             delete_test = ['Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 2','Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 1']
             f = open(str(self.fpath_confHTC_err),'r')

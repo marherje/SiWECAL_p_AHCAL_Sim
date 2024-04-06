@@ -1534,7 +1534,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     mg_shower_nhit_energies->Add(g_shower_nhit_150);
 
     auto c_shower_nhit_energies = new TCanvas("c_shower_nhit_energies", "c_shower_nhit_energies", 800, 800);
-    mg_shower_nhit_energies->Draw("AP");
+    mg_shower_nhit_energies->Draw("ALP");
     mg_shower_nhit_energies->SetTitle("Shower profile ("+partstring+")");
 
     if (transformed) mg_shower_nhit_energies->GetXaxis()->SetTitle("Layer");
@@ -1630,7 +1630,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     mg_shower_nhit_energies_n->Add(g_shower_nhit_n_150);
 
     auto c_shower_nhit_energies_n = new TCanvas("c_shower_nhit_energies_n", "c_shower_nhit_energies_n", 800, 800);
-    mg_shower_nhit_energies_n->Draw("AP");
+    mg_shower_nhit_energies_n->Draw("ALP");
     mg_shower_nhit_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_nhit_energies_n->GetXaxis()->SetTitle("Layer");
@@ -1894,7 +1894,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     mg_shower_weight_energies->Add(g_shower_weight_150);
 
     auto c_shower_weight_energies = new TCanvas("c_shower_weight_energies", "c_shower_weight_energies", 800, 800);
-    mg_shower_weight_energies->Draw("AP");
+    mg_shower_weight_energies->Draw("ALP");
     mg_shower_weight_energies->SetTitle("Shower profile ("+partstring+")");
     mg_shower_weight_energies->GetYaxis()->SetMaxDigits(3);
 
@@ -1991,7 +1991,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     mg_shower_weight_energies_n->Add(g_shower_weight_n_150);
 
     auto c_shower_weight_energies_n = new TCanvas("c_shower_weight_energies_n", "c_shower_weight_energies_n", 800, 800);
-    mg_shower_weight_energies_n->Draw("AP");
+    mg_shower_weight_energies_n->Draw("ALP");
     mg_shower_weight_energies_n->SetTitle("Shower profile (normalized) ("+partstring+")");
 
     if (transformed) mg_shower_weight_energies_n->GetXaxis()->SetTitle("Layer");

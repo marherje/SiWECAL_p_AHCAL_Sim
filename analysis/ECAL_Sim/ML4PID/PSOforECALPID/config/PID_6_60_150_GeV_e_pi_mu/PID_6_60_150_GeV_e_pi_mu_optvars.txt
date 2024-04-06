@@ -74,13 +74,13 @@ UseEvenOddSplitting=0
 SelectionString=
 
 
-SourceBFile=data/PID_6_GeV_e_pi_mu/resolution_e-_result.root
+SourceBFile=data/PID_6_60_150_GeV_e_pi_mu/resolution_e-_result.root
 SourceBTree=ntp
 
-SourceCFile=data/PID_6_GeV_e_pi_mu/resolution_pi-_result.root
+SourceCFile=data/PID_6_60_150_GeV_e_pi_mu/resolution_pi-_result.root
 SourceCTree=ntp
 
-SourceOFile=data/PID_6_GeV_e_pi_mu/resolution_mu-_result.root
+SourceOFile=data/PID_6_60_150_GeV_e_pi_mu/resolution_mu-_result.root
 SourceOTree=ntp
 
 ##------------------------------------------------

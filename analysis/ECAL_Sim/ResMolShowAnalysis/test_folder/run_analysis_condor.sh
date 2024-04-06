@@ -11,9 +11,9 @@ fi
 
 cd ${FOLDER}/results_folder
 #FOLDER=/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/analysis/ECAL_Sim/ResMolShowAnalysis
-for energy in 6 150
+for energy in 2 6 60 150
 do
-    for particle in e- pi- mu-
+    for particle in e- #pi- mu-
     do
 	echo "Submit --- > analysis "$particle $energy " GeV"
 	cp ${FOLDER}/run_analysis.sh run_analysis_${particle}_${energy}.sh
