@@ -1,0 +1,369 @@
+/var/lib/condor/execute/dir_30787
+running e- 2 GeV
+   ------------------------------------------------------------
+  | Welcome to ROOT 6.18/04                  https://root.cern |
+  |                               (c) 1995-2019, The ROOT Team |
+  | Built for linuxx8664gcc on Sep 11 2019, 15:38:23           |
+  | From tags/v6-18-04@v6-18-04                                |
+  | Try '.help', '.demo', '.license', '.credits', '.quit'/'.q' |
+   ------------------------------------------------------------
+
+
+Processing analysis_2.C("e-")...
+Energy = 2 GeV
+nentries: 30000
+Event 0
+Event 1000
+Event 2000
+Event 3000
+Event 4000
+Event 5000
+Event 6000
+Event 7000
+Event 8000
+Event 9000
+Event 10000
+Event 11000
+Event 12000
+Event 13000
+Event 14000
+Event 15000
+Event 16000
+Event 17000
+Event 18000
+Event 19000
+Event 20000
+Event 21000
+Event 22000
+Event 23000
+Event 24000
+Event 25000
+Event 26000
+Event 27000
+Event 28000
+Event 29000
+FITTING: Radius90_e-_2GeV
+ FCN=649.732 FROM MIGRAD    STATUS=CONVERGED     305 CALLS         306 TOTAL
+                     EDM=7.55817e-09    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.54056e+03   1.17424e+01   1.64243e-01   7.83717e-06
+   2  p1           2.53026e+01   4.67829e-02   8.07000e-04  -1.07219e-03
+   3  p2           7.19099e+00   3.72546e-02   5.12823e-04   2.03167e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_0_e-_2GeV
+ FCN=3.74825e-07 FROM MIGRAD    STATUS=CONVERGED     102 CALLS         103 TOTAL
+                     EDM=7.48623e-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.09753e+04   1.55643e+02   3.40662e-02   7.82040e-07
+   2  p1           7.76323e-01   1.05394e-01   8.02730e-06  -2.61096e-02
+   3  p2           1.80184e+00   7.95613e-02   7.49479e-06  -2.95804e-02
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_1_e-_2GeV
+ FCN=77.7081 FROM MIGRAD    STATUS=CONVERGED      75 CALLS          76 TOTAL
+                     EDM=8.1396e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           5.46501e+03   4.57457e+01   2.03222e-01   4.50996e-06
+   2  p1           3.78315e+00   1.78691e-02   1.07571e-04  -1.31688e-03
+   3  p2           2.22071e+00   2.17967e-02   9.58413e-05   1.73504e-02
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_2_e-_2GeV
+ FCN=135.954 FROM MIGRAD    STATUS=CONVERGED      92 CALLS          93 TOTAL
+                     EDM=3.00476e-10    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.3 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.48090e+03   3.59203e+01  -4.51852e-02  -4.35464e-07
+   2  p1           5.97493e+00   1.83819e-02  -1.78788e-05  -6.41943e-04
+   3  p2           2.57089e+00   1.81318e-02  -1.72286e-07  -1.29386e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_3_e-_2GeV
+ FCN=81.986 FROM MIGRAD    STATUS=CONVERGED     111 CALLS         112 TOTAL
+                     EDM=2.58387e-08    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   3.8 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.17182e+03   3.30025e+01   9.57609e-01   6.36849e-06
+   2  p1           7.19611e+00   1.93910e-02   2.29960e-04   4.86032e-03
+   3  p2           2.81631e+00   1.92995e-02  -5.72918e-04   1.22287e-02
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_4_e-_2GeV
+ FCN=112.998 FROM MIGRAD    STATUS=CONVERGED     104 CALLS         105 TOTAL
+                     EDM=9.27522e-11    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   1.8 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.47608e+03   3.48269e+01   5.38605e-02  -2.61295e-07
+   2  p1           6.84904e+00   1.78895e-02  -1.82189e-05   4.03128e-04
+   3  p2           2.57979e+00   1.61626e-02  -2.15340e-05   8.02133e-05
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_5_e-_2GeV
+ FCN=97.7031 FROM MIGRAD    STATUS=CONVERGED     153 CALLS         154 TOTAL
+                     EDM=2.82568e-08    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   1.4 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.49161e+03   3.46521e+01  -6.96644e-02  -3.29566e-06
+   2  p1           6.17497e+00   1.72840e-02  -1.22390e-04  -2.36300e-03
+   3  p2           2.61989e+00   1.60943e-02  -6.05787e-05   8.46069e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_6_e-_2GeV
+ FCN=67.5241 FROM MIGRAD    STATUS=CONVERGED      88 CALLS          89 TOTAL
+                     EDM=2.19543e-09    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.6 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.63887e+03   3.77730e+01   7.50050e-02  -7.18307e-07
+   2  p1           4.91240e+00   1.87186e-02   1.57848e-05  -5.93376e-04
+   3  p2           2.55384e+00   2.05515e-02  -3.65787e-05   1.96809e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_7_e-_2GeV
+ FCN=29.5882 FROM MIGRAD    STATUS=CONVERGED      88 CALLS          89 TOTAL
+                     EDM=1.47088e-06    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.91405e+03   4.22454e+01   1.15851e-01  -1.35060e-05
+   2  p1           3.48310e+00   2.47527e-02   8.50737e-05   4.18881e-02
+   3  p2           2.53624e+00   3.21595e-02   8.21213e-05   1.69514e-02
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_8_e-_2GeV
+ FCN=4.13173 FROM MIGRAD    STATUS=CONVERGED     103 CALLS         104 TOTAL
+                     EDM=5.09132e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           6.00087e+03   5.67488e+01   5.70892e-02   4.55086e-06
+   2  p1           1.32251e+00   8.62911e-02   3.42678e-05   1.63686e-03
+   3  p2           2.75681e+00   5.94906e-02   2.66476e-05   2.16504e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_9_e-_2GeV
+FITTING: NumHits_layer_10_e-_2GeV
+FITTING: NumHits_layer_11_e-_2GeV
+FITTING: NumHits_layer_12_e-_2GeV
+FITTING: NumHits_layer_13_e-_2GeV
+FITTING: NumHits_layer_14_e-_2GeV
+FITTING: NumHits_layer_n_0_e-_2GeV
+ FCN=4452.01 FROM HESSE     STATUS=OK             16 CALLS         645 TOTAL
+                     EDM=2.22646e-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.38884e+03   8.21093e+03   2.47301e-01   1.75357e-05
+   2  p1           5.16066e+06   1.13310e+07   3.16433e+01  -8.11950e-09
+   3  p2           6.99394e+06   1.48254e+07   3.40303e+01   5.98896e-09
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_1_e-_2GeV
+ FCN=146.174 FROM MIGRAD    STATUS=CONVERGED     386 CALLS         387 TOTAL
+                     EDM=1.21017e-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.74114e+03   2.21334e+01   1.37389e-01  -8.29747e-06
+   2  p1           7.67096e-02   3.52960e-04   2.84290e-06   3.11291e-01
+   3  p2           4.50655e-02   3.94131e-04   2.37944e-06   5.15636e-01
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_2_e-_2GeV
+ FCN=226.899 FROM MIGRAD    STATUS=CONVERGED     316 CALLS         317 TOTAL
+                     EDM=7.38744e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.8 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.26095e+03   1.82180e+01   7.91853e-02  -4.98944e-05
+   2  p1           1.21490e-01   3.56495e-04  -2.37427e-06  -1.60698e+00
+   3  p2           5.20571e-02   3.54538e-04   2.98042e-07   4.42456e-01
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_3_e-_2GeV
+ FCN=179.171 FROM MIGRAD    STATUS=CONVERGED     316 CALLS         317 TOTAL
+                     EDM=2.73384e-10    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.12591e+03   1.64190e+01   1.16073e-01  -5.50241e-07
+   2  p1           1.44931e-01   3.81245e-04   3.48315e-06   3.90497e-02
+   3  p2           5.64464e-02   3.61836e-04   2.53295e-06  -7.69774e-03
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_4_e-_2GeV
+ FCN=124.763 FROM MIGRAD    STATUS=CONVERGED     212 CALLS         213 TOTAL
+                     EDM=8.05361e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.7 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.33641e+03   1.80526e+01   9.40997e-02  -4.98705e-06
+   2  p1           1.37119e-01   3.58076e-04   5.51951e-06   2.19780e+00
+   3  p2           4.95020e-02   3.13617e-04   2.90309e-06  -4.03489e+00
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_5_e-_2GeV
+ FCN=3283.93 FROM MIGRAD    STATUS=FAILED        200 CALLS         201 TOTAL
+                     EDM=1.88076e+09    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.64339e+03   2.59262e-04   0.00000e+00   1.60781e+00
+   2  p1           1.38786e-01   4.49198e-03  -0.00000e+00  -7.14679e+03
+   3  p2           1.37814e-01   3.10091e+00  -0.00000e+00   1.97888e+04
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_6_e-_2GeV
+ FCN=1721.59 FROM MIGRAD    STATUS=FAILED        126 CALLS         127 TOTAL
+                     EDM=55.8641    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.65671e+03   9.25925e-01   0.00000e+00   3.54858e-02
+   2  p1           8.06735e-01   6.64484e+03  -0.00000e+00   7.43751e+01
+   3  p2           7.37823e-01   6.64484e+03   0.00000e+00  -2.18151e+02
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_7_e-_2GeV
+ FCN=871.222 FROM MIGRAD    STATUS=FAILED        437 CALLS         438 TOTAL
+                     EDM=29029.7    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.23382e+03   1.23345e+01  -0.00000e+00  -1.16764e+00
+   2  p1           4.89389e-02   7.07107e-01   0.00000e+00  -7.68467e+04
+   3  p2           6.02213e-02   7.07110e-01   0.00000e+00  -6.32827e+04
+                               ERR DEF= 0.5
+FITTING: NumHits_layer_n_8_e-_2GeV
+FITTING: NumHits_layer_n_9_e-_2GeV
+FITTING: NumHits_layer_n_10_e-_2GeV
+FITTING: NumHits_layer_n_11_e-_2GeV
+FITTING: NumHits_layer_n_12_e-_2GeV
+FITTING: NumHits_layer_n_13_e-_2GeV
+FITTING: NumHits_layer_n_14_e-_2GeV
+FITTING: Weight_layer_0_e-_2GeV
+ FCN=86.2817 FROM MIGRAD    STATUS=CONVERGED     270 CALLS         271 TOTAL
+                     EDM=9.75378e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   3.6 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           7.73332e+03   5.81874e+01   2.11899e+00   3.34282e-06
+   2  p1           1.35735e+01   2.94625e-01  -4.48893e-03   4.47785e-03
+   3  p2           1.87125e+01   2.61672e-01  -3.68011e-03   8.50983e-03
+                               ERR DEF= 0.5
+FITTING: Weight_layer_1_e-_2GeV
+ FCN=996.452 FROM MIGRAD    STATUS=FAILED        253 CALLS         254 TOTAL
+                     EDM=222.916    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.95901e+03   2.20683e+00   0.00000e+00   7.53687e-02
+   2  p1          -4.68054e+01   3.22534e+02  -0.00000e+00   1.72477e+00
+   3  p2           9.76168e+01   3.22834e+02  -0.00000e+00   4.83273e+00
+                               ERR DEF= 0.5
+FITTING: Weight_layer_2_e-_2GeV
+ FCN=135.735 FROM MIGRAD    STATUS=CONVERGED     298 CALLS         299 TOTAL
+                     EDM=1.64293e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.2 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.48049e+03   2.74961e+01   2.40984e-01   7.50037e-06
+   2  p1           6.82309e+01   2.43917e-01  -2.73462e-03  -1.78737e-03
+   3  p2           3.42112e+01   2.45296e-01  -2.16673e-03  -8.68897e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_3_e-_2GeV
+ FCN=226.157 FROM MIGRAD    STATUS=CONVERGED     322 CALLS         323 TOTAL
+                     EDM=1.41018e-06    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.60487e+03   2.82696e+01   2.22935e-01   4.45916e-05
+   2  p1           6.99245e+01   2.25815e-01   2.32692e-03   9.98883e-04
+   3  p2           3.28598e+01   2.20933e-01   1.73192e-03   7.76584e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_4_e-_2GeV
+ FCN=273.925 FROM MIGRAD    STATUS=CONVERGED     483 CALLS         484 TOTAL
+                     EDM=4.45417e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.91382e+03   3.08354e+01   2.68015e-01  -7.39820e-06
+   2  p1           5.93630e+01   2.00835e-01   2.29712e-03   5.85607e-04
+   3  p2           2.96741e+01   1.94266e-01   1.68815e-03  -6.32273e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_5_e-_2GeV
+ FCN=221.374 FROM MIGRAD    STATUS=CONVERGED     254 CALLS         255 TOTAL
+                     EDM=3.8237e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           4.35967e+03   3.48361e+01   2.68808e-01  -7.34983e-06
+   2  p1           4.42680e+01   2.01543e-01   2.01829e-03  -4.48866e-08
+   3  p2           2.74052e+01   2.09414e-01   1.58439e-03  -6.42695e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_6_e-_2GeV
+ FCN=140.92 FROM MIGRAD    STATUS=CONVERGED     346 CALLS         347 TOTAL
+                     EDM=3.17466e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           5.02571e+03   3.96380e+01   2.48093e-01   3.51723e-06
+   2  p1           2.85781e+01   2.60713e-01   1.68080e-03   7.78661e-04
+   3  p2           2.59390e+01   2.66687e-01   1.38126e-03   9.14045e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_7_e-_2GeV
+ FCN=18.8726 FROM MIGRAD    STATUS=CONVERGED     274 CALLS         275 TOTAL
+                     EDM=1.5988e-11    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           6.51570e+03   5.16022e+01   1.20162e-01  -3.20793e-10
+   2  p1           1.03462e+01   6.62752e-01   6.56640e-04   5.18050e-07
+   3  p2           2.63748e+01   4.94284e-01   5.17721e-04   8.71433e-06
+                               ERR DEF= 0.5
+FITTING: Weight_layer_8_e-_2GeV
+FITTING: Weight_layer_9_e-_2GeV
+FITTING: Weight_layer_10_e-_2GeV
+FITTING: Weight_layer_11_e-_2GeV
+FITTING: Weight_layer_12_e-_2GeV
+FITTING: Weight_layer_13_e-_2GeV
+FITTING: Weight_layer_14_e-_2GeV
+FITTING: Weight_layer_n_0_e-_2GeV
+ FCN=64.7578 FROM MIGRAD    STATUS=CONVERGED     536 CALLS         537 TOTAL
+                     EDM=1.33691e-06    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           3.68924e+03   2.78642e+01   1.25737e-01   4.45541e-05
+   2  p1           2.41772e-02   8.48127e-04   2.07368e-06   4.24109e-01
+   3  p2          -4.28420e-02   7.34015e-04   1.72850e-06  -4.12478e-01
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_1_e-_2GeV
+ FCN=70.1783 FROM MIGRAD    STATUS=CONVERGED     721 CALLS         722 TOTAL
+                     EDM=1.88899e-08    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.87404e+03   1.52674e+01   6.64324e-02  -1.70201e-06
+   2  p1           9.76911e-02   6.75526e-04   3.28311e-06  -1.19842e-02
+   3  p2           6.82834e-02   7.56272e-04   2.87211e-06   1.52259e-01
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_2_e-_2GeV
+ FCN=75.8961 FROM MIGRAD    STATUS=CONVERGED     229 CALLS         230 TOTAL
+                     EDM=1.01917e-09    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.67270e+03   1.35255e+01   6.08155e-02  -3.08237e-06
+   2  p1           1.46113e-01   5.35971e-04   3.19000e-06   2.11299e-03
+   3  p2           7.17013e-02   5.83403e-04   2.59631e-06  -5.90755e-02
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_3_e-_2GeV
+ FCN=119.531 FROM MIGRAD    STATUS=CONVERGED     262 CALLS         263 TOTAL
+                     EDM=2.21302e-07    STRATEGY= 1  ERROR MATRIX UNCERTAINTY   2.3 per cent
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.78061e+03   1.44131e+01   1.94785e-01  -2.83979e-05
+   2  p1           1.49139e-01   4.83346e-04  -2.80352e-06  -1.12433e+00
+   3  p2           6.62527e-02   5.08462e-04  -6.88858e-06  -3.48772e-01
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_4_e-_2GeV
+ FCN=173.705 FROM MIGRAD    STATUS=CONVERGED     287 CALLS         288 TOTAL
+                     EDM=7.20335e-10    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.86975e+03   1.49925e+01   1.02238e-01   3.73072e-07
+   2  p1           1.26875e-01   4.68432e-04   4.21511e-06  -4.15985e-02
+   3  p2           6.40579e-02   4.96842e-04   3.35612e-06   3.77391e-02
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_5_e-_2GeV
+ FCN=1441.41 FROM MIGRAD    STATUS=FAILED        254 CALLS         255 TOTAL
+                     EDM=3558.8    STRATEGY= 1      ERR MATRIX NOT POS-DEF
+  EXT PARAMETER                APPROXIMATE        STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           1.87847e+03   1.26845e+01  -0.00000e+00   2.24332e+00
+   2  p1           4.92002e-02   7.07114e-01  -0.00000e+00   1.56800e+04
+   3  p2           1.62154e-01   7.07107e-01  -0.00000e+00   1.50250e+04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_6_e-_2GeV
+ FCN=121.621 FROM MIGRAD    STATUS=CONVERGED     386 CALLS         387 TOTAL
+                     EDM=2.70788e-10    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  p0           2.40465e+03   1.93204e+01   1.10745e-01   8.60466e-07
+   2  p1           6.15197e-02   5.38110e-04   3.39857e-06  -5.81452e-03
+   3  p2           5.45124e-02   5.96269e-04   2.95563e-06  -4.84052e-04
+                               ERR DEF= 0.5
+FITTING: Weight_layer_n_7_e-_2GeV
+FITTING: Weight_layer_n_8_e-_2GeV
+FITTING: Weight_layer_n_9_e-_2GeV
+FITTING: Weight_layer_n_10_e-_2GeV
+FITTING: Weight_layer_n_11_e-_2GeV
+FITTING: Weight_layer_n_12_e-_2GeV
+FITTING: Weight_layer_n_13_e-_2GeV
+FITTING: Weight_layer_n_14_e-_2GeV

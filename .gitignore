@@ -73,11 +73,13 @@ analysis/ECAL_Sim/plots_Jan/
 # Res Mol Lin Var studies
 analysis/ECAL_Sim/ResMolShowAnalysis/results_folder
 analysis/ECAL_Sim/ResMolShowAnalysis/test_folder
-analysis/ECAL_Sim/ResMolShowAnalysis/plots_March
-analysis/ECAL_Sim/ResMolShowAnalysis/plots_April
+analysis/ECAL_Sim/ResMolShowAnalysis/plots_*
 
 # ML outputs
 analysis/ECAL_Sim/ML4PID/PSOforECALPID/output
 analysis/ECAL_Sim/ML4PID/PSOforECALPID/logs
 analysis/ECAL_Sim/ML4PID/PSOforECALPID/SAVELOGS
 
+analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/output
+analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/logs
+analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/SAVELOGS

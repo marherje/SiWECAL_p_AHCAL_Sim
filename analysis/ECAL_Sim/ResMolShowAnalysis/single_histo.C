@@ -40,9 +40,9 @@ void findTH1values(TH1 * he, TH1 * hmu, TH1 * hpi, float &x_min, float &x_max, f
   int b_max_pi = hpi->FindLastBinAbove(0,1);
 
   int b_min = min(b_min_e, min(b_min_mu,b_min_pi));
-  int b_max = max(b_max_e, min(b_max_mu,b_max_pi));
+  int b_max = max(b_max_e, max(b_max_mu,b_max_pi));
 
-  if(b_max > N_ECAL_LAYERS + 1) rescalable = true;
+  if(b_max != N_ECAL_LAYERS + 1) rescalable = true;
 
   x_min = he->GetBinCenter(b_min-1);
   x_max = he->GetBinCenter(b_max+1);
@@ -92,6 +92,12 @@ void drawHistosTH1(TString varname, TString energy, TH1 * he, TH1 * hmu, TH1 * h
 
   auto c = new TCanvas("c_"+varname+"_"+energy+"GeV", "c_"+varname+"_"+energy+"GeV", 800, 800);
   c->cd();
+  if(y_max > 1000){
+    he->SetMinimum(1);
+    hmu->SetMinimum(1);
+    hpi->SetMinimum(1);
+    c->SetLogy();
+  }
   he->SetLineColor(kGray+2);
   hmu->SetLineColor(kCyan-3);
   hpi->SetLineColor(kRed-4);
@@ -103,10 +109,12 @@ void drawHistosTH1(TString varname, TString energy, TH1 * he, TH1 * hmu, TH1 * h
   hmu->Draw("histosame");
   hpi->Draw("histosame");
 
-  float xleg=0.25;
-  if( he->GetMaximumBin() < he->GetNbinsX()/2) xleg = 0.65;
+  float xleg=0.;
+  if( he->GetBinCenter(he->GetMaximumBin()) < (x_max-x_min)/2) xleg = 0.7;
+  if( he->GetBinCenter(he->GetMaximumBin()) > (x_max-x_min)/2) xleg = 0.2;
+  cout<<he->GetBinCenter(he->GetMaximumBin())<<" "<<(x_max-x_min)/2<<endl;
   TLegend *leg;
-  leg= new TLegend(xleg,0.70,xleg+0.2,0.85);
+  leg= new TLegend(xleg,0.70,xleg+0.1,0.85);
   leg->SetTextSize(0.035);
   leg->SetTextFont(42);
   leg->AddEntry(he,"e-","l");

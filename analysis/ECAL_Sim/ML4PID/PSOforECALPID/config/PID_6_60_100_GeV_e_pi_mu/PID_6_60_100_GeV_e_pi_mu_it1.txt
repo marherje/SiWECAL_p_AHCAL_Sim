@@ -1,0 +1,157 @@
+##Parameters for the Particle Swarm Optimization
+
+##RunOn = EKPSL5 | EKPSL5 | NAFSL5 | NAFSL6 | IFIC | DESY
+RunOn=DESY
+
+## Swarm Parameters
+##change to 40-50 
+NParticles=50 
+##change to 25-30
+NIterations=20 
+wIneratia=0.729
+wMemory=1.49445
+wSwarm=1.49445
+
+##FOM = Weighted_1_AUC | Weighted_AUC | ROCIntegral | Separation | rejB_vs_effS_0.1 | rejB_vs_effS_0.3 |rejB_vs_effS_0.5 | Chi2_B_muSB
+FOM=Weighted_1_AUC
+ADThreshold=0.20
+KSThreshold=0.10
+FindBestVariables=0 
+MaxVariablesInCombination=100
+##only add variable if new FOM > ImprovementThreshold*FOM
+ImprovementThreshold=1.005
+
+## Set FindBestVariables=0 to not iterate over additional variables
+## repeat each training additional times with different random seeds for test/training splitting (0==no repetition)
+## only reasonable if SplitSeed=0 is in the PreparationString a few lines down
+## and if UseEvenOddSplitting=0
+## FOM and KS will be taken as the worst of all trainings
+#Change to 2 or 3 later
+RepeatTrainingNTimes=1 
+## draw random starting variables, 0== use predermined starting variables
+DrawNRandomAsStartingVars=0
+##NOTYET SaveTrainingsToTrees=False
+
+##TMVA Options
+FactoryString=!V:!Silent:Color:!DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=multiclass
+PreparationString=SplitMode=Random:NormMode=NumEvents:!V
+##if you want to limit the number of events do it eiter PreparationString or here
+##nTrain_Signal=
+##nTrain_Background=
+##nTest_Signal=
+##nTest_Background=
+##Weight expression, might need to be declared in WeightVariables furhter down
+## probably same syntax as in TTree::Draw 
+BWeightExpression=Weight
+CWeightExpression=Weight
+OWeightExpression=Weight
+
+##Method to train and test
+##only tested with BDT so far
+## you might want to think abount you handle NEGATIVE WEIGHTS
+##Parameters in MethodParams will be overwritten if they span the search space
+MethodType=TMVA::Types::kBDT
+MethodParams=!H:!V:NTrees=100:BoostType=Grad:Shrinkage=0.01:UseBaggedBoost:GradBaggingFraction=0.3:nCuts=10:MaxDepth=2:NegWeightTreatment=IgnoreNegWeightsInTraining
+##:NEventsMax=200
+
+
+## search space
+##coord=["Name",minValue,maxValue,maxVelocity,"int|float"]
+##if min and max value are the same the value is not varied
+coord=["NTrees",800,1200,50,"int"]
+coord=["Shrinkage",0.001,0.05,0.005,"float"]
+coord=["GradBaggingFraction",0.1,0.8,0.05,"float"]
+coord=["nCuts",20,80,5,"int"]
+coord=["MaxDepth",2,8,1,"int"]
+
+##--------------------------------------------------
+##Source Trees:
+## if UseEvenOddSplitting=1, the input trees will be split in training/testsample with Variable "Evt_Odd" 
+## maybe change the variable in PSO/PrepareTrees.C
+## else TMVA will use built in splitting
+UseEvenOddSplitting=0
+## use selections without quotation marks. E.g.:
+SelectionString=
+
+SourceBFile=data/PID_6_60_100_GeV_e_pi_mu/resolution_e-_result.root
+SourceBTree=ntp
+
+SourceCFile=data/PID_6_60_100_GeV_e_pi_mu/resolution_pi-_result.root
+SourceCTree=ntp
+
+SourceOFile=data/PID_6_60_100_GeV_e_pi_mu/resolution_mu-_result.root
+SourceOTree=ntp
+
+##------------------------------------------------
+##Variables in Format ["NAME","TYPE","LENGTH","VarExpression"]
+##IMPORTANT dont leave a blank line between the initial and the end variables line
+##variables the optimization starts with
+InitialVariables:
+["weighte","F","","weighte"]
+["bar_z","F","","bar_z"]
+["mol","F","","mol"]
+["radius90_layer_1","F","","radius90_layer_1"]
+["radius90_layer_5","F","","radius90_layer_5"]
+["radius90_layer_10","F","","radius90_layer_10"]
+["shower_sume_start_10_layer","F","","shower_sume_start_10_layer"]
+["shower_sume_end_10_layer","F","","shower_sume_end_10_layer"]
+["sume_layer_1","F","","sume_layer_1"]
+["MIP_Likeness","F","","MIP_Likeness"]
+EndVariables
+
+##---------------------------------------------------
+## variables the swarm can try
+AdditionalVariables:
+["shower_nhit_max_layer","F","","shower_nhit_max_layer"]
+["shower_nhit_start_layer","F","","shower_nhit_start_layer"]
+["shower_nhit_end_layer","F","","shower_nhit_end_layer"]
+["shower_nhit_start_10_layer","F","","shower_nhit_start_10_layer"]
+["shower_nhit_end_10_layer","F","","shower_nhit_end_10_layer"]
+["shower_nhit_average","F","","shower_nhit_average"]
+["shower_nhit_max","F","","shower_nhit_max"]
+["nhit_layer_0","F","","nhit_layer_0"]
+["nhit_layer_1","F","","nhit_layer_1"]
+["nhit_layer_2","F","","nhit_layer_2"]
+["nhit_layer_3","F","","nhit_layer_3"]
+["nhit_layer_4","F","","nhit_layer_4"]
+["nhit_layer_5","F","","nhit_layer_5"]
+["nhit_layer_6","F","","nhit_layer_6"]
+["nhit_layer_7","F","","nhit_layer_7"]
+["nhit_layer_8","F","","nhit_layer_8"]
+["nhit_layer_9","F","","nhit_layer_9"]
+["nhit_layer_10","F","","nhit_layer_10"]
+["nhit_layer_11","F","","nhit_layer_11"]
+["nhit_layer_12","F","","nhit_layer_12"]
+["nhit_layer_13","F","","nhit_layer_13"]
+["nhit_layer_14","F","","nhit_layer_14"]
+["shower_weighte_max_layer","F","","shower_weighte_max_layer"]
+["shower_weighte_start_layer","F","","shower_weighte_start_layer"]
+["shower_weighte_end_layer","F","","shower_weighte_end_layer"]
+["shower_weighte_start_10_layer","F","","shower_weighte_start_10_layer"]
+["shower_weighte_end_10_layer","F","","shower_weighte_end_10_layer"]
+["shower_weighte_average","F","","shower_weighte_average"]
+["shower_weighte_max","F","","shower_weighte_max"]
+["weighte_layer_0","F","","weighte_layer_0"]
+["weighte_layer_1","F","","weighte_layer_1"]
+["weighte_layer_2","F","","weighte_layer_2"]
+["weighte_layer_3","F","","weighte_layer_3"]
+["weighte_layer_4","F","","weighte_layer_4"]
+["weighte_layer_5","F","","weighte_layer_5"]
+["weighte_layer_6","F","","weighte_layer_6"]
+["weighte_layer_7","F","","weighte_layer_7"]
+["weighte_layer_8","F","","weighte_layer_8"]
+["weighte_layer_9","F","","weighte_layer_9"]
+["weighte_layer_10","F","","weighte_layer_10"]
+["weighte_layer_11","F","","weighte_layer_11"]
+["weighte_layer_12","F","","weighte_layer_12"]
+["weighte_layer_13","F","","weighte_layer_13"]
+["weighte_layer_14","F","","weighte_layer_14"]
+EndVariables
+
+##---------------------------------------------------
+## variables used for reweighting and stuff
+WeightVariables:
+["Weight","F","","Weight"]
+EndVariables
+##---------------------------------------------------
+

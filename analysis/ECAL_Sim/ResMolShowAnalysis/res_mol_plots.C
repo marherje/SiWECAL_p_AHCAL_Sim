@@ -200,6 +200,104 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     TVectorD *shower_nhit_max = new TVectorD(N_ENERGIES); 
     TVectorD *shower_nhit_average = new TVectorD(N_ENERGIES);
 
+    TVectorD *mu_sume_layer_0 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_1 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_2 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_3 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_4 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_5 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_6 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_7 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_8 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_9 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_10 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_11 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_12 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_13 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_14 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_0 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_1 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_2 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_3 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_4 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_5 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_6 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_7 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_8 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_9 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_10 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_11 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_12 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_13 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_14 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_0 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_1 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_2 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_3 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_4 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_5 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_6 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_7 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_8 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_9 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_10 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_11 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_12 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_13 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_14 = new TVectorD(N_ENERGIES);
+
+    TVectorD *mu_sume_layer_n_0 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_1 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_2 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_3 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_4 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_5 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_6 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_7 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_8 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_9 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_10 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_11 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_12 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_13 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_sume_layer_n_14 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_0 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_1 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_2 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_3 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_4 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_5 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_6 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_7 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_8 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_9 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_10 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_11 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_12 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_13 = new TVectorD(N_ENERGIES);
+    TVectorD *mu_error_sume_layer_n_14 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_0 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_1 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_2 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_3 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_4 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_5 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_6 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_7 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_8 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_9 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_10 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_11 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_12 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_13 = new TVectorD(N_ENERGIES);
+    TVectorD *sig_sume_layer_n_14 = new TVectorD(N_ENERGIES);
+
+    TVectorD *shower_sume_max_layer = new TVectorD(N_ENERGIES);
+    TVectorD *shower_sume_start_layer = new TVectorD(N_ENERGIES);
+    TVectorD *shower_sume_end_layer = new TVectorD(N_ENERGIES);
+    TVectorD *shower_sume_max  = new TVectorD(N_ENERGIES);
+    TVectorD *shower_sume_average = new TVectorD(N_ENERGIES);
+
     TVectorD *mu_weight_layer_0 = new TVectorD(N_ENERGIES); 
     TVectorD *mu_weight_layer_1 = new TVectorD(N_ENERGIES); 
     TVectorD *mu_weight_layer_2 = new TVectorD(N_ENERGIES); 
@@ -302,18 +400,42 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     // New variables
     // Index    0 1 2 3  4  5  6  7  8  9 10 11 12  13  14  15  16  17
     // Energies 2 4 6 8 10 20 30 40 50 60 70 80 90 100 125 150 175 200
-    // Shower nhit
-    double showernhitvalues[N_ENERGIES][N_ECAL_LAYERS];
-    double showernhitvalues_n[N_ENERGIES][N_ECAL_LAYERS];
-
-    double showernhiterrors[N_ENERGIES][N_ECAL_LAYERS];
-    double showernhiterrors_n[N_ENERGIES][N_ECAL_LAYERS];
-
+    // axis structures
     TVectorD *layeraxis = new TVectorD(N_ECAL_LAYERS);
     double layeraxisvalues[N_ECAL_LAYERS] = {0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.};
     TVectorD layeraxisref(N_ECAL_LAYERS, layeraxisvalues);
     layeraxis = &layeraxisref;
-    
+
+    TVectorD *W_axis = new TVectorD(N_ECAL_LAYERS);
+    double W_thickness[N_ECAL_LAYERS] = {4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 4.2, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6, 5.6};
+    double W[N_ECAL_LAYERS];
+    for(int i=0; i<N_ECAL_LAYERS;i++){
+      if(i==0) W[i] = W_thickness[i]/3.5;
+      else{
+	W[i] = W[i-1] + W_thickness[i]/3.5;
+      }
+    }
+    TVectorD W_axis_ref(N_ECAL_LAYERS, W);
+    W_axis = &W_axis_ref;
+
+    TVectorD *zeros = new TVectorD(N_ENERGIES);
+    double zerovalues[N_ENERGIES];
+    for (int i=0; i<N_ENERGIES; i++) zerovalues[i] = 0.;
+    TVectorD zerovectorref(N_ENERGIES, zerovalues);
+    zeros = &zerovectorref;
+
+    TVectorD *zeroslayer = new TVectorD(N_ECAL_LAYERS);
+    double zerovalueslayer[N_ECAL_LAYERS];
+    for(int i=0; i<N_ECAL_LAYERS;i++) zerovalueslayer[i] = 0.;
+    TVectorD zerovectorreflayer(N_ECAL_LAYERS, zerovalueslayer);
+    zeroslayer = &zerovectorreflayer;
+
+    // Shower nhit
+    double showernhitvalues[N_ENERGIES][N_ECAL_LAYERS];
+    double showernhitvalues_n[N_ENERGIES][N_ECAL_LAYERS];
+    double showernhiterrors[N_ENERGIES][N_ECAL_LAYERS];
+    double showernhiterrors_n[N_ENERGIES][N_ECAL_LAYERS];
+
     TVectorD *shower_nhit_profile_2 = new TVectorD(N_ECAL_LAYERS);
     double showernhitvalues_2[N_ECAL_LAYERS];
     TVectorD *shower_nhit_profile_4 = new TVectorD(N_ECAL_LAYERS);
@@ -379,24 +501,82 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     double showernhiterrors_n_80[N_ECAL_LAYERS];
     TVectorD *shower_nhit_profile_errors_n_150 = new TVectorD(N_ECAL_LAYERS);
     double showernhiterrors_n_150[N_ECAL_LAYERS];
+    
+    // Shower sume energy
+    double showersumevalues[N_ENERGIES][N_ECAL_LAYERS];
+    double showersumevalues_n[N_ENERGIES][N_ECAL_LAYERS];
+    double showersumeerrors[N_ENERGIES][N_ECAL_LAYERS];
+    double showersumeerrors_n[N_ENERGIES][N_ECAL_LAYERS];
 
-    TVectorD *zeros = new TVectorD(N_ENERGIES);
-    double zerovalues[N_ENERGIES];
-    for (int i=0; i<N_ENERGIES; i++) zerovalues[i] = 0.;
-    TVectorD zerovectorref(N_ENERGIES, zerovalues);
-    zeros = &zerovectorref;
+    TVectorD *shower_sume_profile_2 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_2[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_4 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_4[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_6 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_6[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_10 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_10[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_20 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_20[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_40 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_40[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_80 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_80[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_150 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_150[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_2 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_2[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_4 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_4[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_6 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_6[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_10 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_10[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_20 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_20[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_40 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_40[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_80 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_80[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_150 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_150[N_ECAL_LAYERS];
 
-    // +1 fr the -1 layer
-    TVectorD *zeroslayer = new TVectorD(N_ECAL_LAYERS);
-    double zerovalueslayer[N_ECAL_LAYERS];
-    for(int i=0; i<N_ECAL_LAYERS;i++) zerovalueslayer[i] = 0.;
-    TVectorD zerovectorreflayer(N_ECAL_LAYERS, zerovalueslayer);
-    zeroslayer = &zerovectorreflayer;
+    TVectorD *shower_sume_profile_n_2 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_2[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_4 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_4[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_6 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_6[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_10 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_10[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_20 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_20[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_40 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_40[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_80 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_80[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_n_150 = new TVectorD(N_ECAL_LAYERS);
+    double showersumevalues_n_150[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_2 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_2[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_4 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_4[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_6 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_6[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_10 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_10[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_20 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_20[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_40 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_40[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_80 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_80[N_ECAL_LAYERS];
+    TVectorD *shower_sume_profile_errors_n_150 = new TVectorD(N_ECAL_LAYERS);
+    double showersumeerrors_n_150[N_ECAL_LAYERS];
     
     // Shower weighted energy
     double showerweightvalues[N_ENERGIES][N_ECAL_LAYERS];
     double showerweightvalues_n[N_ENERGIES][N_ECAL_LAYERS];
-
     double showerweighterrors[N_ENERGIES][N_ECAL_LAYERS];
     double showerweighterrors_n[N_ENERGIES][N_ECAL_LAYERS];
 
@@ -591,6 +771,106 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     TVectorD * shower_nhit_end_layer_cycle = (TVectorD*)(file->FindObjectAny(("shower_nhit_end_layer;"+icycle).c_str()));
     TVectorD * shower_nhit_max_cycle = (TVectorD*)(file->FindObjectAny(("shower_nhit_max;"+icycle).c_str()));
     TVectorD * shower_nhit_average_cycle = (TVectorD*)(file->FindObjectAny(("shower_nhit_average;"+icycle).c_str()));
+
+    //sumeed energy 
+
+    TVectorD * mu_sume_layer_0_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_0;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_1_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_1;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_2_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_2;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_3_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_3;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_4_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_4;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_5_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_5;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_6_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_6;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_7_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_7;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_8_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_8;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_9_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_9;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_10_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_10;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_11_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_11;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_12_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_12;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_13_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_13;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_14_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_14;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_0_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_0;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_1_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_1;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_2_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_2;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_3_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_3;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_4_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_4;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_5_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_5;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_6_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_6;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_7_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_7;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_8_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_8;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_9_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_9;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_10_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_10;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_11_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_11;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_12_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_12;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_13_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_13;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_14_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_14;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_0_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_0;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_1_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_1;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_2_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_2;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_3_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_3;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_4_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_4;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_5_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_5;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_6_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_6;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_7_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_7;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_8_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_8;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_9_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_9;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_10_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_10;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_11_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_11;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_12_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_12;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_13_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_13;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_14_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_14;"+icycle).c_str()));
+
+    TVectorD * mu_sume_layer_n_0_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_0;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_1_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_1;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_2_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_2;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_3_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_3;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_4_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_4;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_5_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_5;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_6_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_6;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_7_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_7;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_8_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_8;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_9_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_9;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_10_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_10;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_11_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_11;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_12_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_12;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_13_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_13;"+icycle).c_str()));
+    TVectorD * mu_sume_layer_n_14_cycle = (TVectorD*)(file->FindObjectAny(("mu_sume_layer_n_14;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_0_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_0;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_1_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_1;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_2_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_2;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_3_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_3;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_4_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_4;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_5_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_5;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_6_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_6;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_7_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_7;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_8_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_8;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_9_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_9;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_10_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_10;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_11_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_11;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_12_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_12;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_13_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_13;"+icycle).c_str()));
+    TVectorD * mu_error_sume_layer_n_14_cycle = (TVectorD*)(file->FindObjectAny(("mu_error_sume_layer_n_14;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_0_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_0;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_1_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_1;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_2_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_2;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_3_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_3;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_4_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_4;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_5_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_5;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_6_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_6;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_7_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_7;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_8_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_8;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_9_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_9;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_10_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_10;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_11_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_11;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_12_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_12;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_13_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_13;"+icycle).c_str()));
+    TVectorD * sig_sume_layer_n_14_cycle = (TVectorD*)(file->FindObjectAny(("sig_sume_layer_n_14;"+icycle).c_str()));
+
+    TVectorD * shower_sume_max_layer_cycle = (TVectorD*)(file->FindObjectAny(("shower_sume_max_layer;"+icycle).c_str()));
+    TVectorD * shower_sume_start_layer_cycle = (TVectorD*)(file->FindObjectAny(("shower_sume_start_layer;"+icycle).c_str()));
+    TVectorD * shower_sume_end_layer_cycle = (TVectorD*)(file->FindObjectAny(("shower_sume_end_layer;"+icycle).c_str()));
+    TVectorD * shower_sume_max_cycle = (TVectorD*)(file->FindObjectAny(("shower_sume_max;"+icycle).c_str()));
+    TVectorD * shower_sume_average_cycle = (TVectorD*)(file->FindObjectAny(("shower_sume_average;"+icycle).c_str()));
 
     //weighted energy
     TVectorD * mu_weight_layer_0_cycle = (TVectorD*)(file->FindObjectAny(("mu_weight_layer_0;"+icycle).c_str()));
@@ -812,6 +1092,105 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     ((*shower_nhit_max))[i-1] = ((* shower_nhit_max_cycle))[0];
     ((*shower_nhit_average))[i-1] = ((* shower_nhit_average_cycle))[0];
 
+    // sume
+
+    ((*mu_sume_layer_0))[i-1] = ((*mu_sume_layer_0_cycle))[0];
+    ((*mu_sume_layer_1))[i-1] = ((*mu_sume_layer_1_cycle))[0];
+    ((*mu_sume_layer_2))[i-1] = ((*mu_sume_layer_2_cycle))[0];
+    ((*mu_sume_layer_3))[i-1] = ((*mu_sume_layer_3_cycle))[0];
+    ((*mu_sume_layer_4))[i-1] = ((*mu_sume_layer_4_cycle))[0];
+    ((*mu_sume_layer_5))[i-1] = ((*mu_sume_layer_5_cycle))[0];
+    ((*mu_sume_layer_6))[i-1] = ((*mu_sume_layer_6_cycle))[0];
+    ((*mu_sume_layer_7))[i-1] = ((*mu_sume_layer_7_cycle))[0];
+    ((*mu_sume_layer_8))[i-1] = ((*mu_sume_layer_8_cycle))[0];
+    ((*mu_sume_layer_9))[i-1] = ((*mu_sume_layer_9_cycle))[0];
+    ((*mu_sume_layer_10))[i-1] = ((*mu_sume_layer_10_cycle))[0];
+    ((*mu_sume_layer_11))[i-1] = ((*mu_sume_layer_11_cycle))[0];
+    ((*mu_sume_layer_12))[i-1] = ((*mu_sume_layer_12_cycle))[0];
+    ((*mu_sume_layer_13))[i-1] = ((*mu_sume_layer_13_cycle))[0];
+    ((*mu_sume_layer_14))[i-1] = ((*mu_sume_layer_14_cycle))[0];
+    ((*mu_error_sume_layer_0))[i-1] = ((*mu_error_sume_layer_0_cycle))[0];
+    ((*mu_error_sume_layer_1))[i-1] = ((*mu_error_sume_layer_1_cycle))[0];
+    ((*mu_error_sume_layer_2))[i-1] = ((*mu_error_sume_layer_2_cycle))[0];
+    ((*mu_error_sume_layer_3))[i-1] = ((*mu_error_sume_layer_3_cycle))[0];
+    ((*mu_error_sume_layer_4))[i-1] = ((*mu_error_sume_layer_4_cycle))[0];
+    ((*mu_error_sume_layer_5))[i-1] = ((*mu_error_sume_layer_5_cycle))[0];
+    ((*mu_error_sume_layer_6))[i-1] = ((*mu_error_sume_layer_6_cycle))[0];
+    ((*mu_error_sume_layer_7))[i-1] = ((*mu_error_sume_layer_7_cycle))[0];
+    ((*mu_error_sume_layer_8))[i-1] = ((*mu_error_sume_layer_8_cycle))[0];
+    ((*mu_error_sume_layer_9))[i-1] = ((*mu_error_sume_layer_9_cycle))[0];
+    ((*mu_error_sume_layer_10))[i-1] = ((*mu_error_sume_layer_10_cycle))[0];
+    ((*mu_error_sume_layer_11))[i-1] = ((*mu_error_sume_layer_11_cycle))[0];
+    ((*mu_error_sume_layer_12))[i-1] = ((*mu_error_sume_layer_12_cycle))[0];
+    ((*mu_error_sume_layer_13))[i-1] = ((*mu_error_sume_layer_13_cycle))[0];
+    ((*mu_error_sume_layer_14))[i-1] = ((*mu_error_sume_layer_14_cycle))[0];
+    ((*sig_sume_layer_0))[i-1] = ((*sig_sume_layer_0_cycle))[0];
+    ((*sig_sume_layer_1))[i-1] = ((*sig_sume_layer_1_cycle))[0];
+    ((*sig_sume_layer_2))[i-1] = ((*sig_sume_layer_2_cycle))[0];
+    ((*sig_sume_layer_3))[i-1] = ((*sig_sume_layer_3_cycle))[0];
+    ((*sig_sume_layer_4))[i-1] = ((*sig_sume_layer_4_cycle))[0];
+    ((*sig_sume_layer_5))[i-1] = ((*sig_sume_layer_5_cycle))[0];
+    ((*sig_sume_layer_6))[i-1] = ((*sig_sume_layer_6_cycle))[0];
+    ((*sig_sume_layer_7))[i-1] = ((*sig_sume_layer_7_cycle))[0];
+    ((*sig_sume_layer_8))[i-1] = ((*sig_sume_layer_8_cycle))[0];
+    ((*sig_sume_layer_9))[i-1] = ((*sig_sume_layer_9_cycle))[0];
+    ((*sig_sume_layer_10))[i-1] = ((*sig_sume_layer_10_cycle))[0];
+    ((*sig_sume_layer_11))[i-1] = ((*sig_sume_layer_11_cycle))[0];
+    ((*sig_sume_layer_12))[i-1] = ((*sig_sume_layer_12_cycle))[0];
+    ((*sig_sume_layer_13))[i-1] = ((*sig_sume_layer_13_cycle))[0];
+    ((*sig_sume_layer_14))[i-1] = ((*sig_sume_layer_14_cycle))[0];
+
+    ((*mu_sume_layer_n_0))[i-1] = ((* mu_sume_layer_n_0_cycle))[0];
+    ((*mu_sume_layer_n_1))[i-1] = ((* mu_sume_layer_n_1_cycle))[0];
+    ((*mu_sume_layer_n_2))[i-1] = ((* mu_sume_layer_n_2_cycle))[0];
+    ((*mu_sume_layer_n_3))[i-1] = ((* mu_sume_layer_n_3_cycle))[0];
+    ((*mu_sume_layer_n_4))[i-1] = ((* mu_sume_layer_n_4_cycle))[0];
+    ((*mu_sume_layer_n_5))[i-1] = ((* mu_sume_layer_n_5_cycle))[0];
+    ((*mu_sume_layer_n_6))[i-1] = ((* mu_sume_layer_n_6_cycle))[0];
+    ((*mu_sume_layer_n_7))[i-1] = ((* mu_sume_layer_n_7_cycle))[0];
+    ((*mu_sume_layer_n_8))[i-1] = ((* mu_sume_layer_n_8_cycle))[0];
+    ((*mu_sume_layer_n_9))[i-1] = ((* mu_sume_layer_n_9_cycle))[0];
+    ((*mu_sume_layer_n_10))[i-1] = ((* mu_sume_layer_n_10_cycle))[0];
+    ((*mu_sume_layer_n_11))[i-1] = ((* mu_sume_layer_n_11_cycle))[0];
+    ((*mu_sume_layer_n_12))[i-1] = ((* mu_sume_layer_n_12_cycle))[0];
+    ((*mu_sume_layer_n_13))[i-1] = ((* mu_sume_layer_n_13_cycle))[0];
+    ((*mu_sume_layer_n_14))[i-1] = ((* mu_sume_layer_n_14_cycle))[0];
+    ((*mu_error_sume_layer_n_0))[i-1] = ((* mu_error_sume_layer_n_0_cycle))[0];
+    ((*mu_error_sume_layer_n_1))[i-1] = ((* mu_error_sume_layer_n_1_cycle))[0];
+    ((*mu_error_sume_layer_n_2))[i-1] = ((* mu_error_sume_layer_n_2_cycle))[0];
+    ((*mu_error_sume_layer_n_3))[i-1] = ((* mu_error_sume_layer_n_3_cycle))[0];
+    ((*mu_error_sume_layer_n_4))[i-1] = ((* mu_error_sume_layer_n_4_cycle))[0];
+    ((*mu_error_sume_layer_n_5))[i-1] = ((* mu_error_sume_layer_n_5_cycle))[0];
+    ((*mu_error_sume_layer_n_6))[i-1] = ((* mu_error_sume_layer_n_6_cycle))[0];
+    ((*mu_error_sume_layer_n_7))[i-1] = ((* mu_error_sume_layer_n_7_cycle))[0];
+    ((*mu_error_sume_layer_n_8))[i-1] = ((* mu_error_sume_layer_n_8_cycle))[0];
+    ((*mu_error_sume_layer_n_9))[i-1] = ((* mu_error_sume_layer_n_9_cycle))[0];
+    ((*mu_error_sume_layer_n_10))[i-1] = ((* mu_error_sume_layer_n_10_cycle))[0];
+    ((*mu_error_sume_layer_n_11))[i-1] = ((* mu_error_sume_layer_n_11_cycle))[0];
+    ((*mu_error_sume_layer_n_12))[i-1] = ((* mu_error_sume_layer_n_12_cycle))[0];
+    ((*mu_error_sume_layer_n_13))[i-1] = ((* mu_error_sume_layer_n_13_cycle))[0];
+    ((*mu_error_sume_layer_n_14))[i-1] = ((* mu_error_sume_layer_n_14_cycle))[0];
+    ((*sig_sume_layer_n_0))[i-1] = ((* sig_sume_layer_n_0_cycle))[0];
+    ((*sig_sume_layer_n_1))[i-1] = ((* sig_sume_layer_n_1_cycle))[0];
+    ((*sig_sume_layer_n_2))[i-1] = ((* sig_sume_layer_n_2_cycle))[0];
+    ((*sig_sume_layer_n_3))[i-1] = ((* sig_sume_layer_n_3_cycle))[0];
+    ((*sig_sume_layer_n_4))[i-1] = ((* sig_sume_layer_n_4_cycle))[0];
+    ((*sig_sume_layer_n_5))[i-1] = ((* sig_sume_layer_n_5_cycle))[0];
+    ((*sig_sume_layer_n_6))[i-1] = ((* sig_sume_layer_n_6_cycle))[0];
+    ((*sig_sume_layer_n_7))[i-1] = ((* sig_sume_layer_n_7_cycle))[0];
+    ((*sig_sume_layer_n_8))[i-1] = ((* sig_sume_layer_n_8_cycle))[0];
+    ((*sig_sume_layer_n_9))[i-1] = ((* sig_sume_layer_n_9_cycle))[0];
+    ((*sig_sume_layer_n_10))[i-1] = ((* sig_sume_layer_n_10_cycle))[0];
+    ((*sig_sume_layer_n_11))[i-1] = ((* sig_sume_layer_n_11_cycle))[0];
+    ((*sig_sume_layer_n_12))[i-1] = ((* sig_sume_layer_n_12_cycle))[0];
+    ((*sig_sume_layer_n_13))[i-1] = ((* sig_sume_layer_n_13_cycle))[0];
+    ((*sig_sume_layer_n_14))[i-1] = ((* sig_sume_layer_n_14_cycle))[0];
+    ((*shower_sume_max_layer))[i-1] = ((* shower_sume_max_layer_cycle))[0];
+    ((*shower_sume_start_layer))[i-1] = ((* shower_sume_start_layer_cycle))[0];
+    ((*shower_sume_end_layer))[i-1] = ((* shower_sume_end_layer_cycle))[0];
+    ((*shower_sume_max))[i-1] = ((* shower_sume_max_cycle))[0];
+    ((*shower_sume_average))[i-1] = ((* shower_sume_average_cycle))[0];
+
     //weighted energy
     ((*mu_weight_layer_0))[i-1] = ((* mu_weight_layer_0_cycle))[0];
     ((*mu_weight_layer_1))[i-1] = ((* mu_weight_layer_1_cycle))[0];
@@ -931,27 +1310,27 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       showernhitvalues[ienergy][12]=((*mu_nhit_layer_12))[ienergy];
       showernhitvalues[ienergy][13]=((*mu_nhit_layer_13))[ienergy];
       showernhitvalues[ienergy][14]=((*mu_nhit_layer_14))[ienergy];
-      showernhiterrors[ienergy][0]=((*sig_nhit_layer_0))[ienergy];
-      showernhiterrors[ienergy][1]=((*sig_nhit_layer_1))[ienergy];
-      showernhiterrors[ienergy][2]=((*sig_nhit_layer_2))[ienergy];
-      showernhiterrors[ienergy][3]=((*sig_nhit_layer_3))[ienergy];
-      showernhiterrors[ienergy][4]=((*sig_nhit_layer_4))[ienergy];
-      showernhiterrors[ienergy][5]=((*sig_nhit_layer_5))[ienergy];
-      showernhiterrors[ienergy][6]=((*sig_nhit_layer_6))[ienergy];
-      showernhiterrors[ienergy][7]=((*sig_nhit_layer_7))[ienergy];
-      showernhiterrors[ienergy][8]=((*sig_nhit_layer_8))[ienergy];
-      showernhiterrors[ienergy][9]=((*sig_nhit_layer_9))[ienergy];
-      showernhiterrors[ienergy][10]=((*sig_nhit_layer_10))[ienergy];
-      showernhiterrors[ienergy][11]=((*sig_nhit_layer_11))[ienergy];
-      showernhiterrors[ienergy][12]=((*sig_nhit_layer_12))[ienergy];
-      showernhiterrors[ienergy][13]=((*sig_nhit_layer_13))[ienergy];
-      showernhiterrors[ienergy][14]=((*sig_nhit_layer_14))[ienergy];
+      showernhiterrors[ienergy][0]=((*mu_error_nhit_layer_0))[ienergy];
+      showernhiterrors[ienergy][1]=((*mu_error_nhit_layer_1))[ienergy];
+      showernhiterrors[ienergy][2]=((*mu_error_nhit_layer_2))[ienergy];
+      showernhiterrors[ienergy][3]=((*mu_error_nhit_layer_3))[ienergy];
+      showernhiterrors[ienergy][4]=((*mu_error_nhit_layer_4))[ienergy];
+      showernhiterrors[ienergy][5]=((*mu_error_nhit_layer_5))[ienergy];
+      showernhiterrors[ienergy][6]=((*mu_error_nhit_layer_6))[ienergy];
+      showernhiterrors[ienergy][7]=((*mu_error_nhit_layer_7))[ienergy];
+      showernhiterrors[ienergy][8]=((*mu_error_nhit_layer_8))[ienergy];
+      showernhiterrors[ienergy][9]=((*mu_error_nhit_layer_9))[ienergy];
+      showernhiterrors[ienergy][10]=((*mu_error_nhit_layer_10))[ienergy];
+      showernhiterrors[ienergy][11]=((*mu_error_nhit_layer_11))[ienergy];
+      showernhiterrors[ienergy][12]=((*mu_error_nhit_layer_12))[ienergy];
+      showernhiterrors[ienergy][13]=((*mu_error_nhit_layer_13))[ienergy];
+      showernhiterrors[ienergy][14]=((*mu_error_nhit_layer_14))[ienergy];
       cout<<"Energy ("<<((*energies))[ienergy]<<" GeV)"<<endl;
       cout<<"nhit shower"<<endl;
-      cout<<((*sig_nhit_layer_0))[ienergy]<<" "<<((*sig_nhit_layer_1))[ienergy]<<" "<<((*sig_nhit_layer_2))[ienergy]<<" "<<((*sig_nhit_layer_3))[ienergy]<<" "<<
-	((*sig_nhit_layer_4))[ienergy]<<" "<<((*sig_nhit_layer_5))[ienergy]<<" "<<((*sig_nhit_layer_6))[ienergy]<<" "<<((*sig_nhit_layer_7))[ienergy]<<" "<<
-	((*sig_nhit_layer_8))[ienergy]<<" "<<((*sig_nhit_layer_9))[ienergy]<<" "<<((*sig_nhit_layer_10))[ienergy]<<" "<<((*sig_nhit_layer_11))[ienergy]<<" "<<
-	((*sig_nhit_layer_12))[ienergy]<<" "<<((*sig_nhit_layer_13))[ienergy]<<" "<<((*sig_nhit_layer_14))[ienergy]<<endl;
+      cout<<((*mu_error_nhit_layer_0))[ienergy]<<" "<<((*mu_error_nhit_layer_1))[ienergy]<<" "<<((*mu_error_nhit_layer_2))[ienergy]<<" "<<((*mu_error_nhit_layer_3))[ienergy]<<" "<<
+	((*mu_error_nhit_layer_4))[ienergy]<<" "<<((*mu_error_nhit_layer_5))[ienergy]<<" "<<((*mu_error_nhit_layer_6))[ienergy]<<" "<<((*mu_error_nhit_layer_7))[ienergy]<<" "<<
+	((*mu_error_nhit_layer_8))[ienergy]<<" "<<((*mu_error_nhit_layer_9))[ienergy]<<" "<<((*mu_error_nhit_layer_10))[ienergy]<<" "<<((*mu_error_nhit_layer_11))[ienergy]<<" "<<
+	((*mu_error_nhit_layer_12))[ienergy]<<" "<<((*mu_error_nhit_layer_13))[ienergy]<<" "<<((*mu_error_nhit_layer_14))[ienergy]<<endl;
 
       showernhitvalues_n[ienergy][0]=((*mu_nhit_layer_n_0))[ienergy];
       showernhitvalues_n[ienergy][1]=((*mu_nhit_layer_n_1))[ienergy];
@@ -968,26 +1347,99 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       showernhitvalues_n[ienergy][12]=((*mu_nhit_layer_n_12))[ienergy];
       showernhitvalues_n[ienergy][13]=((*mu_nhit_layer_n_13))[ienergy];
       showernhitvalues_n[ienergy][14]=((*mu_nhit_layer_n_14))[ienergy];
-      showernhiterrors_n[ienergy][0]=((*sig_nhit_layer_n_0))[ienergy];
-      showernhiterrors_n[ienergy][1]=((*sig_nhit_layer_n_1))[ienergy];
-      showernhiterrors_n[ienergy][2]=((*sig_nhit_layer_n_2))[ienergy];
-      showernhiterrors_n[ienergy][3]=((*sig_nhit_layer_n_3))[ienergy];
-      showernhiterrors_n[ienergy][4]=((*sig_nhit_layer_n_4))[ienergy];
-      showernhiterrors_n[ienergy][5]=((*sig_nhit_layer_n_5))[ienergy];
-      showernhiterrors_n[ienergy][6]=((*sig_nhit_layer_n_6))[ienergy];
-      showernhiterrors_n[ienergy][7]=((*sig_nhit_layer_n_7))[ienergy];
-      showernhiterrors_n[ienergy][8]=((*sig_nhit_layer_n_8))[ienergy];
-      showernhiterrors_n[ienergy][9]=((*sig_nhit_layer_n_9))[ienergy];
-      showernhiterrors_n[ienergy][10]=((*sig_nhit_layer_n_10))[ienergy];
-      showernhiterrors_n[ienergy][11]=((*sig_nhit_layer_n_11))[ienergy];
-      showernhiterrors_n[ienergy][12]=((*sig_nhit_layer_n_12))[ienergy];
-      showernhiterrors_n[ienergy][13]=((*sig_nhit_layer_n_13))[ienergy];
-      showernhiterrors_n[ienergy][14]=((*sig_nhit_layer_n_14))[ienergy];
+      showernhiterrors_n[ienergy][0]=((*mu_error_nhit_layer_n_0))[ienergy];
+      showernhiterrors_n[ienergy][1]=((*mu_error_nhit_layer_n_1))[ienergy];
+      showernhiterrors_n[ienergy][2]=((*mu_error_nhit_layer_n_2))[ienergy];
+      showernhiterrors_n[ienergy][3]=((*mu_error_nhit_layer_n_3))[ienergy];
+      showernhiterrors_n[ienergy][4]=((*mu_error_nhit_layer_n_4))[ienergy];
+      showernhiterrors_n[ienergy][5]=((*mu_error_nhit_layer_n_5))[ienergy];
+      showernhiterrors_n[ienergy][6]=((*mu_error_nhit_layer_n_6))[ienergy];
+      showernhiterrors_n[ienergy][7]=((*mu_error_nhit_layer_n_7))[ienergy];
+      showernhiterrors_n[ienergy][8]=((*mu_error_nhit_layer_n_8))[ienergy];
+      showernhiterrors_n[ienergy][9]=((*mu_error_nhit_layer_n_9))[ienergy];
+      showernhiterrors_n[ienergy][10]=((*mu_error_nhit_layer_n_10))[ienergy];
+      showernhiterrors_n[ienergy][11]=((*mu_error_nhit_layer_n_11))[ienergy];
+      showernhiterrors_n[ienergy][12]=((*mu_error_nhit_layer_n_12))[ienergy];
+      showernhiterrors_n[ienergy][13]=((*mu_error_nhit_layer_n_13))[ienergy];
+      showernhiterrors_n[ienergy][14]=((*mu_error_nhit_layer_n_14))[ienergy];
       cout<<"nhit shower n"<<endl;
-      cout<<((*sig_nhit_layer_n_0))[ienergy]<<" "<<((*sig_nhit_layer_n_1))[ienergy]<<" "<<((*sig_nhit_layer_n_2))[ienergy]<<" "<<((*sig_nhit_layer_n_3))[ienergy]<<" "<<
-        ((*sig_nhit_layer_n_4))[ienergy]<<" "<<((*sig_nhit_layer_n_5))[ienergy]<<" "<<((*sig_nhit_layer_n_6))[ienergy]<<" "<<((*sig_nhit_layer_n_7))[ienergy]<<" "<<
-        ((*sig_nhit_layer_n_8))[ienergy]<<" "<<((*sig_nhit_layer_n_9))[ienergy]<<" "<<((*sig_nhit_layer_n_10))[ienergy]<<" "<<((*sig_nhit_layer_n_11))[ienergy]<<" "<<
-        ((*sig_nhit_layer_n_12))[ienergy]<<" "<<((*sig_nhit_layer_n_13))[ienergy]<<" "<<((*sig_nhit_layer_n_14))[ienergy]<<endl;
+      cout<<((*mu_error_nhit_layer_n_0))[ienergy]<<" "<<((*mu_error_nhit_layer_n_1))[ienergy]<<" "<<((*mu_error_nhit_layer_n_2))[ienergy]<<" "<<((*mu_error_nhit_layer_n_3))[ienergy]<<" "<<
+        ((*mu_error_nhit_layer_n_4))[ienergy]<<" "<<((*mu_error_nhit_layer_n_5))[ienergy]<<" "<<((*mu_error_nhit_layer_n_6))[ienergy]<<" "<<((*mu_error_nhit_layer_n_7))[ienergy]<<" "<<
+        ((*mu_error_nhit_layer_n_8))[ienergy]<<" "<<((*mu_error_nhit_layer_n_9))[ienergy]<<" "<<((*mu_error_nhit_layer_n_10))[ienergy]<<" "<<((*mu_error_nhit_layer_n_11))[ienergy]<<" "<<
+        ((*mu_error_nhit_layer_n_12))[ienergy]<<" "<<((*mu_error_nhit_layer_n_13))[ienergy]<<" "<<((*mu_error_nhit_layer_n_14))[ienergy]<<endl;
+
+      showersumevalues[ienergy][0]=((*mu_sume_layer_0))[ienergy];
+      showersumevalues[ienergy][1]=((*mu_sume_layer_1))[ienergy];
+      showersumevalues[ienergy][2]=((*mu_sume_layer_2))[ienergy];
+      showersumevalues[ienergy][3]=((*mu_sume_layer_3))[ienergy];
+      showersumevalues[ienergy][4]=((*mu_sume_layer_4))[ienergy];
+      showersumevalues[ienergy][5]=((*mu_sume_layer_5))[ienergy];
+      showersumevalues[ienergy][6]=((*mu_sume_layer_6))[ienergy];
+      showersumevalues[ienergy][7]=((*mu_sume_layer_7))[ienergy];
+      showersumevalues[ienergy][8]=((*mu_sume_layer_8))[ienergy];
+      showersumevalues[ienergy][9]=((*mu_sume_layer_9))[ienergy];
+      showersumevalues[ienergy][10]=((*mu_sume_layer_10))[ienergy];
+      showersumevalues[ienergy][11]=((*mu_sume_layer_11))[ienergy];
+      showersumevalues[ienergy][12]=((*mu_sume_layer_12))[ienergy];
+      showersumevalues[ienergy][13]=((*mu_sume_layer_13))[ienergy];
+      showersumevalues[ienergy][14]=((*mu_sume_layer_14))[ienergy];
+      showersumeerrors[ienergy][0]=((*mu_error_sume_layer_0))[ienergy];
+      showersumeerrors[ienergy][1]=((*mu_error_sume_layer_1))[ienergy];
+      showersumeerrors[ienergy][2]=((*mu_error_sume_layer_2))[ienergy];
+      showersumeerrors[ienergy][3]=((*mu_error_sume_layer_3))[ienergy];
+      showersumeerrors[ienergy][4]=((*mu_error_sume_layer_4))[ienergy];
+      showersumeerrors[ienergy][5]=((*mu_error_sume_layer_5))[ienergy];
+      showersumeerrors[ienergy][6]=((*mu_error_sume_layer_6))[ienergy];
+      showersumeerrors[ienergy][7]=((*mu_error_sume_layer_7))[ienergy];
+      showersumeerrors[ienergy][8]=((*mu_error_sume_layer_8))[ienergy];
+      showersumeerrors[ienergy][9]=((*mu_error_sume_layer_9))[ienergy];
+      showersumeerrors[ienergy][10]=((*mu_error_sume_layer_10))[ienergy];
+      showersumeerrors[ienergy][11]=((*mu_error_sume_layer_11))[ienergy];
+      showersumeerrors[ienergy][12]=((*mu_error_sume_layer_12))[ienergy];
+      showersumeerrors[ienergy][13]=((*mu_error_sume_layer_13))[ienergy];
+      showersumeerrors[ienergy][14]=((*mu_error_sume_layer_14))[ienergy];
+      cout<<"Energy ("<<((*energies))[ienergy]<<" GeV)"<<endl;
+      cout<<"sume shower"<<endl;
+      cout<<((*mu_error_sume_layer_0))[ienergy]<<" "<<((*mu_error_sume_layer_1))[ienergy]<<" "<<((*mu_error_sume_layer_2))[ienergy]<<" "<<((*mu_error_sume_layer_3))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_4))[ienergy]<<" "<<((*mu_error_sume_layer_5))[ienergy]<<" "<<((*mu_error_sume_layer_6))[ienergy]<<" "<<((*mu_error_sume_layer_7))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_8))[ienergy]<<" "<<((*mu_error_sume_layer_9))[ienergy]<<" "<<((*mu_error_sume_layer_10))[ienergy]<<" "<<((*mu_error_sume_layer_11))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_12))[ienergy]<<" "<<((*mu_error_sume_layer_13))[ienergy]<<" "<<((*mu_error_sume_layer_14))[ienergy]<<endl;
+
+      showersumevalues_n[ienergy][0]=((*mu_sume_layer_n_0))[ienergy];
+      showersumevalues_n[ienergy][1]=((*mu_sume_layer_n_1))[ienergy];
+      showersumevalues_n[ienergy][2]=((*mu_sume_layer_n_2))[ienergy];
+      showersumevalues_n[ienergy][3]=((*mu_sume_layer_n_3))[ienergy];
+      showersumevalues_n[ienergy][4]=((*mu_sume_layer_n_4))[ienergy];
+      showersumevalues_n[ienergy][5]=((*mu_sume_layer_n_5))[ienergy];
+      showersumevalues_n[ienergy][6]=((*mu_sume_layer_n_6))[ienergy];
+      showersumevalues_n[ienergy][7]=((*mu_sume_layer_n_7))[ienergy];
+      showersumevalues_n[ienergy][8]=((*mu_sume_layer_n_8))[ienergy];
+      showersumevalues_n[ienergy][9]=((*mu_sume_layer_n_9))[ienergy];
+      showersumevalues_n[ienergy][10]=((*mu_sume_layer_n_10))[ienergy];
+      showersumevalues_n[ienergy][11]=((*mu_sume_layer_n_11))[ienergy];
+      showersumevalues_n[ienergy][12]=((*mu_sume_layer_n_12))[ienergy];
+      showersumevalues_n[ienergy][13]=((*mu_sume_layer_n_13))[ienergy];
+      showersumevalues_n[ienergy][14]=((*mu_sume_layer_n_14))[ienergy];
+      showersumeerrors_n[ienergy][0]=((*mu_error_sume_layer_n_0))[ienergy];
+      showersumeerrors_n[ienergy][1]=((*mu_error_sume_layer_n_1))[ienergy];
+      showersumeerrors_n[ienergy][2]=((*mu_error_sume_layer_n_2))[ienergy];
+      showersumeerrors_n[ienergy][3]=((*mu_error_sume_layer_n_3))[ienergy];
+      showersumeerrors_n[ienergy][4]=((*mu_error_sume_layer_n_4))[ienergy];
+      showersumeerrors_n[ienergy][5]=((*mu_error_sume_layer_n_5))[ienergy];
+      showersumeerrors_n[ienergy][6]=((*mu_error_sume_layer_n_6))[ienergy];
+      showersumeerrors_n[ienergy][7]=((*mu_error_sume_layer_n_7))[ienergy];
+      showersumeerrors_n[ienergy][8]=((*mu_error_sume_layer_n_8))[ienergy];
+      showersumeerrors_n[ienergy][9]=((*mu_error_sume_layer_n_9))[ienergy];
+      showersumeerrors_n[ienergy][10]=((*mu_error_sume_layer_n_10))[ienergy];
+      showersumeerrors_n[ienergy][11]=((*mu_error_sume_layer_n_11))[ienergy];
+      showersumeerrors_n[ienergy][12]=((*mu_error_sume_layer_n_12))[ienergy];
+      showersumeerrors_n[ienergy][13]=((*mu_error_sume_layer_n_13))[ienergy];
+      showersumeerrors_n[ienergy][14]=((*mu_error_sume_layer_n_14))[ienergy];
+      cout<<"sume shower n"<<endl;
+      cout<<((*mu_error_sume_layer_n_0))[ienergy]<<" "<<((*mu_error_sume_layer_n_1))[ienergy]<<" "<<((*mu_error_sume_layer_n_2))[ienergy]<<" "<<((*mu_error_sume_layer_n_3))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_n_4))[ienergy]<<" "<<((*mu_error_sume_layer_n_5))[ienergy]<<" "<<((*mu_error_sume_layer_n_6))[ienergy]<<" "<<((*mu_error_sume_layer_n_7))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_n_8))[ienergy]<<" "<<((*mu_error_sume_layer_n_9))[ienergy]<<" "<<((*mu_error_sume_layer_n_10))[ienergy]<<" "<<((*mu_error_sume_layer_n_11))[ienergy]<<" "<<
+        ((*mu_error_sume_layer_n_12))[ienergy]<<" "<<((*mu_error_sume_layer_n_13))[ienergy]<<" "<<((*mu_error_sume_layer_n_14))[ienergy]<<endl;
 
       showerweightvalues[ienergy][0]=((*mu_weight_layer_0))[ienergy];
       showerweightvalues[ienergy][1]=((*mu_weight_layer_1))[ienergy];
@@ -1004,26 +1456,26 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       showerweightvalues[ienergy][12]=((*mu_weight_layer_12))[ienergy];
       showerweightvalues[ienergy][13]=((*mu_weight_layer_13))[ienergy];
       showerweightvalues[ienergy][14]=((*mu_weight_layer_14))[ienergy];
-      showerweighterrors[ienergy][0]=((*sig_weight_layer_0))[ienergy];
-      showerweighterrors[ienergy][1]=((*sig_weight_layer_1))[ienergy];
-      showerweighterrors[ienergy][2]=((*sig_weight_layer_2))[ienergy];
-      showerweighterrors[ienergy][3]=((*sig_weight_layer_3))[ienergy];
-      showerweighterrors[ienergy][4]=((*sig_weight_layer_4))[ienergy];
-      showerweighterrors[ienergy][5]=((*sig_weight_layer_5))[ienergy];
-      showerweighterrors[ienergy][6]=((*sig_weight_layer_6))[ienergy];
-      showerweighterrors[ienergy][7]=((*sig_weight_layer_7))[ienergy];
-      showerweighterrors[ienergy][8]=((*sig_weight_layer_8))[ienergy];
-      showerweighterrors[ienergy][9]=((*sig_weight_layer_9))[ienergy];
-      showerweighterrors[ienergy][10]=((*sig_weight_layer_10))[ienergy];
-      showerweighterrors[ienergy][11]=((*sig_weight_layer_11))[ienergy];
-      showerweighterrors[ienergy][12]=((*sig_weight_layer_12))[ienergy];
-      showerweighterrors[ienergy][13]=((*sig_weight_layer_13))[ienergy];
-      showerweighterrors[ienergy][14]=((*sig_weight_layer_14))[ienergy];
+      showerweighterrors[ienergy][0]=((*mu_error_weight_layer_0))[ienergy];
+      showerweighterrors[ienergy][1]=((*mu_error_weight_layer_1))[ienergy];
+      showerweighterrors[ienergy][2]=((*mu_error_weight_layer_2))[ienergy];
+      showerweighterrors[ienergy][3]=((*mu_error_weight_layer_3))[ienergy];
+      showerweighterrors[ienergy][4]=((*mu_error_weight_layer_4))[ienergy];
+      showerweighterrors[ienergy][5]=((*mu_error_weight_layer_5))[ienergy];
+      showerweighterrors[ienergy][6]=((*mu_error_weight_layer_6))[ienergy];
+      showerweighterrors[ienergy][7]=((*mu_error_weight_layer_7))[ienergy];
+      showerweighterrors[ienergy][8]=((*mu_error_weight_layer_8))[ienergy];
+      showerweighterrors[ienergy][9]=((*mu_error_weight_layer_9))[ienergy];
+      showerweighterrors[ienergy][10]=((*mu_error_weight_layer_10))[ienergy];
+      showerweighterrors[ienergy][11]=((*mu_error_weight_layer_11))[ienergy];
+      showerweighterrors[ienergy][12]=((*mu_error_weight_layer_12))[ienergy];
+      showerweighterrors[ienergy][13]=((*mu_error_weight_layer_13))[ienergy];
+      showerweighterrors[ienergy][14]=((*mu_error_weight_layer_14))[ienergy];
       cout<<"weight shower"<<endl;
-      cout<<((*sig_weight_layer_0))[ienergy]<<" "<<((*sig_weight_layer_1))[ienergy]<<" "<<((*sig_weight_layer_2))[ienergy]<<" "<<((*sig_weight_layer_3))[ienergy]<<" "<<
-        ((*sig_weight_layer_4))[ienergy]<<" "<<((*sig_weight_layer_5))[ienergy]<<" "<<((*sig_weight_layer_6))[ienergy]<<" "<<((*sig_weight_layer_7))[ienergy]<<" "<<
-        ((*sig_weight_layer_8))[ienergy]<<" "<<((*sig_weight_layer_9))[ienergy]<<" "<<((*sig_weight_layer_10))[ienergy]<<" "<<((*sig_weight_layer_11))[ienergy]<<" "<<
-        ((*sig_weight_layer_12))[ienergy]<<" "<<((*sig_weight_layer_13))[ienergy]<<" "<<((*sig_weight_layer_14))[ienergy]<<endl;
+      cout<<((*mu_error_weight_layer_0))[ienergy]<<" "<<((*mu_error_weight_layer_1))[ienergy]<<" "<<((*mu_error_weight_layer_2))[ienergy]<<" "<<((*mu_error_weight_layer_3))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_4))[ienergy]<<" "<<((*mu_error_weight_layer_5))[ienergy]<<" "<<((*mu_error_weight_layer_6))[ienergy]<<" "<<((*mu_error_weight_layer_7))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_8))[ienergy]<<" "<<((*mu_error_weight_layer_9))[ienergy]<<" "<<((*mu_error_weight_layer_10))[ienergy]<<" "<<((*mu_error_weight_layer_11))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_12))[ienergy]<<" "<<((*mu_error_weight_layer_13))[ienergy]<<" "<<((*mu_error_weight_layer_14))[ienergy]<<endl;
 
       showerweightvalues_n[ienergy][0]=((*mu_weight_layer_n_0))[ienergy];
       showerweightvalues_n[ienergy][1]=((*mu_weight_layer_n_1))[ienergy];
@@ -1040,26 +1492,26 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       showerweightvalues_n[ienergy][12]=((*mu_weight_layer_n_12))[ienergy];
       showerweightvalues_n[ienergy][13]=((*mu_weight_layer_n_13))[ienergy];
       showerweightvalues_n[ienergy][14]=((*mu_weight_layer_n_14))[ienergy];
-      showerweighterrors_n[ienergy][0]=((*sig_weight_layer_n_0))[ienergy];
-      showerweighterrors_n[ienergy][1]=((*sig_weight_layer_n_1))[ienergy];
-      showerweighterrors_n[ienergy][2]=((*sig_weight_layer_n_2))[ienergy];
-      showerweighterrors_n[ienergy][3]=((*sig_weight_layer_n_3))[ienergy];
-      showerweighterrors_n[ienergy][4]=((*sig_weight_layer_n_4))[ienergy];
-      showerweighterrors_n[ienergy][5]=((*sig_weight_layer_n_5))[ienergy];
-      showerweighterrors_n[ienergy][6]=((*sig_weight_layer_n_6))[ienergy];
-      showerweighterrors_n[ienergy][7]=((*sig_weight_layer_n_7))[ienergy];
-      showerweighterrors_n[ienergy][8]=((*sig_weight_layer_n_8))[ienergy];
-      showerweighterrors_n[ienergy][9]=((*sig_weight_layer_n_9))[ienergy];
-      showerweighterrors_n[ienergy][10]=((*sig_weight_layer_n_10))[ienergy];
-      showerweighterrors_n[ienergy][11]=((*sig_weight_layer_n_11))[ienergy];
-      showerweighterrors_n[ienergy][12]=((*sig_weight_layer_n_12))[ienergy];
-      showerweighterrors_n[ienergy][13]=((*sig_weight_layer_n_13))[ienergy];
-      showerweighterrors_n[ienergy][14]=((*sig_weight_layer_n_14))[ienergy];
+      showerweighterrors_n[ienergy][0]=((*mu_error_weight_layer_n_0))[ienergy];
+      showerweighterrors_n[ienergy][1]=((*mu_error_weight_layer_n_1))[ienergy];
+      showerweighterrors_n[ienergy][2]=((*mu_error_weight_layer_n_2))[ienergy];
+      showerweighterrors_n[ienergy][3]=((*mu_error_weight_layer_n_3))[ienergy];
+      showerweighterrors_n[ienergy][4]=((*mu_error_weight_layer_n_4))[ienergy];
+      showerweighterrors_n[ienergy][5]=((*mu_error_weight_layer_n_5))[ienergy];
+      showerweighterrors_n[ienergy][6]=((*mu_error_weight_layer_n_6))[ienergy];
+      showerweighterrors_n[ienergy][7]=((*mu_error_weight_layer_n_7))[ienergy];
+      showerweighterrors_n[ienergy][8]=((*mu_error_weight_layer_n_8))[ienergy];
+      showerweighterrors_n[ienergy][9]=((*mu_error_weight_layer_n_9))[ienergy];
+      showerweighterrors_n[ienergy][10]=((*mu_error_weight_layer_n_10))[ienergy];
+      showerweighterrors_n[ienergy][11]=((*mu_error_weight_layer_n_11))[ienergy];
+      showerweighterrors_n[ienergy][12]=((*mu_error_weight_layer_n_12))[ienergy];
+      showerweighterrors_n[ienergy][13]=((*mu_error_weight_layer_n_13))[ienergy];
+      showerweighterrors_n[ienergy][14]=((*mu_error_weight_layer_n_14))[ienergy];
       cout<<"weight shower n"<<endl;
-      cout<<((*sig_weight_layer_n_0))[ienergy]<<" "<<((*sig_weight_layer_n_1))[ienergy]<<" "<<((*sig_weight_layer_n_2))[ienergy]<<" "<<((*sig_weight_layer_n_3))[ienergy]<<" "<<
-        ((*sig_weight_layer_n_4))[ienergy]<<" "<<((*sig_weight_layer_n_5))[ienergy]<<" "<<((*sig_weight_layer_n_6))[ienergy]<<" "<<((*sig_weight_layer_n_7))[ienergy]<<" "<<
-        ((*sig_weight_layer_n_8))[ienergy]<<" "<<((*sig_weight_layer_n_9))[ienergy]<<" "<<((*sig_weight_layer_n_10))[ienergy]<<" "<<((*sig_weight_layer_n_11))[ienergy]<<" "<<
-        ((*sig_weight_layer_n_12))[ienergy]<<" "<<((*sig_weight_layer_n_13))[ienergy]<<" "<<((*sig_weight_layer_n_14))[ienergy]<<endl;
+      cout<<((*mu_error_weight_layer_n_0))[ienergy]<<" "<<((*mu_error_weight_layer_n_1))[ienergy]<<" "<<((*mu_error_weight_layer_n_2))[ienergy]<<" "<<((*mu_error_weight_layer_n_3))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_n_4))[ienergy]<<" "<<((*mu_error_weight_layer_n_5))[ienergy]<<" "<<((*mu_error_weight_layer_n_6))[ienergy]<<" "<<((*mu_error_weight_layer_n_7))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_n_8))[ienergy]<<" "<<((*mu_error_weight_layer_n_9))[ienergy]<<" "<<((*mu_error_weight_layer_n_10))[ienergy]<<" "<<((*mu_error_weight_layer_n_11))[ienergy]<<" "<<
+        ((*mu_error_weight_layer_n_12))[ienergy]<<" "<<((*mu_error_weight_layer_n_13))[ienergy]<<" "<<((*mu_error_weight_layer_n_14))[ienergy]<<endl;
     }
 
     for(int ilayer=0; ilayer < N_ECAL_LAYERS; ilayer++){
@@ -1098,6 +1550,40 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       showernhiterrors_n_40[ilayer] = showernhiterrors_n[7][ilayer];
       showernhiterrors_n_80[ilayer] = showernhiterrors_n[11][ilayer];
       showernhiterrors_n_150[ilayer] = showernhiterrors_n[15][ilayer];
+
+      showersumevalues_2[ilayer] = showersumevalues[0][ilayer];
+      showersumevalues_4[ilayer] = showersumevalues[1][ilayer];
+      showersumevalues_6[ilayer] = showersumevalues[2][ilayer];
+      showersumevalues_10[ilayer] = showersumevalues[4][ilayer];
+      showersumevalues_20[ilayer] = showersumevalues[5][ilayer];
+      showersumevalues_40[ilayer] = showersumevalues[7][ilayer];
+      showersumevalues_80[ilayer] = showersumevalues[11][ilayer];
+      showersumevalues_150[ilayer] = showersumevalues[15][ilayer];
+      showersumeerrors_2[ilayer] = showersumeerrors[0][ilayer];
+      showersumeerrors_4[ilayer] = showersumeerrors[1][ilayer];
+      showersumeerrors_6[ilayer] = showersumeerrors[2][ilayer];
+      showersumeerrors_10[ilayer] = showersumeerrors[4][ilayer];
+      showersumeerrors_20[ilayer] = showersumeerrors[5][ilayer];
+      showersumeerrors_40[ilayer] = showersumeerrors[7][ilayer];
+      showersumeerrors_80[ilayer] = showersumeerrors[11][ilayer];
+      showersumeerrors_150[ilayer] = showersumeerrors[15][ilayer];
+
+      showersumevalues_n_2[ilayer] = showersumevalues_n[0][ilayer];
+      showersumevalues_n_4[ilayer] = showersumevalues_n[1][ilayer];
+      showersumevalues_n_6[ilayer] = showersumevalues_n[2][ilayer];
+      showersumevalues_n_10[ilayer] = showersumevalues_n[4][ilayer];
+      showersumevalues_n_20[ilayer] = showersumevalues_n[5][ilayer];
+      showersumevalues_n_40[ilayer] = showersumevalues_n[7][ilayer];
+      showersumevalues_n_80[ilayer] = showersumevalues_n[11][ilayer];
+      showersumevalues_n_150[ilayer] = showersumevalues_n[15][ilayer];
+      showersumeerrors_n_2[ilayer] = showersumeerrors_n[0][ilayer];
+      showersumeerrors_n_4[ilayer] = showersumeerrors_n[1][ilayer];
+      showersumeerrors_n_6[ilayer] = showersumeerrors_n[2][ilayer];
+      showersumeerrors_n_10[ilayer] = showersumeerrors_n[4][ilayer];
+      showersumeerrors_n_20[ilayer] = showersumeerrors_n[5][ilayer];
+      showersumeerrors_n_40[ilayer] = showersumeerrors_n[7][ilayer];
+      showersumeerrors_n_80[ilayer] = showersumeerrors_n[11][ilayer];
+      showersumeerrors_n_150[ilayer] = showersumeerrors_n[15][ilayer];
 
       showerweightvalues_2[ilayer] = showerweightvalues[0][ilayer];
       showerweightvalues_4[ilayer] = showerweightvalues[1][ilayer];
@@ -1200,6 +1686,72 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     TVectorD showernhiterrorref_n_150(N_ECAL_LAYERS,showernhiterrors_n_150);
     shower_nhit_profile_errors_n_150 = &showernhiterrorref_n_150;
 
+    TVectorD showersumeref_2(N_ECAL_LAYERS,showersumevalues_2);
+    shower_sume_profile_2 = &showersumeref_2;
+    TVectorD showersumeref_4(N_ECAL_LAYERS,showersumevalues_4);
+    shower_sume_profile_4 = &showersumeref_4;
+    TVectorD showersumeref_6(N_ECAL_LAYERS,showersumevalues_6);
+    shower_sume_profile_6 = &showersumeref_6;
+    TVectorD showersumeref_10(N_ECAL_LAYERS,showersumevalues_10);
+    shower_sume_profile_10 = &showersumeref_10;
+    TVectorD showersumeref_20(N_ECAL_LAYERS,showersumevalues_20);
+    shower_sume_profile_20 = &showersumeref_20;
+    TVectorD showersumeref_40(N_ECAL_LAYERS,showersumevalues_40);
+    shower_sume_profile_40 = &showersumeref_40;
+    TVectorD showersumeref_80(N_ECAL_LAYERS,showersumevalues_80);
+    shower_sume_profile_80 = &showersumeref_80;
+    TVectorD showersumeref_150(N_ECAL_LAYERS,showersumevalues_150);
+    shower_sume_profile_150 = &showersumeref_150;
+    TVectorD showersumeerrorref_2(N_ECAL_LAYERS,showersumeerrors_2);
+    shower_sume_profile_errors_2 = &showersumeerrorref_2;
+    TVectorD showersumeerrorref_4(N_ECAL_LAYERS,showersumeerrors_4);
+    shower_sume_profile_errors_4 = &showersumeerrorref_4;
+    TVectorD showersumeerrorref_6(N_ECAL_LAYERS,showersumeerrors_6);
+    shower_sume_profile_errors_6 = &showersumeerrorref_6;
+    TVectorD showersumeerrorref_10(N_ECAL_LAYERS,showersumeerrors_10);
+    shower_sume_profile_errors_10 = &showersumeerrorref_10;
+    TVectorD showersumeerrorref_20(N_ECAL_LAYERS,showersumeerrors_20);
+    shower_sume_profile_errors_20 = &showersumeerrorref_20;
+    TVectorD showersumeerrorref_40(N_ECAL_LAYERS,showersumeerrors_40);
+    shower_sume_profile_errors_40 = &showersumeerrorref_40;
+    TVectorD showersumeerrorref_80(N_ECAL_LAYERS,showersumeerrors_80);
+    shower_sume_profile_errors_80 = &showersumeerrorref_80;
+    TVectorD showersumeerrorref_150(N_ECAL_LAYERS,showersumeerrors_150);
+    shower_sume_profile_errors_150 = &showersumeerrorref_150;
+
+    TVectorD showersumeref_n_2(N_ECAL_LAYERS,showersumevalues_n_2);
+    shower_sume_profile_n_2 = &showersumeref_n_2;
+    TVectorD showersumeref_n_4(N_ECAL_LAYERS,showersumevalues_n_4);
+    shower_sume_profile_n_4 = &showersumeref_n_4;
+    TVectorD showersumeref_n_6(N_ECAL_LAYERS,showersumevalues_n_6);
+    shower_sume_profile_n_6 = &showersumeref_n_6;
+    TVectorD showersumeref_n_10(N_ECAL_LAYERS,showersumevalues_n_10);
+    shower_sume_profile_n_10 = &showersumeref_n_10;
+    TVectorD showersumeref_n_20(N_ECAL_LAYERS,showersumevalues_n_20);
+    shower_sume_profile_n_20 = &showersumeref_n_20;
+    TVectorD showersumeref_n_40(N_ECAL_LAYERS,showersumevalues_n_40);
+    shower_sume_profile_n_40 = &showersumeref_n_40;
+    TVectorD showersumeref_n_80(N_ECAL_LAYERS,showersumevalues_n_80);
+    shower_sume_profile_n_80 = &showersumeref_n_80;
+    TVectorD showersumeref_n_150(N_ECAL_LAYERS,showersumevalues_n_150);
+    shower_sume_profile_n_150 = &showersumeref_n_150;
+    TVectorD showersumeerrorref_n_2(N_ECAL_LAYERS,showersumeerrors_n_2);
+    shower_sume_profile_errors_n_2 = &showersumeerrorref_n_2;
+    TVectorD showersumeerrorref_n_4(N_ECAL_LAYERS,showersumeerrors_n_4);
+    shower_sume_profile_errors_n_4 = &showersumeerrorref_n_4;
+    TVectorD showersumeerrorref_n_6(N_ECAL_LAYERS,showersumeerrors_n_6);
+    shower_sume_profile_errors_n_6 = &showersumeerrorref_n_6;
+    TVectorD showersumeerrorref_n_10(N_ECAL_LAYERS,showersumeerrors_n_10);
+    shower_sume_profile_errors_n_10 = &showersumeerrorref_n_10;
+    TVectorD showersumeerrorref_n_20(N_ECAL_LAYERS,showersumeerrors_n_20);
+    shower_sume_profile_errors_n_20 = &showersumeerrorref_n_20;
+    TVectorD showersumeerrorref_n_40(N_ECAL_LAYERS,showersumeerrors_n_40);
+    shower_sume_profile_errors_n_40 = &showersumeerrorref_n_40;
+    TVectorD showersumeerrorref_n_80(N_ECAL_LAYERS,showersumeerrors_n_80);
+    shower_sume_profile_errors_n_80 = &showersumeerrorref_n_80;
+    TVectorD showersumeerrorref_n_150(N_ECAL_LAYERS,showersumeerrors_n_150);
+    shower_sume_profile_errors_n_150 = &showersumeerrorref_n_150;
+
     TVectorD showerweightref_2(N_ECAL_LAYERS,showerweightvalues_2);
     shower_weight_profile_2 = &showerweightref_2;
     TVectorD showerweightref_4(N_ECAL_LAYERS,showerweightvalues_4);
@@ -1298,7 +1850,6 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     // Debugging tvectord access 
     for (int j = 0; j < N_ENERGIES; j++) {cout << "This energy: " << ((*energies))[j] << " GeV, 1/sqrt(E):" << ((*energies_tr))[j] << endl;}
 
-
     //Resolution plot:
     TMultiGraph *mg = new TMultiGraph();
     
@@ -1337,8 +1888,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     }
     
     // // Linearity plots
-    // We could add sim, sim_masked and data alltogether
-        
+    // We could add sim, sim_masked and data alltogether        
     TMultiGraph *mg_lin_nhit = new TMultiGraph();
     TMultiGraph *mg_lin_sume = new TMultiGraph();
     TMultiGraph *mg_lin_weight = new TMultiGraph();
@@ -1434,12 +1984,11 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       c_lin_weight->SaveAs("lin_weight_ecal_sim_"+savetrans+".eps");
       c_lin_weight->SaveAs("lin_weight_ecal_sim_"+savetrans+".png");
     }
-
-    
+   
     
     // Moliere
     // TGraphErrors *g_mol = new TGraphErrors(N_ENERGIES, energies_tr, mol, zeros, mol_sig);   
-    TGraphErrors *g_mol = new TGraphErrors(*energyaxis, *mu_mol, *zeros, *sig_mol);   
+    TGraphErrors *g_mol = new TGraphErrors(*energyaxis, *mu_mol, *zeros, *mu_error_mol);   
     graph_setup_add(g_mol, "Moliere Radius", kBlue);
 
     TMultiGraph *mg_mol = new TMultiGraph();
@@ -1473,7 +2022,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     // NHITS shower profile
     // Example layer 3
-    TGraphErrors *g_nhit_layer_3 = new TGraphErrors(*energyaxis, *mu_nhit_layer_3, *zeros, *sig_nhit_layer_3);
+    TGraphErrors *g_nhit_layer_3 = new TGraphErrors(*energyaxis, *mu_nhit_layer_3, *zeros, *mu_error_nhit_layer_3);
     graph_setup_add(g_nhit_layer_3, "Hits in layer 3", kBlue);
 
     TMultiGraph *mg_nhit_layer_3 = new TMultiGraph();
@@ -1566,10 +2115,53 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       c_shower_nhit_energies->SaveAs("shower_nhit_energies_"+savetrans+".png");
     }
 
+    // Shower different energies
+    TGraphErrors *g_shower_X0_nhit_2 = new TGraphErrors(*W_axis, *shower_nhit_profile_2 , *zeros, *shower_nhit_profile_errors_2);
+    graph_setup_add(g_shower_X0_nhit_2, "Shower profile (2 GeV)", kBlack);
+    TGraphErrors *g_shower_X0_nhit_4 = new TGraphErrors(*W_axis, *shower_nhit_profile_4 , *zeros, *shower_nhit_profile_errors_4);
+    graph_setup_add(g_shower_X0_nhit_4, "Shower profile (4 GeV)", kCyan+3);
+    TGraphErrors *g_shower_X0_nhit_6 = new TGraphErrors(*W_axis, *shower_nhit_profile_6 , *zeros, *shower_nhit_profile_errors_6);
+    graph_setup_add(g_shower_X0_nhit_6, "Shower profile (6 GeV)", kCyan-6);
+    TGraphErrors *g_shower_X0_nhit_10 = new TGraphErrors(*W_axis, *shower_nhit_profile_10 , *zeros, *shower_nhit_profile_errors_10);
+    graph_setup_add(g_shower_X0_nhit_10, "Shower profile (10 GeV)", kCyan-7);
+    TGraphErrors *g_shower_X0_nhit_20 = new TGraphErrors(*W_axis, *shower_nhit_profile_20 , *zeros, *shower_nhit_profile_errors_20);
+    graph_setup_add(g_shower_X0_nhit_20, "Shower profile (20 GeV)", kRed-9);
+    TGraphErrors *g_shower_X0_nhit_40 = new TGraphErrors(*W_axis, *shower_nhit_profile_40 , *zeros, *shower_nhit_profile_errors_40);
+    graph_setup_add(g_shower_X0_nhit_40, "Shower profile (40 GeV)", kRed-7);
+    TGraphErrors *g_shower_X0_nhit_80 = new TGraphErrors(*W_axis, *shower_nhit_profile_80 , *zeros, *shower_nhit_profile_errors_80);
+    graph_setup_add(g_shower_X0_nhit_80, "Shower profile (80 GeV)", kRed-3);
+    TGraphErrors *g_shower_X0_nhit_150 = new TGraphErrors(*W_axis, *shower_nhit_profile_150 , *zeros, *shower_nhit_profile_errors_150);
+    graph_setup_add(g_shower_X0_nhit_150, "Shower profile (150 GeV)", kRed+2);
+
+    TMultiGraph *mg_shower_X0_nhit_energies = new TMultiGraph();
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_2);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_4);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_6);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_10);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_20);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_40);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_80);
+    mg_shower_X0_nhit_energies->Add(g_shower_X0_nhit_150);
+
+    auto c_shower_X0_nhit_energies = new TCanvas("c_shower_X0_nhit_energies", "c_shower_X0_nhit_energies", 800, 800);
+    mg_shower_X0_nhit_energies->Draw("ALP");
+    mg_shower_X0_nhit_energies->SetTitle("Shower profile ("+partstring+")");
+
+    mg_shower_X0_nhit_energies->GetXaxis()->SetTitle("X0 (W)");
+    mg_shower_X0_nhit_energies->GetYaxis()->SetTitle("Hits");
+    mg_shower_X0_nhit_energies->GetYaxis()->SetTitleOffset(1.4);
+    mg_shower_X0_nhit_energies->GetYaxis()->SetRangeUser(0,150);
+
+    leg_shower_nhit_energies->Draw();
+    addCaliceLogo();
+    if(save == true){
+      c_shower_X0_nhit_energies->SaveAs("shower_nhit_energies_X0_"+savetrans+".eps");
+      c_shower_X0_nhit_energies->SaveAs("shower_nhit_energies_X0_"+savetrans+".png");
+    }
 
     // Shower profile normalized
     // Example layer 3                                                                                                                                          
-    TGraphErrors *g_nhit_layer_n_3 = new TGraphErrors(*energyaxis, *mu_nhit_layer_n_3, *zeros, *sig_nhit_layer_n_3);
+    TGraphErrors *g_nhit_layer_n_3 = new TGraphErrors(*energyaxis, *mu_nhit_layer_n_3, *zeros, *mu_error_nhit_layer_n_3);
     graph_setup_add(g_nhit_layer_n_3, "Hits in layer 3 (normalized)", kBlue);
 
     TMultiGraph *mg_nhit_layer_n_3 = new TMultiGraph();
@@ -1833,7 +2425,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
 
     // WEIGHT shower profile
     // Example layer 3
-    TGraphErrors *g_weight_layer_3 = new TGraphErrors(*energyaxis, *mu_weight_layer_3, *zeros, *sig_weight_layer_3);
+    TGraphErrors *g_weight_layer_3 = new TGraphErrors(*energyaxis, *mu_weight_layer_3, *zeros, *mu_error_weight_layer_3);
     graph_setup_add(g_weight_layer_3, "Weighted energy in layer 3", kBlue);
 
     TMultiGraph *mg_weight_layer_3 = new TMultiGraph();
@@ -1902,7 +2494,7 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
     else mg_shower_weight_energies->GetXaxis()->SetTitle("Layer");
     mg_shower_weight_energies->GetYaxis()->SetTitle("Weighted energy (MIPs)");
     mg_shower_weight_energies->GetYaxis()->SetTitleOffset(1.4);
-    mg_shower_weight_energies->GetYaxis()->SetRangeUser(0,7000);
+    mg_shower_weight_energies->GetYaxis()->SetRangeUser(0,3000);
 
     TLegend *leg_shower_weight_energies;
     if(transformed == true) leg_shower_weight_energies= new TLegend(0.12,0.60,0.32,0.85);
@@ -1927,6 +2519,49 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       c_shower_weight_energies->SaveAs("shower_weight_energies_"+savetrans+".png");
     }
 
+    // Shower different energies X0
+    TGraphErrors *g_shower_X0_weight_2 = new TGraphErrors(*W_axis, *shower_weight_profile_2 , *zeros, *shower_weight_profile_errors_2);
+    graph_setup_add(g_shower_X0_weight_2, "Shower profile (2 GeV)", kBlack);
+    TGraphErrors *g_shower_X0_weight_4 = new TGraphErrors(*W_axis, *shower_weight_profile_4 , *zeros, *shower_weight_profile_errors_4);
+    graph_setup_add(g_shower_X0_weight_4, "Shower profile (4 GeV)", kCyan+3);
+    TGraphErrors *g_shower_X0_weight_6 = new TGraphErrors(*W_axis, *shower_weight_profile_6 , *zeros, *shower_weight_profile_errors_6);
+    graph_setup_add(g_shower_X0_weight_6, "Shower profile (6 GeV)", kCyan-6);
+    TGraphErrors *g_shower_X0_weight_10 = new TGraphErrors(*W_axis, *shower_weight_profile_10 , *zeros, *shower_weight_profile_errors_10);
+    graph_setup_add(g_shower_X0_weight_10, "Shower profile (10 GeV)", kCyan-7);
+    TGraphErrors *g_shower_X0_weight_20 = new TGraphErrors(*W_axis, *shower_weight_profile_20 , *zeros, *shower_weight_profile_errors_20);
+    graph_setup_add(g_shower_X0_weight_20, "Shower profile (20 GeV)", kRed-9);
+    TGraphErrors *g_shower_X0_weight_40 = new TGraphErrors(*W_axis, *shower_weight_profile_40 , *zeros, *shower_weight_profile_errors_40);
+    graph_setup_add(g_shower_X0_weight_40, "Shower profile (40 GeV)", kRed-7);
+    TGraphErrors *g_shower_X0_weight_80 = new TGraphErrors(*W_axis, *shower_weight_profile_80 , *zeros, *shower_weight_profile_errors_80);
+    graph_setup_add(g_shower_X0_weight_80, "Shower profile (80 GeV)", kRed-3);
+    TGraphErrors *g_shower_X0_weight_150 = new TGraphErrors(*W_axis, *shower_weight_profile_150 , *zeros, *shower_weight_profile_errors_150);
+    graph_setup_add(g_shower_X0_weight_150, "Shower profile (150 GeV)", kRed+2);
+
+    TMultiGraph *mg_shower_X0_weight_energies = new TMultiGraph();
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_2);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_4);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_6);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_10);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_20);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_40);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_80);
+    mg_shower_X0_weight_energies->Add(g_shower_X0_weight_150);
+
+    auto c_shower_X0_weight_energies = new TCanvas("c_shower_X0_weight_energies", "c_shower_X0_weight_energies", 800, 800);
+    mg_shower_X0_weight_energies->Draw("ALP");
+    mg_shower_X0_weight_energies->SetTitle("Shower profile ("+partstring+")");
+    mg_shower_X0_weight_energies->GetYaxis()->SetMaxDigits(3);
+    mg_shower_X0_weight_energies->GetXaxis()->SetTitle("X0 (W)");
+    mg_shower_X0_weight_energies->GetYaxis()->SetTitle("Weighted energy (MIPs)");
+    mg_shower_X0_weight_energies->GetYaxis()->SetTitleOffset(1.4);
+    mg_shower_X0_weight_energies->GetYaxis()->SetRangeUser(0,3000);
+
+    leg_shower_weight_energies->Draw();
+    addCaliceLogo();
+    if(save == true){
+      c_shower_X0_weight_energies->SaveAs("shower_weight_energies_X0_"+savetrans+".eps");
+      c_shower_X0_weight_energies->SaveAs("shower_weight_energies_X0_"+savetrans+".png");
+    }
 
     // Shower profile normalized
     // Example layer 3
@@ -2190,5 +2825,110 @@ void res_mol_plots(string particle, bool transformed = true, bool save = false){
       c_shower_weight_end_layer->SaveAs("shower_weight_end_layer_"+savetrans+".png");
     }
 
+    //SUME PLOTS
+    // Shower different energies
+    TGraphErrors *g_shower_sume_2 = new TGraphErrors(*layeraxis, *shower_sume_profile_2 , *zeros, *shower_sume_profile_errors_2);
+    graph_setup_add(g_shower_sume_2, "Shower profile (2 GeV)", kBlack);
+    TGraphErrors *g_shower_sume_4 = new TGraphErrors(*layeraxis, *shower_sume_profile_4 , *zeros, *shower_sume_profile_errors_4);
+    graph_setup_add(g_shower_sume_4, "Shower profile (4 GeV)", kCyan+3);
+    TGraphErrors *g_shower_sume_6 = new TGraphErrors(*layeraxis, *shower_sume_profile_6 , *zeros, *shower_sume_profile_errors_6);
+    graph_setup_add(g_shower_sume_6, "Shower profile (6 GeV)", kCyan-6);
+    TGraphErrors *g_shower_sume_10 = new TGraphErrors(*layeraxis, *shower_sume_profile_10 , *zeros, *shower_sume_profile_errors_10);
+    graph_setup_add(g_shower_sume_10, "Shower profile (10 GeV)", kCyan-7);
+    TGraphErrors *g_shower_sume_20 = new TGraphErrors(*layeraxis, *shower_sume_profile_20 , *zeros, *shower_sume_profile_errors_20);
+    graph_setup_add(g_shower_sume_20, "Shower profile (20 GeV)", kRed-9);
+    TGraphErrors *g_shower_sume_40 = new TGraphErrors(*layeraxis, *shower_sume_profile_40 , *zeros, *shower_sume_profile_errors_40);
+    graph_setup_add(g_shower_sume_40, "Shower profile (40 GeV)", kRed-7);
+    TGraphErrors *g_shower_sume_80 = new TGraphErrors(*layeraxis, *shower_sume_profile_80 , *zeros, *shower_sume_profile_errors_80);
+    graph_setup_add(g_shower_sume_80, "Shower profile (80 GeV)", kRed-3);
+    TGraphErrors *g_shower_sume_150 = new TGraphErrors(*layeraxis, *shower_sume_profile_150 , *zeros, *shower_sume_profile_errors_150);
+    graph_setup_add(g_shower_sume_150, "Shower profile (150 GeV)", kRed+2);
+
+    TMultiGraph *mg_shower_sume_energies = new TMultiGraph();
+    mg_shower_sume_energies->Add(g_shower_sume_2);
+    mg_shower_sume_energies->Add(g_shower_sume_4);
+    mg_shower_sume_energies->Add(g_shower_sume_6);
+    mg_shower_sume_energies->Add(g_shower_sume_10);
+    mg_shower_sume_energies->Add(g_shower_sume_20);
+    mg_shower_sume_energies->Add(g_shower_sume_40);
+    mg_shower_sume_energies->Add(g_shower_sume_80);
+    mg_shower_sume_energies->Add(g_shower_sume_150);
+
+    auto c_shower_sume_energies = new TCanvas("c_shower_sume", "c_shower_sume", 800, 800);
+    mg_shower_sume_energies->Draw("ALP");
+    mg_shower_sume_energies->SetTitle("Shower profile ("+partstring+")");
+    mg_shower_sume_energies->GetXaxis()->SetTitle("Layer");
+    mg_shower_sume_energies->GetYaxis()->SetTitle("Energy (MIPs)");
+    mg_shower_sume_energies->GetYaxis()->SetMaxDigits(3);
+    mg_shower_sume_energies->GetYaxis()->SetTitleOffset(1.4);
+    mg_shower_sume_energies->GetYaxis()->SetRangeUser(0,3000);
+
+    TLegend *leg_shower_sume_energies;
+    if(transformed == true) leg_shower_sume_energies= new TLegend(0.12,0.60,0.32,0.85);
+    else leg_shower_sume_energies= new TLegend(0.12,0.60,0.32,0.85);
+    leg_shower_sume_energies->SetTextSize(0.035);
+    leg_shower_sume_energies->SetTextFont(42);
+    leg_shower_sume_energies->AddEntry(g_shower_sume_2,"2 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_4,"4 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_6,"6 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_10,"10 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_20,"20 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_40,"40 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_80,"80 GeV","ap");
+    leg_shower_sume_energies->AddEntry(g_shower_sume_150,"150 GeV","ap");
+    leg_shower_sume_energies->SetFillColor(0);
+    leg_shower_sume_energies->SetLineColor(0);
+    leg_shower_sume_energies->SetShadowColor(0);
+    leg_shower_sume_energies->Draw();
+    addCaliceLogo();
+    if(save == true){
+      c_shower_sume_energies->SaveAs("shower_sume_"+savetrans+".eps");
+      c_shower_sume_energies->SaveAs("shower_sume_"+savetrans+".png");
+    }
+
+    // Shower different energies X0
+    TGraphErrors *g_shower_X0_sume_2 = new TGraphErrors(*W_axis, *shower_sume_profile_2 , *zeros, *shower_sume_profile_errors_2);
+    graph_setup_add(g_shower_X0_sume_2, "Shower profile (2 GeV)", kBlack);
+    TGraphErrors *g_shower_X0_sume_4 = new TGraphErrors(*W_axis, *shower_sume_profile_4 , *zeros, *shower_sume_profile_errors_4);
+    graph_setup_add(g_shower_X0_sume_4, "Shower profile (4 GeV)", kCyan+3);
+    TGraphErrors *g_shower_X0_sume_6 = new TGraphErrors(*W_axis, *shower_sume_profile_6 , *zeros, *shower_sume_profile_errors_6);
+    graph_setup_add(g_shower_X0_sume_6, "Shower profile (6 GeV)", kCyan-6);
+    TGraphErrors *g_shower_X0_sume_10 = new TGraphErrors(*W_axis, *shower_sume_profile_10 , *zeros, *shower_sume_profile_errors_10);
+    graph_setup_add(g_shower_X0_sume_10, "Shower profile (10 GeV)", kCyan-7);
+    TGraphErrors *g_shower_X0_sume_20 = new TGraphErrors(*W_axis, *shower_sume_profile_20 , *zeros, *shower_sume_profile_errors_20);
+    graph_setup_add(g_shower_X0_sume_20, "Shower profile (20 GeV)", kRed-9);
+    TGraphErrors *g_shower_X0_sume_40 = new TGraphErrors(*W_axis, *shower_sume_profile_40 , *zeros, *shower_sume_profile_errors_40);
+    graph_setup_add(g_shower_X0_sume_40, "Shower profile (40 GeV)", kRed-7);
+    TGraphErrors *g_shower_X0_sume_80 = new TGraphErrors(*W_axis, *shower_sume_profile_80 , *zeros, *shower_sume_profile_errors_80);
+    graph_setup_add(g_shower_X0_sume_80, "Shower profile (80 GeV)", kRed-3);
+    TGraphErrors *g_shower_X0_sume_150 = new TGraphErrors(*W_axis, *shower_sume_profile_150 , *zeros, *shower_sume_profile_errors_150);
+    graph_setup_add(g_shower_X0_sume_150, "Shower profile (150 GeV)", kRed+2);
+
+    TMultiGraph *mg_shower_X0_sume_energies = new TMultiGraph();
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_2);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_4);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_6);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_10);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_20);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_40);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_80);
+    mg_shower_X0_sume_energies->Add(g_shower_X0_sume_150);
+
+    auto c_shower_X0_sume_energies = new TCanvas("c_shower_X0_sume", "c_shower_X0_sume", 800, 800);
+    mg_shower_X0_sume_energies->SetTitle("Shower profile ("+partstring+")");
+    mg_shower_X0_sume_energies->GetXaxis()->SetTitle("X0 (W)");
+    mg_shower_X0_sume_energies->GetYaxis()->SetTitle("Energy (MIPs)");
+    mg_shower_X0_sume_energies->GetYaxis()->SetTitleOffset(1.4);
+    mg_shower_X0_sume_energies->GetYaxis()->SetMaxDigits(3);
+    mg_shower_X0_sume_energies->GetYaxis()->SetRangeUser(0,3000);
+    mg_shower_X0_sume_energies->Draw("ALP");
+
+    leg_shower_sume_energies->Draw();
+    addCaliceLogo();
+    if(save == true){
+      c_shower_X0_sume_energies->SaveAs("shower_sume_X0_"+savetrans+".eps");
+      c_shower_X0_sume_energies->SaveAs("shower_sume_X0_"+savetrans+".png");
+    }
+    
 
 }

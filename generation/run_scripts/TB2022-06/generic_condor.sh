@@ -87,7 +87,7 @@ SIM.compactFile = "${geometry_folder}/TBModel_June2022.xml"
 SIM.dumpSteeringFile = "${local}/steer/dumpSteering.xml"
 
 SIM.field.eps_min = 0.0001*mm
-SIM.part.minimalKineticEnergy = 0.3*MeV
+SIM.part.minimalKineticEnergy = 0.2*MeV
 SIM.physicsList = "${physlist}"
 SIM.enableDetailedShowerMode=True
 EOF

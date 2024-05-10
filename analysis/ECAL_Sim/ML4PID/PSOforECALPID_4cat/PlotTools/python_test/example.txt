@@ -1,0 +1,2 @@
+Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 5
+Error in <TH1F::Smooth>: Smooth only supported for histograms with >= 3 bins. Nbins = 3

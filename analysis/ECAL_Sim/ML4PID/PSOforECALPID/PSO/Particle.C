@@ -19,8 +19,6 @@
 #include "TH1F.h"
 #include "TCanvas.h"
 
-
-
 #include "TStopwatch.h"
 #include "TMVA/IMethod.h"
 #include "TMVA/MethodBase.h"
@@ -90,10 +88,7 @@ std::vector<Float_t> KS_AD_Test(){
     test_B_histo->Fill(value_B);
     test_C_histo->Fill(value_C);
     test_O_histo->Fill(value_O);
-
-
   }
-
 
   TTree* TrainTree=(TTree*) outputfile->Get("dataloader/TrainTree");
 
