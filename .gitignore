@@ -71,7 +71,7 @@ processors/ECAL/submit_jobs/LCIO2build_folder/
 analysis/ECAL_Sim/plots_Jan/
 
 # Res Mol Lin Var studies
-analysis/ECAL_Sim/ResMolShowAnalysis/results_folder
+analysis/ECAL_Sim/ResMolShowAnalysis/results_*
 analysis/ECAL_Sim/ResMolShowAnalysis/test_folder
 analysis/ECAL_Sim/ResMolShowAnalysis/plots_*
 
