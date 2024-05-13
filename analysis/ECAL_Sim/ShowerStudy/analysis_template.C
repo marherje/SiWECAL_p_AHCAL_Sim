@@ -39,7 +39,7 @@ void get_res(int &nhit, float &sume, float &weight, vector<float> * hit_energy, 
     // We have 4.2 and 5.6 which are 1.2 and 1.6 X0 respectively
     // It was weight_masked += hit_energy->at(j) * W_thicknesses[hit_slab->at(j)]/(0.4*3.5);
     // New version ?
-s    
+
    for (int j = 0; j < hit_energy->size(); j++) {
      if( masked && hit_isMasked->at(j) == 1 ) continue;
             nhit += 1;

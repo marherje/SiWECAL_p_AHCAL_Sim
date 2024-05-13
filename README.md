@@ -1,4 +1,7 @@
 This repository is a junction of SiWECAL and AHCAL simulations.
+The starting point is the SiWECAL-Sim repository in https://github.com/marherje/SiWECAL-Sim but the structure has changed quite a lot to also leave space for the AHCAL analysis.
+
+
 The content will be (preliminary):
 -Generation: dd4hep sim of a combined geometry for both detectors.
 -Processors: Marlin processors for MIP conversion, digitization, prepare ROOT files from the .slcio, etc.
