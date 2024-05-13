@@ -77,9 +77,9 @@ processors/ECAL/submit_jobs/LCIO2build_folder/
 analysis/ECAL_Sim/plots_Jan/
 
 # Res Mol Lin Var studies
-analysis/ECAL_Sim/ShowerStudy/results_*
-analysis/ECAL_Sim/ShowerStudy/test_folder
-analysis/ECAL_Sim/ShowerStudy/plots*
+analysis/ECAL_Sim/ShowerStudy/results_*/
+analysis/ECAL_Sim/ShowerStudy/test_folder/
+analysis/ECAL_Sim/ShowerStudy/plots*/
 
 # ML outputs
 analysis/ECAL_Sim/ML4PID/PSOforECALPID/output
