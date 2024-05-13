@@ -47,7 +47,7 @@ void addProduction(){
   TPad *p1 = new TPad("img", "img", 0.1, 0.905, 0.5, 0.925);
   p1->Draw();
   p1->cd();
-  TString title = "E: 100 GeV";
+  TString title = "PID_100_GeV_e_pi_mu";
   TText* t = new TText(0.01,0.1,title);
   t->SetTextColor(kRed);
   t->SetTextSize(0.99);
@@ -146,6 +146,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
   leg->Draw();
+  addProduction();
+  c->cd();
   addCaliceLogo(true);
 
   if(save == true){
@@ -429,6 +431,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
     leg_WP->SetShadowColor(0);
     leg_WP->Draw();
   }
+  addProduction();
+  c2->cd();
   addCaliceLogo(true);
 
   if(save == true){
@@ -446,7 +450,7 @@ void drawVariablesLegend(vector<TString> varnames) {
   float secondline = 0.;
 
   for(int i=0;i<varnames.size();i++){
-    //cout<<"string size: "<<varnames.at(i).Length()<<", ";                                                                                                                                                                                   
+    //cout<<"string size: "<<varnames.at(i).Length()<<", ";
     if(i==0) {
       text_vars.DrawLatex(0.001,0.8,"V"+TString::Format("%i:",i+1)+varnames.at(i));
     }
@@ -464,7 +468,7 @@ void drawVariablesLegend(vector<TString> varnames) {
       }
     }
     linesize += float(varnames.at(i).Length())+3.+2.;
-    //cout<<"linesize: "<<linesize<<endl;                                                                                                                                                                                                     
+    //cout<<"linesize: "<<linesize<<endl;
   }
 }
 

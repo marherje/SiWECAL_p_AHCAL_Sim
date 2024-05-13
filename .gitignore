@@ -50,6 +50,12 @@
 *.log
 *nohup*
 
+# Python compiling
+*.pyc
+*_C.d
+*_C.so
+*.pcm
+
 
 # Generation folders
 generation/run_scripts/TB2022-06/log/
@@ -71,9 +77,9 @@ processors/ECAL/submit_jobs/LCIO2build_folder/
 analysis/ECAL_Sim/plots_Jan/
 
 # Res Mol Lin Var studies
-analysis/ECAL_Sim/ResMolShowAnalysis/results_*
-analysis/ECAL_Sim/ResMolShowAnalysis/test_folder
-analysis/ECAL_Sim/ResMolShowAnalysis/plots_*
+analysis/ECAL_Sim/ShowerStudy/results_*
+analysis/ECAL_Sim/ShowerStudy/test_folder
+analysis/ECAL_Sim/ShowerStudy/plots*
 
 # ML outputs
 analysis/ECAL_Sim/ML4PID/PSOforECALPID/output

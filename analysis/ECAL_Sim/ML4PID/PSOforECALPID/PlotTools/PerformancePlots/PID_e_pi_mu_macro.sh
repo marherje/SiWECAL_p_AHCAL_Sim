@@ -2,6 +2,10 @@
 
 copydir=~/Pictures/plot_sim/PID_Performance
 
+if [ ! -e ~/Pictures/plot-sim ]; then
+    mkdir ~/Pictures/plot-sim
+fi
+
 if [ ! -e $copydir ]; then
     mkdir $copydir
 fi

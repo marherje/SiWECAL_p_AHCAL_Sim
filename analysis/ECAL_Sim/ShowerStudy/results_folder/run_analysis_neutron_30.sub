@@ -1,0 +1,11 @@
+# Unix submit description file
+# simple Marlin job
+
+
+executable              = run_analysis_neutron_30.sh
+log                     = run_analysis_neutron_30.log
+output                  = outfile_run_analysis_neutron_30.txt
+error                   = errors_run_analysis_neutron_30.txt
+should_transfer_files   = Yes
+when_to_transfer_output = ON_EXIT
+queue 1

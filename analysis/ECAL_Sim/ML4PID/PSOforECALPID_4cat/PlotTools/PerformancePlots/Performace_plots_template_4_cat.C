@@ -47,7 +47,7 @@ void addProduction(){
   TPad *p1 = new TPad("img", "img", 0.1, 0.905, 0.5, 0.925);
   p1->Draw();
   p1->cd();
-  TString title = "E: XprodX";
+  TString title = "XproductionX";
   TText* t = new TText(0.01,0.1,title);
   t->SetTextColor(kRed);
   t->SetTextSize(0.99);

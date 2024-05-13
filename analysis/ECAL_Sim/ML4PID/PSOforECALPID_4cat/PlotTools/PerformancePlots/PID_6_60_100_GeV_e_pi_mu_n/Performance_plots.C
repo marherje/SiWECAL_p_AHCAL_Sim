@@ -47,7 +47,7 @@ void addProduction(){
   TPad *p1 = new TPad("img", "img", 0.1, 0.905, 0.5, 0.925);
   p1->Draw();
   p1->cd();
-  TString title = "E: 6 + 60 + 100 GeV";
+  TString title = "PID_6_60_100_GeV_e_pi_mu_n";
   TText* t = new TText(0.01,0.1,title);
   t->SetTextColor(kRed);
   t->SetTextSize(0.99);
