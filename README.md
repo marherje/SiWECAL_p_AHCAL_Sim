@@ -26,8 +26,8 @@ it will display a list of materials moving in a straight line from (x0,y0,z0) to
 
 ## PROCESSORS
 - `ECAL processors`: Proccesing of from .slcio ECalorimetershits into "real" ECAL data.
-        - `HCAL processors`: Proccesing of from .slcio HCalorimetershits into "real" HCAL data. (TBD)
-	- `Joint processors`: (TBD)
+- `HCAL processors`: Proccesing of from .slcio HCalorimetershits into "real" HCAL data. (TBD)
+- `Joint processors`: (TBD)
 
 ## ANALYSIS
 ### `ECAL_Sim`: Shower and PID studies.
