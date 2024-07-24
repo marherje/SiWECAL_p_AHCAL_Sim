@@ -104,7 +104,7 @@ ddsim --enableG4GPS --macroFile ${local}/macros/${macfile} --steeringFile ${loca
 &> ${local}/log/${label}.log
 #tar czvf ${local}/TB2022-06_${label}.slcio.tar.gz TB2022-06_${label}.slcio 
 #rm ${local}/log/errors_${condorfile}* ${local}/log/outfile_${condorfile}*
-mv steer_path/*$condorfile.txt log_path/.
+mv ${steer_path}/*$condorfile.txt ${log_path}/.
 EOF
     
     cat > ${local}/steer/$condorsub <<EOF
