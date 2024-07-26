@@ -17,7 +17,7 @@ particle=$1
 energy=$2
 #conf=$3
 
-ilcsoft_path="/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-03"
+ilcsoft_path="/cvmfs/ilc.desy.de/sw/x86_64_gcc103_centos7/v02-03"
 local=$PWD
 geometry_folder="/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/geometry/ECALHCAL_TB2022-06"
 data_path="${local}/data"
@@ -87,7 +87,7 @@ SIM.compactFile = "${geometry_folder}/TBModel_June2022.xml"
 SIM.dumpSteeringFile = "${local}/steer/dumpSteering.xml"
 
 SIM.field.eps_min = 0.0001*mm
-SIM.part.minimalKineticEnergy = 0.3*MeV
+SIM.part.minimalKineticEnergy = 0.2*MeV
 SIM.physicsList = "${physlist}"
 SIM.enableDetailedShowerMode=True
 EOF
@@ -99,7 +99,7 @@ EOF
     cat > ${local}/steer/$condorsh <<EOF
 #!/bin/bash
 cp -r ${local}/steer/runddsim_${label}.* .
-source /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/init_ilcsoft_v02-03-02_g103_flags17.sh
+source /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/init_key4hep.sh
 ddsim --enableG4GPS --macroFile ${local}/macros/${macfile} --steeringFile ${local}/steer/$scriptname
 &> ${local}/log/${label}.log
 #tar czvf ${local}/TB2022-06_${label}.slcio.tar.gz TB2022-06_${label}.slcio 
