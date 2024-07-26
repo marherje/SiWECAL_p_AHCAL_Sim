@@ -434,10 +434,15 @@ void analysis (string particle, bool masked=false) {
     //Si: 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320
     
     string filenames[N_ENERGIES];
-    string base_path = "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/submit_jobs/LCIO2build_folder/LCIO2build_output/";
+    string base_path = "XBASEPATHX";
     // for (int j = 0; j < N_ENERGIES; j++) filenames[j] = base_path + "/CONF11/build/ECAL_QGSP_BERT_conf6_e-_" + to_string((int)round(energies[j])) +  "GeV_5kevt_build_masked.root";
-    for (int j = 0; j < N_ENERGIES; j++) filenames[j] = base_path + "output_LCIO2Build_TB2022-06_"+particle+"_" + to_string((int)round(energies[j])) +  "GeV.root";
-    
+    for (int j = 0; j < N_ENERGIES; j++){
+      std::string str = std::to_string (energies[j]);
+      str.erase ( str.find_last_not_of('0') + 1, std::string::npos );
+      str.erase ( str.find_last_not_of('.') + 1, std::string::npos );
+      cout<<str<<endl;
+      filenames[j] = base_path + "output_LCIO2Build_TB2022-06_"+particle+"_" + str +  "GeV.root";
+    }
     TString result_name = "resolution_"+particle+"_result.root" ;
     
     TFile f(result_name, "recreate");

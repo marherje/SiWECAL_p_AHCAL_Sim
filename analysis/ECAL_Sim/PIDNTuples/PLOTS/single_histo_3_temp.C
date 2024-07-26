@@ -65,7 +65,7 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, bool save = fa
   hA->SetXTitle("Value");
   hA->SetYTitle("Entries");
 
-  auto c = new TCanvas("c_XproductionX_"+varname, "c_XproductionX_"+varname, 800, 800);
+  auto c = new TCanvas("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+varname, "c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+varname, 800, 800);
   c->cd();
   if(y_max > 1000){
     hA->SetMinimum(1);
@@ -92,9 +92,9 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, bool save = fa
   leg= new TLegend(xleg,0.70,xleg+0.3,0.85);
   leg->SetTextSize(0.03);
   leg->SetTextFont(42);
-  leg->AddEntry(hA,"XsetAX","l");
-  leg->AddEntry(hB,"XsetBX","l");
-  leg->AddEntry(hC,"XsetCX","l");
+  leg->AddEntry(hA,"e- (0.5+4.5+8.5 GeV)","l");
+  leg->AddEntry(hB,"#nu_{e} (0.5+4.5+8.5 GeV)","l");
+  leg->AddEntry(hC,"n (0.5+4.5+8.5 GeV)","l");
   leg->SetFillColor(0);
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
@@ -102,16 +102,16 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, bool save = fa
   addCaliceLogo(true);
 
   if(save == true){
-    c->SaveAs("c_XproductionX_"+varname+".eps");
-    c->SaveAs("c_XproductionX_"+varname+".png");
+    c->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+varname+".eps");
+    c->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+varname+".png");
   }
 }
 
 void single_histo_3_temp(TString varname, bool save = false){
 
-  TString filename_A = "../XproductionX/resolution_XresAX_result.root";
-  TString filename_B = "../XproductionX/resolution_XresBX_result.root";
-  TString filename_C = "../XproductionX/resolution_XresCX_result.root";
+  TString filename_A = "../PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_e-_result.root";
+  TString filename_B = "../PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_nu_e_result.root";
+  TString filename_C = "../PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_neutron_result.root";
 
   TFile *file_A = new TFile(filename_A, "read");
   TFile *file_B = new TFile(filename_B, "read");
@@ -130,9 +130,9 @@ void single_histo_3_temp(TString varname, bool save = false){
   TH1 *histo_B;
   TH1 *histo_C;
 
-  file_A->GetObject(varname+"_XpartAX", histo_A);
-  file_B->GetObject(varname+"_XpartBX", histo_B);
-  file_C->GetObject(varname+"_XpartCX", histo_C);
+  file_A->GetObject(varname+"_e-", histo_A);
+  file_B->GetObject(varname+"_nu_e", histo_B);
+  file_C->GetObject(varname+"_neutron", histo_C);
 
   drawHistosTH1(varname, histo_A, histo_B, histo_C, save);  
   

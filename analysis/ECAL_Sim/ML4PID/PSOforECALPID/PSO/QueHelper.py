@@ -350,7 +350,7 @@ class QueHelper:
 
         '#RequestMemory  =  2000',
         '#+RequestRuntime = tomorrow',
-
+        '+JobFlavour = largo',
         'queue',
       ]
 
