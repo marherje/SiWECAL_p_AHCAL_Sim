@@ -43,10 +43,10 @@ RM = /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E remove
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor
+CMAKE_SOURCE_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build
+CMAKE_BINARY_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build
 
 # Utility rule file for ExperimentalStart.
 
@@ -71,6 +71,6 @@ CMakeFiles/ExperimentalStart.dir/clean:
 .PHONY : CMakeFiles/ExperimentalStart.dir/clean
 
 CMakeFiles/ExperimentalStart.dir/depend:
-	cd /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/ExperimentalStart.dir/DependInfo.cmake --color=$(COLOR)
+	cd /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/ExperimentalStart.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/ExperimentalStart.dir/depend
 

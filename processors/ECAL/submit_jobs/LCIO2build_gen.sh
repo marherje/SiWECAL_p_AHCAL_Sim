@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORIGIN=/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL
+ORIGIN=/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL
 source $ORIGIN/init_ilcsoft_v02-02-03.sh
 echo $PWD                                                                                                                                                                  
 

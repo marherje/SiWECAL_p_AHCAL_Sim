@@ -19,7 +19,7 @@ energy=$2
 
 ilcsoft_path="/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-03"
 local=$PWD
-geometry_folder="/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/geometry/ECALHCAL_TB2022-06"
+geometry_folder="/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/geometry/ECALHCAL_TB2022-06"
 data_path="${local}/data"
 steer_path="${local}/steer"
 log_path="${local}/log"
@@ -99,7 +99,7 @@ EOF
     cat > ${local}/steer/$condorsh <<EOF
 #!/bin/bash
 cp -r ${local}/steer/runddsim_${label}.* .
-source /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/init_ilcsoft_v02-03-02_g103_flags17.sh
+source /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/init_ilcsoft_v02-03-02_g103_flags17.sh
 ddsim --enableG4GPS --macroFile ${local}/macros/${macfile} --steeringFile ${local}/steer/$scriptname
 &> ${local}/log/${label}.log
 #tar czvf ${local}/TB2022-06_${label}.slcio.tar.gz TB2022-06_${label}.slcio 

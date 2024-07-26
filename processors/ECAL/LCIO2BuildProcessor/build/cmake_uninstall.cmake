@@ -3,11 +3,11 @@
 # http://www.cmake.org/Wiki/CMake_FAQ
 ##########################################
 
-IF(NOT EXISTS "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt")
-  MESSAGE(FATAL_ERROR "Cannot find install manifest: \"/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt\"")
-ENDIF(NOT EXISTS "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt")
+IF(NOT EXISTS "/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt")
+  MESSAGE(FATAL_ERROR "Cannot find install manifest: \"/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt\"")
+ENDIF(NOT EXISTS "/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt")
 
-FILE(READ "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt" files)
+FILE(READ "/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/install_manifest.txt" files)
 STRING(REGEX REPLACE "\n" ";" files "${files}")
 FOREACH(file ${files})
   MESSAGE(STATUS "Uninstalling \"$ENV{DESTDIR}${file}\"")

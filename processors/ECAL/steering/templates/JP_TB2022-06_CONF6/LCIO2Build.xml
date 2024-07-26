@@ -16,16 +16,10 @@
 
   <global>
     <parameter name="LCIOInputFiles">
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_1.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_2.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_3.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_4.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_5.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_6.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_7.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_8.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_9.slcio
-      /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_10.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_1.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_2.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_3.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_4.slcio
     </parameter>
     <!-- limit the number of processed records (run+evt): -->
     <!-- parameter name="MaxRecordNumber" value="100" /-->
@@ -45,8 +39,8 @@
     <!-- <parameter name="Output_Collections" type="string"> ecalGeV2MIP </parameter> -->
     <parameter name="OutputBuildFile" type="string"> output_LCIO2Build_TB2022-06_XPARTICLEX_XENERGYXGeV.root </parameter>
     <parameter name="MappingFiles" type="string">
-     /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt
-     /nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt
     </parameter>
     <parameter name="FixedPosZ" type="string">
       -444.205 -429.205 -414.205 -399.205 -384.28 -369.28 -354.28 -339.28 -324.28 -309.28 -294.37 -279.37 -264.37 -249.37 -234.37

@@ -13,8 +13,8 @@
 
   <includes>
     <comment>Additional design specific material definitions</comment>
-    <gdmlFile  ref="/afs/desy.de/project/ilcsoft/sw/x86_64_gcc82_centos7/v02-02-03/lcgeo/v00-16-07/ILD/compact/ILD_o1_v05/elements.xml"/>
-    <gdmlFile  ref="/afs/desy.de/project/ilcsoft/sw/x86_64_gcc82_centos7/v02-02-03/lcgeo/v00-16-07/ILD/compact/ILD_o1_v05/materials.xml"/>
+    <gdmlFile  ref="elements.xml"/>
+    <gdmlFile  ref="materials.xml"/>
     <gdmlFile  ref="Materials_v1.xml"/>
     <gdmlFile  ref="extra_materials.xml"/>
   </includes>
