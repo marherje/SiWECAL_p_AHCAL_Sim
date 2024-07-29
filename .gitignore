@@ -79,9 +79,7 @@ processors/ECAL/submit_jobs/LCIO2build_folder/
 processors/HCAL_minimal/submit_jobs/AHCALLCIO2build_folder/
 processors/HCAL_minimal/submit_jobs/preshower_AHCALLCIO2build_folder/
 
-processors/combined/submit_jobs/LCIO2build_folder/
-processors/combined/submit_jobs/AHCALLCIO2build_folder/
-processors/combined/submit_jobs/preshower_AHCALLCIO2build_folder/
+processors/combined/submit_jobs/combined_LCIO2build_folder/
 
 # Plots folders
 analysis/ECAL_Sim/plots_Jan/

@@ -21,16 +21,16 @@
 #define N_BINS 40
 
 void addCaliceLogo(bool WIP = true){
-  TImage *img = TImage::Open("../style/CALICELogo_18pc.png");
-  img->SetConstRatio(kTRUE);
-  img->SetImageCompression(0);
+  //TImage *img = TImage::Open("../style/CALICELogo_18pc.png");
+  //img->SetConstRatio(kTRUE);
+  //img->SetImageCompression(0);
   TPad *p1 = new TPad("img", "img", 0.835, 0.92, 1.0, 1.0);
   p1->Draw();
   p1->cd();
-  img->Draw();
+  //img->Draw();
 
   if(WIP == true){
-    TPad *p2 = new TPad("img", "img", 0.01, 0.001, 1.0, 0.2);
+    TPad *p2 = new TPad("img2", "img2", 0.01, 0.001, 1.0, 0.2);
     p1->cd();
     p2->Draw();
     p2->cd();
@@ -44,14 +44,14 @@ void addCaliceLogo(bool WIP = true){
 }
 
 void addProduction(){
-  TPad *p1 = new TPad("img", "img", 0.1, 0.905, 0.5, 0.925);
-  p1->Draw();
-  p1->cd();
-  TString title = "XproductionX";
-  TText* t = new TText(0.01,0.1,title);
-  t->SetTextColor(kRed);
-  t->SetTextSize(0.99);
-  t->Draw();
+  TPad *p3 = new TPad("img3", "img3", 0.1, 0.905, 0.5, 0.925);
+  p3->Draw();
+  p3->cd();
+  TString title3 = "XproductionX";
+  TText* t3 = new TText(0.01,0.1,title3);
+  t3->SetTextColor(kRed);
+  t3->SetTextSize(0.99);
+  t3->Draw();
 }
 
 void graph_setup_add(TGraph *g, string title, Color_t color){
@@ -369,8 +369,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   auto c2 = new TCanvas("c_XproductionX_"+title+"_cut", "c_XproductionX_"+title+"_cut", 800, 800);
   c2->cd();
   hA_cumulative->SetLineColor(kGray+2);
-  hB_cumulative->SetLineColor(kRed-4);
-  hC_cumulative->SetLineColor(kCyan-3);
+  hB_cumulative->SetLineColor(kCyan-3);
+  hC_cumulative->SetLineColor(kRed-4);
   hA_cumulative->SetLineWidth(3);
   hB_cumulative->SetLineWidth(3);
   hC_cumulative->SetLineWidth(3);
@@ -474,7 +474,7 @@ void drawVariablesLegend(vector<TString> varnames) {
 
 void drawCorrelation(TString particle, vector<TString> varnames, TH2F * hA, bool save=false) {
 
-  auto c_A = new TCanvas("c_XproductionX_X_Correlation_"+particle,"c_XproductionX_X_Correlation_"+particle,800,800);
+  auto c_A = new TCanvas("c_XproductionX_Correlation_"+particle,"c_XproductionX_Correlation_"+particle,800,800);
   c_A->cd();
   hA->SetTitle("|Variable correlation| ("+particle+")");
   hA->GetXaxis()->LabelsOption("h");

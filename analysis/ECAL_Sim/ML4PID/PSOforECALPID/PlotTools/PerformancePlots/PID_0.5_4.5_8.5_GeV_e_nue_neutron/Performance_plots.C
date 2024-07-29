@@ -21,16 +21,16 @@
 #define N_BINS 40
 
 void addCaliceLogo(bool WIP = true){
-  TImage *img = TImage::Open("../style/CALICELogo_18pc.png");
-  img->SetConstRatio(kTRUE);
-  img->SetImageCompression(0);
+  //TImage *img = TImage::Open("../style/CALICELogo_18pc.png");
+  //img->SetConstRatio(kTRUE);
+  //img->SetImageCompression(0);
   TPad *p1 = new TPad("img", "img", 0.835, 0.92, 1.0, 1.0);
   p1->Draw();
   p1->cd();
-  img->Draw();
+  //img->Draw();
 
   if(WIP == true){
-    TPad *p2 = new TPad("img", "img", 0.01, 0.001, 1.0, 0.2);
+    TPad *p2 = new TPad("img2", "img2", 0.01, 0.001, 1.0, 0.2);
     p1->cd();
     p2->Draw();
     p2->cd();
@@ -44,14 +44,14 @@ void addCaliceLogo(bool WIP = true){
 }
 
 void addProduction(){
-  TPad *p1 = new TPad("img", "img", 0.1, 0.905, 0.5, 0.925);
-  p1->Draw();
-  p1->cd();
-  TString title = "PID_6_60_100_GeV_e_pi_mu";
-  TText* t = new TText(0.01,0.1,title);
-  t->SetTextColor(kRed);
-  t->SetTextSize(0.99);
-  t->Draw();
+  TPad *p3 = new TPad("img3", "img3", 0.1, 0.905, 0.5, 0.925);
+  p3->Draw();
+  p3->cd();
+  TString title3 = "PID_0.5_4.5_8.5_GeV_e_nue_neutron";
+  TText* t3 = new TText(0.01,0.1,title3);
+  t3->SetTextColor(kRed);
+  t3->SetTextSize(0.99);
+  t3->Draw();
 }
 
 void graph_setup_add(TGraph *g, string title, Color_t color){
@@ -113,7 +113,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   //cout<<"Sums: "<<sum_A<<" "<<sum_B<<" "<<sum_C<<endl;
   //cout<<"Integrals: "<<hA->Integral()<<" "<<hB->Integral()<<" "<<hC->Integral()<<endl;
   
-  auto c = new TCanvas("c_PID_6_60_100_GeV_e_pi_mu_"+title, "c_PID_6_60_100_GeV_e_pi_mu_"+title, 800, 800);
+  auto c = new TCanvas("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+title, "c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+title, 800, 800);
   c->cd();
   hA->SetLineColor(kGray+2);
   hB->SetLineColor(kCyan-3);
@@ -128,20 +128,20 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   hA->GetYaxis()->SetRangeUser(0,100.*y_max/sum_A);
   hA->GetYaxis()->SetTitleOffset(1.4);
   hA->Draw("histo");
-  hB->Draw("histosame");
+  //hB->Draw("histosame");
   hC->Draw("histosame");
   
   float xleg=0.5;
   if(title=="e-likelihood") xleg = 0.3;
-  if(title=="#pi-likelihood") xleg = 0.55;
-  if(title=="#mu-likelihood") xleg = 0.55;
+  if(title=="#nu_{e}-likelihood") xleg = 0.55;
+  if(title=="n-likelihood") xleg = 0.55;
   TLegend *leg;
   leg= new TLegend(xleg,0.70,xleg+0.2,0.85);
   leg->SetTextSize(0.03);
   leg->SetTextFont(42);
   leg->AddEntry(hA,"e-","l");
-  leg->AddEntry(hB,"#pi-","l");
-  leg->AddEntry(hC,"#mu-","l");
+  //leg->AddEntry(hB,"#nu_{e}","l");
+  leg->AddEntry(hC,"neutron","l");
   leg->SetFillColor(0);
   leg->SetLineColor(0);
   leg->SetShadowColor(0);
@@ -151,8 +151,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   addCaliceLogo(true);
 
   if(save == true){
-    c->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_"+title+".eps");
-    c->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_"+title+".png");
+    c->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_neutron_"+title+".eps");
+    c->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_neutron_"+title+".png");
   }
 
   // Building the efficiency histos
@@ -228,7 +228,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
 	break;
       }
     }
-    if( title=="#pi-likelihood" ){
+    if( title=="#nu_{e}-likelihood" ){
       if( B_impurity < 0.01*(1+tol) ){
         h_001_y[0] = B_content;
         h_001_x[0] = x;
@@ -236,7 +236,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#mu-likelihood" ){
+    if( title=="n-likelihood" ){
       if( C_impurity < 0.01*(1+tol) ){
         h_001_y[0] = C_content;
         h_001_x[0] = x;
@@ -263,7 +263,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#pi-likelihood" ){
+    if( title=="#nu_{e}-likelihood" ){
       if( B_impurity < 0.1*(1+tol) ){
         h_01_y[0] = B_content;
         h_01_x[0] = x;
@@ -271,7 +271,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#mu-likelihood" ){
+    if( title=="n-likelihood" ){
       if( C_impurity < 0.1*(1+tol) ){
         h_01_y[0] = C_content;
         h_01_x[0] = x;
@@ -298,7 +298,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#pi-likelihood" ){
+    if( title=="#nu_{e}-likelihood" ){
       if( B_impurity < 1.*(1+tol) ){
         h_1_y[0] = B_content;
         h_1_x[0] = x;
@@ -306,7 +306,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#mu-likelihood" ){
+    if( title=="n-likelihood" ){
       if( C_impurity < 1.*(1+tol) ){
         h_1_y[0] = C_content;
         h_1_x[0] = x;
@@ -333,7 +333,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#pi-likelihood" ){
+    if( title=="#nu_{e}-likelihood" ){
       if( B_impurity < 10.*(1+tol) ){
         h_10_y[0] = B_content;
         h_10_x[0] = x;
@@ -341,7 +341,7 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
         break;
       }
     }
-    if( title=="#mu-likelihood" ){
+    if( title=="n-likelihood" ){
       if( C_impurity < 10.*(1+tol) ){
         h_10_y[0] = C_content;
         h_10_x[0] = x;
@@ -366,16 +366,16 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   hA_cumulative->SetTitle("Efficiencies for "+title+" cut;"+title+" cut;efficiency (%)");
   hA_cumulative->GetYaxis()->SetTitleOffset(1.4);
 
-  auto c2 = new TCanvas("c_PID_6_60_100_GeV_e_pi_mu_"+title+"_cut", "c_PID_6_60_100_GeV_e_pi_mu_"+title+"_cut", 800, 800);
+  auto c2 = new TCanvas("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+title+"_cut", "c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_"+title+"_cut", 800, 800);
   c2->cd();
   hA_cumulative->SetLineColor(kGray+2);
-  hB_cumulative->SetLineColor(kRed-4);
-  hC_cumulative->SetLineColor(kCyan-3);
+  hB_cumulative->SetLineColor(kCyan-3);
+  hC_cumulative->SetLineColor(kRed-4);
   hA_cumulative->SetLineWidth(3);
   hB_cumulative->SetLineWidth(3);
   hC_cumulative->SetLineWidth(3);
   hA_cumulative->Draw("ALP");
-  hB_cumulative->Draw("LP");
+  //hB_cumulative->Draw("LP");
   hC_cumulative->Draw("LP");
   h_001->SetMarkerStyle(33);
   h_001->SetMarkerSize(2);
@@ -398,15 +398,15 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   float xleg_c = 0.6;
   float yleg_c = 0.6;
   if(title=="e-likelihood") xleg_c = 0.3;
-  if(title=="#pi-likelihood") {xleg_c = 0.65; yleg_c = 0.7;}
-  if(title=="#mu-likelihood") {xleg_c = 0.65; yleg_c = 0.7;}
+  if(title=="#nu_{e}-likelihood") {xleg_c = 0.65; yleg_c = 0.7;}
+  if(title=="n-likelihood") {xleg_c = 0.65; yleg_c = 0.7;}
   TLegend *leg_c;
   leg_c= new TLegend(xleg_c,yleg_c,xleg_c+0.2,yleg_c+0.15);
   leg_c->SetTextSize(0.025);
   leg_c->SetTextFont(42);
   leg_c->AddEntry(hA,"e-","l");
-  leg_c->AddEntry(hB,"#pi-","l");
-  leg_c->AddEntry(hC,"#mu-","l");
+  //leg_c->AddEntry(hB,"#nu_{e}","l");
+  leg_c->AddEntry(hC,"neutron","l");
   leg_c->SetFillColor(0);
   leg_c->SetLineColor(0);
   leg_c->SetShadowColor(0);
@@ -416,8 +416,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
     float xleg_WP = 0.6;
     float yleg_WP = 0.4;
     if(title=="e-likelihood") xleg_WP = 0.3;
-    if(title=="#pi-likelihood") {xleg_WP = 0.65; yleg_WP = 0.5;}
-    if(title=="#mu-likelihood") {xleg_WP = 0.65; yleg_WP = 0.5;}
+    if(title=="#nu_{e}-likelihood") {xleg_WP = 0.65; yleg_WP = 0.5;}
+    if(title=="n-likelihood") {xleg_WP = 0.65; yleg_WP = 0.5;}
     TLegend *leg_WP;
     leg_WP= new TLegend(xleg_WP,yleg_WP,xleg_WP+0.2,yleg_WP+0.15);
     leg_WP->SetTextSize(0.025);
@@ -436,8 +436,8 @@ void drawLikelihood(TString title, TH1F * hA, TH1F * hB, TH1F * hC, bool save = 
   addCaliceLogo(true);
 
   if(save == true){
-    c2->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_"+title+"_cut.eps");
-    c2->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_"+title+"_cut.png");
+    c2->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_neutron_"+title+"_cut.eps");
+    c2->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_neutron_"+title+"_cut.png");
   }
 
 }
@@ -474,7 +474,7 @@ void drawVariablesLegend(vector<TString> varnames) {
 
 void drawCorrelation(TString particle, vector<TString> varnames, TH2F * hA, bool save=false) {
 
-  auto c_A = new TCanvas("c_PID_6_60_100_GeV_e_pi_mu_X_Correlation_"+particle,"c_PID_6_60_100_GeV_e_pi_mu_X_Correlation_"+particle,800,800);
+  auto c_A = new TCanvas("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_Correlation_"+particle,"c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_Correlation_"+particle,800,800);
   c_A->cd();
   hA->SetTitle("|Variable correlation| ("+particle+")");
   hA->GetXaxis()->LabelsOption("h");
@@ -498,8 +498,8 @@ void drawCorrelation(TString particle, vector<TString> varnames, TH2F * hA, bool
   addProduction();
   
   if(save == true){
-    c_A->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_correlation_"+particle+".eps");
-    c_A->SaveAs("c_PID_6_60_100_GeV_e_pi_mu_correlation_"+particle+".png");
+    c_A->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_correlation_"+particle+".eps");
+    c_A->SaveAs("c_PID_0.5_4.5_8.5_GeV_e_nue_neutron_correlation_"+particle+".png");
   }
 }
 
@@ -511,8 +511,8 @@ void drawCorrelationPlots(TH2F * hA, TH2F * hB, TH2F * hC, bool save = false) {
   for(int i = 1; i<nbins_x+1; i++) varnames.push_back(hA->GetXaxis()->GetLabels()->At(i-1)->GetName());
 
   TH2F * A_cor = new TH2F("e_correlation","e sample correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
-  TH2F * B_cor = new TH2F("#pi_correlation","#pi sample correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
-  TH2F * C_cor = new TH2F("#mu_correlation","#mu sample correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
+  TH2F * B_cor = new TH2F("#nu_{e}_correlation","#nu_{e} sample correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
+  TH2F * C_cor = new TH2F("n_correlation","n sample correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
   TH2F * max_correlation = new TH2F("max_correlation","Maximum correlation between variables",nbins_x,-0.5,nbins_x+0.5,nbins_y,-0.5,nbins_y+0.5);
   for(int i = 1; i<nbins_x+1; i++){
     for(int j = 1; j<nbins_y+1; j++){
@@ -539,14 +539,14 @@ void drawCorrelationPlots(TH2F * hA, TH2F * hB, TH2F * hC, bool save = false) {
   }
 
   drawCorrelation("e-", varnames, A_cor, save);
-  drawCorrelation("#pi-", varnames, B_cor, save);
-  drawCorrelation("#mu-", varnames, C_cor, save);
+  drawCorrelation("#nu_{e}", varnames, B_cor, save);
+  drawCorrelation("neutron", varnames, C_cor, save);
   drawCorrelation("max", varnames, max_correlation, save);
 }
 
-void Performance_plots(bool save = false){
+void Performance_plots(bool save = true){
 
-  TFile* outputfile=TFile::Open("../ROOTFiles/PID_6_60_100_GeV_e_pi_mu_TMVA.root");
+  TFile* outputfile=TFile::Open("../ROOTFiles/PID_0.5_4.5_8.5_GeV_e_nue_neutron_TMVA.root");
   //outputfile.cd("dataloader");
   //TTree* TestTree=(TTree*) outputfile->Get("dataloader/TestTree");
   //Int_t test_entries=TestTree->GetEntries();
@@ -582,8 +582,8 @@ void Performance_plots(bool save = false){
   gStyle->SetMarkerSize(0.2);
   
   drawLikelihood("e-likelihood", A_likelihood_for_A, A_likelihood_for_B, A_likelihood_for_C, save);
-  drawLikelihood("#pi-likelihood", B_likelihood_for_A, B_likelihood_for_B, B_likelihood_for_C, save);
-  drawLikelihood("#mu-likelihood", C_likelihood_for_A, C_likelihood_for_B, C_likelihood_for_C, save);
+  drawLikelihood("#nu_{e}-likelihood", B_likelihood_for_A, B_likelihood_for_B, B_likelihood_for_C, save);
+  drawLikelihood("n-likelihood", C_likelihood_for_A, C_likelihood_for_B, C_likelihood_for_C, save);
  
   drawCorrelationPlots(correlation_matrix_A, correlation_matrix_B, correlation_matrix_C, save);
 }
