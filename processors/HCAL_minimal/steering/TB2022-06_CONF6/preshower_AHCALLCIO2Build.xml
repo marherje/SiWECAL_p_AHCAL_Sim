@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+	<processor name="AHCALLCIO2BuildConversion"/>		
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_1.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_2.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_3.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_4.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_5.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_6.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_7.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_8.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_9.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_10.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!-- parameter name="MaxRecordNumber" value="100" /-->
+    <parameter name="MaxRecordNumber" value="10000000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+  </global>
+
+
+  <processor name="AHCALLCIO2BuildConversion" type="AHCALLCIO2BuildProcessor">
+    <parameter name="OutputBuildFile" type="string"> output_preshower_AHCALLCIO2Build_TB2022-06_XPARTICLEX_XENERGYXGeV.root </parameter>
+    <parameter name="Input_Collections" type="string"> PreShowerCollection </parameter> 
+    <parameter name="NLayers" type="int"> 1 </parameter>
+    <parameter name="FirstLayerPosZ" type="float"> 5.8 </parameter>
+    <parameter name="LayerSpacing" type="float"> 26.2 </parameter>
+    <parameter name="LayerThickness" type="float"> 3 </parameter>
+    <parameter name="ConversionGeV2MIP" type="bool">true</parameter>
+    <parameter name="GeV2MIPFactors" type="float"> 1./0.0268  </parameter>
+    <parameter name="WriteRootfile" type="bool"> true </parameter>
+  </processor>
+</marlin>

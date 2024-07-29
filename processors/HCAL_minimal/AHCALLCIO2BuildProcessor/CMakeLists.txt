@@ -7,7 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6 FATAL_ERROR)
 
 
 # project name
- PROJECT( LCIO2BuildProcessor )
+ PROJECT( AHCALLCIO2BuildProcessor )
 
 
 # project version

@@ -387,13 +387,11 @@ namespace CALICE
 	    float hitZ=aHit->getPosition()[2];
 	    int NLayers=0;
 
-	    if(_FixedPosZ.size() != 0) { NLayers=_FixedPosZ.size(); }
-            else if(_NSlabs != 9999.) { NLayers=_NSlabs; }
-            else { streamlog_out(ERROR)<<"Missing number of slabs"<<std::endl; }
+	    if(_FixedPosZ.size() == 0) streamlog_out(ERROR)<<"Missing number slab info"<<std::endl;
 
             for (int ilayer = 0; ilayer < NLayers; ilayer++){
               hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
-              //streamlog_out(DEBUG)<<"Layer comparing: "<<ilayer<<", Distance: "<<hitZtolayer.at(ilayer)<<endl;                                                                                            
+              //streamlog_out(DEBUG)<<"Layer comparing: "<<ilayer<<", Distance: "<<hitZtolayer.at(ilayer)<<endl;
               if(ilayer==0) {
                 smallestdistance=hitZtolayer.at(0);
                 i_slab=0;

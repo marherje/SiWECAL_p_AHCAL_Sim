@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor
-BuildDirectory: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build
+SourceDirectory: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor
+BuildDirectory: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,7 +26,7 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake" "/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor"
+ConfigureCommand: "/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake" "/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor"
 MakeCommand: /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
 DefaultCTestConfigurationType: Release
 

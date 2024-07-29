@@ -48,10 +48,10 @@ RM = /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E remove
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor
+CMAKE_SOURCE_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build
+CMAKE_BINARY_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -137,9 +137,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build/CMakeFiles /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build/CMakeFiles /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -285,19 +285,6 @@ NightlyCoverage/fast:
 .PHONY : NightlyCoverage/fast
 
 #=============================================================================
-# Target rules for targets named Experimental
-
-# Build rule for target.
-Experimental: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Experimental
-.PHONY : Experimental
-
-# fast build rule for target.
-Experimental/fast:
-	$(MAKE) -f CMakeFiles/Experimental.dir/build.make CMakeFiles/Experimental.dir/build
-.PHONY : Experimental/fast
-
-#=============================================================================
 # Target rules for targets named Continuous
 
 # Build rule for target.
@@ -413,6 +400,32 @@ NightlyUpdate: cmake_check_build_system
 NightlyUpdate/fast:
 	$(MAKE) -f CMakeFiles/NightlyUpdate.dir/build.make CMakeFiles/NightlyUpdate.dir/build
 .PHONY : NightlyUpdate/fast
+
+#=============================================================================
+# Target rules for targets named Experimental
+
+# Build rule for target.
+Experimental: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Experimental
+.PHONY : Experimental
+
+# fast build rule for target.
+Experimental/fast:
+	$(MAKE) -f CMakeFiles/Experimental.dir/build.make CMakeFiles/Experimental.dir/build
+.PHONY : Experimental/fast
+
+#=============================================================================
+# Target rules for targets named AHCALLCIO2BuildProcessor
+
+# Build rule for target.
+AHCALLCIO2BuildProcessor: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 AHCALLCIO2BuildProcessor
+.PHONY : AHCALLCIO2BuildProcessor
+
+# fast build rule for target.
+AHCALLCIO2BuildProcessor/fast:
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/build
+.PHONY : AHCALLCIO2BuildProcessor/fast
 
 #=============================================================================
 # Target rules for targets named ExperimentalTest
@@ -532,19 +545,6 @@ uninstall/fast:
 .PHONY : uninstall/fast
 
 #=============================================================================
-# Target rules for targets named LCIO2BuildProcessor
-
-# Build rule for target.
-LCIO2BuildProcessor: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 LCIO2BuildProcessor
-.PHONY : LCIO2BuildProcessor
-
-# fast build rule for target.
-LCIO2BuildProcessor/fast:
-	$(MAKE) -f CMakeFiles/LCIO2BuildProcessor.dir/build.make CMakeFiles/LCIO2BuildProcessor.dir/build
-.PHONY : LCIO2BuildProcessor/fast
-
-#=============================================================================
 # Target rules for targets named NightlyTest
 
 # Build rule for target.
@@ -563,7 +563,7 @@ src/LCIO2BuildProcessor.o: src/LCIO2BuildProcessor.cc.o
 
 # target to build an object file
 src/LCIO2BuildProcessor.cc.o:
-	$(MAKE) -f CMakeFiles/LCIO2BuildProcessor.dir/build.make CMakeFiles/LCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.o
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.o
 .PHONY : src/LCIO2BuildProcessor.cc.o
 
 src/LCIO2BuildProcessor.i: src/LCIO2BuildProcessor.cc.i
@@ -572,7 +572,7 @@ src/LCIO2BuildProcessor.i: src/LCIO2BuildProcessor.cc.i
 
 # target to preprocess a source file
 src/LCIO2BuildProcessor.cc.i:
-	$(MAKE) -f CMakeFiles/LCIO2BuildProcessor.dir/build.make CMakeFiles/LCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.i
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.i
 .PHONY : src/LCIO2BuildProcessor.cc.i
 
 src/LCIO2BuildProcessor.s: src/LCIO2BuildProcessor.cc.s
@@ -581,7 +581,7 @@ src/LCIO2BuildProcessor.s: src/LCIO2BuildProcessor.cc.s
 
 # target to generate assembly for a file
 src/LCIO2BuildProcessor.cc.s:
-	$(MAKE) -f CMakeFiles/LCIO2BuildProcessor.dir/build.make CMakeFiles/LCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.s
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.s
 .PHONY : src/LCIO2BuildProcessor.cc.s
 
 # Help Target
@@ -602,7 +602,6 @@ help:
 	@echo "... NightlyConfigure"
 	@echo "... NightlyCoverage"
 	@echo "... edit_cache"
-	@echo "... Experimental"
 	@echo "... Continuous"
 	@echo "... ContinuousBuild"
 	@echo "... ExperimentalUpdate"
@@ -614,6 +613,8 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... NightlyUpdate"
+	@echo "... Experimental"
+	@echo "... AHCALLCIO2BuildProcessor"
 	@echo "... ExperimentalTest"
 	@echo "... ExperimentalMemCheck"
 	@echo "... NightlyMemCheck"
@@ -623,7 +624,6 @@ help:
 	@echo "... ExperimentalConfigure"
 	@echo "... ContinuousSubmit"
 	@echo "... uninstall"
-	@echo "... LCIO2BuildProcessor"
 	@echo "... test"
 	@echo "... NightlyTest"
 	@echo "... rebuild_cache"

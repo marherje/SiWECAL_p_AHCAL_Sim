@@ -1,4 +1,4 @@
-#include "LCIO2BuildProcessor.hh"
+#include "AHCALLCIO2BuildProcessor.hh"
 
 #include <iostream>
 #include <cstdlib>
@@ -40,7 +40,6 @@
 #include <TTree.h>
 #include <TInterpreter.h>
 
-
 #include <fstream>
 #include <sstream>
 
@@ -56,9 +55,9 @@ using namespace std;
 namespace CALICE
 {
 
-  LCIO2BuildProcessor aLCIO2BuildProcessor;
+  AHCALLCIO2BuildProcessor aAHCALLCIO2BuildProcessor;
 
-  LCIO2BuildProcessor::LCIO2BuildProcessor() : Processor("LCIO2BuildProcessor")
+  AHCALLCIO2BuildProcessor::AHCALLCIO2BuildProcessor() : Processor("AHCALLCIO2BuildProcessor")
   {
 
     vector<string> calorimInpCollectionsExample;
@@ -72,77 +71,48 @@ namespace CALICE
                                "Name to identify output file",
                                _outFileName,
                                outFileNameExample);
-    
-    vector<string> siThicknessesExample;
-    registerProcessorParameter("SiThicknesses",
-                               "vector of Silicon thicknesses per layer",
-                               _siThicknesses,
-                               siThicknessesExample);
-    
+
     vector<string> FixedPosZExample;
     registerProcessorParameter("FixedPosZ",
                                "vector of z layer positions",
                                _FixedPosZ,
                                FixedPosZExample);
-    
-    registerProcessorParameter("NSlabs",
-                               "Number of slab",
-                               _NSlabs,
+        
+    registerProcessorParameter("NLayers",
+                               "Number of layers",
+                               _NLayers,
                                int(9999));
 
-    registerProcessorParameter("FirstSlabPosZ",
-                               "Position of first slab",
-                               _FirstSlabPosZ,
+    registerProcessorParameter("FirstLayerPosZ",
+                               "Position of first layer",
+                               _FirstLayerPosZ,
                                float(9999));
 
-    registerProcessorParameter("SlabSpacing",
-                               "Separation between slabs",
-                               _SlabSpacing,
+    registerProcessorParameter("LayerSpacing",
+                               "Separation between layer",
+                               _LayerSpacing,
                                float(9999));
     
-    vector<string> GeV2MIPFactorsExample;
-    registerProcessorParameter("GeV2MIPFactors",
-                               "vector of MIP conversion factors",
-                               _GeV2MIPFactors,
-                               GeV2MIPFactorsExample);
-    
+    registerProcessorParameter("LayerThickness",
+                               "Thickness of one layer",
+                               _LayerThickness,
+                               float(9999));
+
     registerProcessorParameter("ConversionGeV2MIP",
                                "Do conversion to MIP",
                                _ConversionGeV2MIP,
                                false);
-    
-    // vector<string> MapFilenamesExample = {"/home/llr/ilc/jimenez/Projects/Simulations/SiWECAL-Sim/processors/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt", "/home/llr/ilc/jimenez/Projects/Simulations/SiWECAL-Sim/processors/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt"};
-    vector<string> MapFilenamesExample = {"", ""}; 
-      //{"/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt", "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt"};
-    registerProcessorParameter("MappingFiles",
-                               "Files mapping hit position with cell chan and chip",
-                               _MapFilenames,
-                               MapFilenamesExample);
-    
-    // vector<int> SlabMapIndicesExample = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1};
-    vector<int> SlabMapIndicesExample = {0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0};
-    registerProcessorParameter("SlabMapIndices",
-                               "vector indices of maps (from MappingFiles parameters) to be used per slab",
-                               _SlabMapIndices,
-                               SlabMapIndicesExample);    
 
-
-    float HalfCenterGapExample = 1.05; // This dead space should be included in the generation (3.8 - 5.5/2)
-    registerProcessorParameter("HalfCenterGap",
-                               "Half size of gap between wafers",
-                               _HalfCenterGap,
-                               HalfCenterGapExample);
-    
-    // registerProcessorParameter("hitType",
-    //                            "Hit type (SimCalorimeterHit or CalorimeterHit)",
-    //                            _hitType,
-    //                            "SimCalorimeterHit");
-    
+    registerProcessorParameter("GeV2MIPFactor_float",
+                               "GeV2MIP conversion",
+			       _GeV2MIPFactor_float,
+                               float(9999));
+            
   }
 
   /************************************************************************************/
 
-  void LCIO2BuildProcessor::init()
+  void AHCALLCIO2BuildProcessor::init()
   {
     streamlog_out(DEBUG) << "init called" << std::endl ;
 
@@ -151,7 +121,7 @@ namespace CALICE
     _nRun = 0 ;
     _nEvt = 0 ;
     _rootout = new TFile(_outFileName.c_str(), "RECREATE");
-    _treeout = new TTree("ecal", "From SLCIO");
+    _treeout = new TTree("hcal", "From SLCIO");
     _treeout->Branch("event", &event);
     _treeout->Branch("spill", &spill);
     _treeout->Branch("cycle", &cycle);
@@ -160,7 +130,7 @@ namespace CALICE
     _treeout->Branch("bcid_merge_end", &bcid_merge_end);
     _treeout->Branch("id_run", &id_run);
     _treeout->Branch("id_dat", &id_dat);
-    _treeout->Branch("nhit_slab", &nhit_slab);
+    _treeout->Branch("nhit_layer", &nhit_layer);
     _treeout->Branch("nhit_chip", &nhit_chip);
     _treeout->Branch("nhit_chan", &nhit_chan);
     _treeout->Branch("nhit_len", &nhit_len);
@@ -169,7 +139,7 @@ namespace CALICE
     _treeout->Branch("sum_energy", &sum_energy);
     _treeout->Branch("sum_energy_lg", &sum_energy_lg);
 
-    _treeout->Branch("hit_slab", &hit_slab);
+    _treeout->Branch("hit_layer", &hit_layer);
     _treeout->Branch("hit_chip", &hit_chip);
     _treeout->Branch("hit_chan", &hit_chan);
     _treeout->Branch("hit_sca", &hit_sca);
@@ -187,126 +157,51 @@ namespace CALICE
     _treeout->Branch("hit_y", &hit_y);
     _treeout->Branch("hit_z", &hit_z);
 
-    
+
     if(_FixedPosZ.size() != 0) {
       for (int ilayer = 0; ilayer < int(_FixedPosZ.size()); ilayer++){
         _FixedPosZ_float.push_back(stof(_FixedPosZ[ilayer]));
       }
     }
-    else {
-      if(_NSlabs == 9999){ streamlog_out(ERROR)<<"Missing number of slabs"<<std::endl;}
+    else{ 
+      if(_NLayers == 9999){ streamlog_out(ERROR)<<"Missing number of layers"<<std::endl;}
       else {
-        if(_FirstSlabPosZ == 9999.){ streamlog_out(ERROR)<<"Missing first slab position"<<std::endl;}
-        else if(_SlabSpacing == 9999.){ streamlog_out(ERROR)<<"Missing slab separation"<<std::endl;}
-        else{
-          for (int ilayer = 0; ilayer < _NSlabs; ilayer++){
-            _FixedPosZ_float.push_back(_FirstSlabPosZ + _SlabSpacing*ilayer);
-          }
-        }
+	if(_FirstLayerPosZ == 9999.){ streamlog_out(ERROR)<<"Missing first layer position"<<std::endl;}
+	else {
+	  if(_LayerSpacing == 9999.){ streamlog_out(ERROR)<<"Missing layer separation"<<std::endl;}
+	  else {
+	    if(_LayerThickness == 9999.){ streamlog_out(ERROR)<<"Missing layer thickness"<<std::endl;}
+	    else{
+	      for (int ilayer = 0; ilayer < _NLayers; ilayer++){
+		_FixedPosZ_float.push_back(_FirstLayerPosZ + _LayerSpacing*ilayer);
+	      }
+	    }
+	  }
+	}
       }
     }
-
-    for (int ilayer = 0; ilayer < int(_FixedPosZ.size()); ilayer++){
-      if( _siThicknesses.size() != 1 ) {
-        if(_FixedPosZ.size() != _siThicknesses.size()) {streamlog_out(ERROR)<< "Si Thicknesses vector size don't match the number of layers "<<std::endl;}
-        else {
-          _siThicknesses_float.push_back(0.001*stof(_siThicknesses[ilayer])); // Converted from microns to mm
-        }
-      }
-      else {
-        try{
-          if(_siThicknesses.size() == 1) _siThicknesses_float.push_back(0.001*stof(_siThicknesses[0])); //Converted from microns to mm
-          else throw 404;
-        }
-        catch(...){streamlog_out(ERROR)<< "Missing Si Thicknesses info "<<std::endl;
-        }
-      }
-    }
+   
 
     if(_ConversionGeV2MIP==true){
-      for (int ilayer = 0; ilayer < int(_FixedPosZ.size()); ilayer++){
-	if( _GeV2MIPFactors.size() > 1 ) {
-	  if(_FixedPosZ.size() != _GeV2MIPFactors.size()) {streamlog_out(ERROR)<< "MIP vector size don't match the number of layers "<<std::endl;}
-	  else {
-	    _GeV2MIPFactors_float.push_back(stof(_GeV2MIPFactors[ilayer]));
-	  }
-	}
-	else {
-	  try{
-	    if(_GeV2MIPFactors.size() == 1) _GeV2MIPFactors_float.push_back(stof(_GeV2MIPFactors.at(0)));
-	    else throw 404;
-	  }
-	  catch(...){streamlog_out(ERROR)<< "Missing MIP info "<<std::endl;
-	  }
-	}
-      }
+      if(_GeV2MIPFactor_float==9999) streamlog_out(ERROR)<< "Missing MIP info "<<std::endl;
     }
     
-    streamlog_out(DEBUG)<<"GeV2MIP size: "<<_GeV2MIPFactors.size()<<", GeV2MIP: "<<_GeV2MIP<<std::endl;
+    streamlog_out(DEBUG)<<"GeV2MIP value: "<<_GeV2MIPFactor_float<<std::endl;
     streamlog_out(DEBUG)<<"FixedPosZ size: "<<_FixedPosZ.size()<<std::endl;
-    streamlog_out(DEBUG)<<"siThicknesses size: "<<_siThicknesses.size()<<std::endl;
-    streamlog_out(DEBUG)<<"N Slabs: "<<_NSlabs<<", First slab pos Z: "<<_FirstSlabPosZ<<", Slab spacing: "<<_SlabSpacing<<std::endl;
+    streamlog_out(DEBUG)<<"N Layers: "<<_NLayers<<", First layer pos Z: "<<_FirstLayerPosZ<<", Layer spacing: "<<_LayerSpacing<<std::endl;
 
-    
-    // _FixedPosZ = {6.225,  21.225,  36.15,  51.15,  66.06,  81.06,  96.06, \
-    //               111.15, 126.15, 141.15, 156.15, 171.06, 186.06, 201.06,\
-    //               216.06};
-    // ILD mode
-    // _FixedPosZ = {6.225,  21.225,  36.15,  51.15,  66.06,  81.06,  96.06,\
-    //               111.15, 126.15, 141.15, 156.15, 171.06, 186.06, 201.06,\
-    //               216.06, 216., 231., 246., 261., 276., 291., 306., 321., 336.};
     _printType = true;
 
-    // Mapping (should be done with nice dict...)
-    // vector<vector<vector<float>>> _maps(_MapFilenames.size(), vector<vector<float>>(1024, vector<float>(2)));
-    // Initializing to zeros, needs to be done in a smarter way
-    vector<float> zeros = {0., 0.};
-    vector<vector<float>> this_map;
-    for (int imap = 0; imap < _MapFilenames.size(); imap++) {
-      for (int icell = 0; icell < 1024; icell++) this_map.push_back(zeros);
-      _maps.push_back(this_map); 
-    }
-    fstream map_file;
-    string space_delimiter = " ";
-    size_t pos;
-    vector<string> words;
-
-    for (int imap = 0; imap < _MapFilenames.size(); imap++) {
-      map_file.open(_MapFilenames[imap], ios::in);
-      vector<vector<float>> this_map;
-      if (map_file.is_open()){   
-        string line;
-        getline(map_file, line); //skip the first line
-        int iline = 0;
-        while(getline(map_file, line)){ 
-          auto start = 0U;
-          auto end = line.find(space_delimiter);
-          while (end != std::string::npos) {
-              words.push_back(line.substr(start, end - start));
-              start = end + space_delimiter.length();
-              end = line.find(space_delimiter, start);
-          }
-          words.push_back(line.substr(start));
-          // There's a sign flip in coordinates in mapping (hence the -1*)
-          _maps[imap][64 * stoi(words[0]) + stoi(words[3])][0] = -1 * stof(words[4]);
-          _maps[imap][64 * stoi(words[0]) + stoi(words[3])][1] = -1 * stof(words[5]);
-          words.clear();
-        }
-
-        map_file.close();
-      }
-      else streamlog_out(WARNING)<<"Mapping file not found! Add input or check src and mapping folders"<<endl;
-    }
   }
 
 
   /************************************************************************************/
-  void LCIO2BuildProcessor::processRunHeader( LCRunHeader* run)
+  void AHCALLCIO2BuildProcessor::processRunHeader( LCRunHeader* run)
   {
     _nRun++ ;
   }
 
-  void LCIO2BuildProcessor::processEvent( LCEvent * evt )
+  void AHCALLCIO2BuildProcessor::processEvent( LCEvent * evt )
   {
     
     int evtNumber = evt->getEventNumber();
@@ -351,8 +246,8 @@ namespace CALICE
           sum_energy_lg = 0.;
           sum_energy = 0.;
 
-          vector<int> slabs_hit, chans_hit, chips_hit;
-          int i_slab;
+          vector<int> layers_hit, chans_hit, chips_hit;
+          int i_layer;
           float gap_hit_x, gap_hit_y;
 
           // Hits loop
@@ -387,112 +282,51 @@ namespace CALICE
 	    float hitZ=aHit->getPosition()[2];
 	    int NLayers=0;
 
-	    if(_FixedPosZ.size() != 0) { NLayers=_FixedPosZ.size(); }
-            else if(_NSlabs != 9999.) { NLayers=_NSlabs; }
-            else { streamlog_out(ERROR)<<"Missing number of slabs"<<std::endl; }
+            if(_NLayers != 9999.) { NLayers=_NLayers; }
+            else { streamlog_out(ERROR)<<"Missing number of layers"<<std::endl; }
 
-            for (int ilayer = 0; ilayer < NLayers; ilayer++){
-              hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
-              //streamlog_out(DEBUG)<<"Layer comparing: "<<ilayer<<", Distance: "<<hitZtolayer.at(ilayer)<<endl;                                                                                            
-              if(ilayer==0) {
+	    for (int ilayer = 0; ilayer < NLayers; ilayer++){
+	      hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
+	      if(ilayer==0) {
                 smallestdistance=hitZtolayer.at(0);
-                i_slab=0;
+                i_layer=0;
               }
               else if(hitZtolayer.at(ilayer) == 0.) {
                 smallestdistance=hitZtolayer.at(ilayer);
-                i_slab=ilayer;
+                i_layer=ilayer;
                 break;
               }
               else if(hitZtolayer.at(ilayer) < smallestdistance) {
                 smallestdistance=hitZtolayer.at(ilayer);
-                i_slab=ilayer;
+                i_layer=ilayer;
               }
             }
-            streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtolayer.at(i_slab)<<endl;
-
+            streamlog_out(DEBUG)<<"Closest layer: "<<i_layer<<". Distance: "<<hitZtolayer.at(i_layer)<<endl;
+	    
 	    for (int ilayer = 0; ilayer < NLayers; ilayer++){
-	      if ( (_FixedPosZ_float[ilayer] > (aHit->getPosition()[2] - _siThicknesses_float.at(ilayer)) ) &&
-		(_FixedPosZ_float[ilayer] < (aHit->getPosition()[2] + _siThicknesses_float.at(ilayer)) ) ) {
-		hit_slab.push_back(ilayer);
+	      float thislayerpos = _FirstLayerPosZ + ilayer*_LayerSpacing;
+	      if ( (thislayerpos > (aHit->getPosition()[2] - _LayerThickness) ) &&
+		(thislayerpos < (aHit->getPosition()[2] + _LayerThickness) ) ) {
+		hit_layer.push_back(ilayer);
 	      }
-	      else if (_FixedPosZ_float[ilayer] == aHit->getPosition()[2]) {
-		hit_slab.push_back(ilayer);
+	      else if (thislayerpos == aHit->getPosition()[2]) {
+		hit_layer.push_back(ilayer);
 	      }
 	    }
 	    
 	    // End insertion Jesus             
 
 	    if (_ConversionGeV2MIP) {
-              hit_energy.push_back(aHit->getEnergy() / _GeV2MIPFactors_float[i_slab]);
-              sum_energy += aHit->getEnergy() / _GeV2MIPFactors_float[i_slab];
+              hit_energy.push_back(aHit->getEnergy() / _GeV2MIPFactor_float);
+	      sum_energy += aHit->getEnergy() / _GeV2MIPFactor_float;
             }
             else {
               hit_energy.push_back(aHit->getEnergy());
               sum_energy += aHit->getEnergy();
             }
-
-            // hit_chip hit_chan
-            if (aHit->getPosition()[0] > 0) gap_hit_x = aHit->getPosition()[0] + _HalfCenterGap;
-            else gap_hit_x = aHit->getPosition()[0] - _HalfCenterGap;
-            if (aHit->getPosition()[1] > 0) gap_hit_y = aHit->getPosition()[1] + _HalfCenterGap;
-            else gap_hit_y = aHit->getPosition()[1] - _HalfCenterGap;
-
-            for (int icell = 0; icell < 1024; icell++) {
-              float in_x = fabs(_maps[_SlabMapIndices[i_slab]][icell][0] - gap_hit_x);
-              float in_y = fabs(_maps[_SlabMapIndices[i_slab]][icell][1] - gap_hit_y);
-              if (in_x < 0.1 && in_y < 0.1) {
-                hit_chip.push_back(icell/64);
-                hit_chan.push_back(icell%64);
-              }
-              
-            }
-
-            // ** Note ** //
-            // I didn't find a straightforward way to fill hit_slab,
-            // without providing the list of z layer pos (_FixedPosZ) as
-            // input in the steering, which is not convenient because
-            // per conf/geometry, z points can be different...
-            // ** End Note ** //
-            
-            // Shorter implementation if perfect equality between hit_z and _FixedPosZ
-            // auto slab_index = std::find(_FixedPosZ.begin(), _FixedPosZ.end(), aHit->getPosition()[2]);
-            // if (slab_index != _FixedPosZ.end()) hit_slab.push_back(std::distance(_FixedPosZ.begin(), slab_index));
-
-	    // ** Note Jesus ** // 
-	    // I fixed most of this issue with the insertion above
-	    // Also added debugging tools to know what is going wrong in case the slabs positions is not correct
-	    // or if MIP values or Si Thicknesses values are missing
-
           }//end loop over SimCalorimeterHits
 
           sum_energy_lg = sum_energy;
-          
-          vector<int>::iterator it1;
-          // nhit_slab
-          slabs_hit = hit_slab;
-          sort(slabs_hit.begin(), slabs_hit.end());
-          it1 = unique(slabs_hit.begin(), slabs_hit.end());
-          slabs_hit.resize(std::distance(slabs_hit.begin(), it1));
-          nhit_slab = slabs_hit.size();
-	  streamlog_out(DEBUG)<<"slabs_hit.size(): "<<slabs_hit.size()<<endl;
-
-          // nhit_chan
-          vector<int>::iterator it2;
-          chans_hit = hit_chan;
-          sort(chans_hit.begin(), chans_hit.end());
-          it2 = unique(chans_hit.begin(), chans_hit.end());
-          chans_hit.resize(std::distance(chans_hit.begin(), it2));
-          nhit_chan = chans_hit.size();
-	  streamlog_out(DEBUG)<<"chans_hit.size(): "<<chans_hit.size()<<endl;
-	  
-          // nhit_chip
-          vector<int>::iterator it3;
-          chips_hit = hit_chip;
-          sort(chips_hit.begin(), chips_hit.end());
-          it3 = unique(chips_hit.begin(), chips_hit.end());
-          chips_hit.resize(distance(chips_hit.begin(), it3));
-          nhit_chip = chips_hit.size();
-	  streamlog_out(DEBUG)<<"chips_hit.size(): "<<chips_hit.size()<<endl;
 
         }//end if col
       }//end if find col names
@@ -502,7 +336,7 @@ namespace CALICE
 
   _treeout->Fill();
   // Clear vectors
-  hit_slab.clear();
+  hit_layer.clear();
   hit_chip.clear();
   hit_chan.clear();
   hit_sca.clear();
@@ -530,18 +364,18 @@ namespace CALICE
 
   /************************************************************************************/
 
-  void LCIO2BuildProcessor::check( LCEvent * evt ) {
+  void AHCALLCIO2BuildProcessor::check( LCEvent * evt ) {
     // nothing to check here - could be used to fill checkplots in reconstruction processor
   }
 
   /************************************************************************************/
-  void LCIO2BuildProcessor::end(){
+  void AHCALLCIO2BuildProcessor::end(){
 
     _treeout->Write();
     _rootout->Write("", TObject::kOverwrite);
     _rootout->Close();
     
-    std::cout << "LCIO2BuildProcessor::end()  " << name()
+    std::cout << "AHCALLCIO2BuildProcessor::end()  " << name()
       << " processed " << _nEvt << " events in " << _nRun << " runs "
       << "FLAG"
       << std::endl ;
@@ -549,23 +383,23 @@ namespace CALICE
   }
 
   /************************************************************************************/
-  // void LCIO2BuildProcessor::hitCast(){
+  // void AHCALLCIO2BuildProcessor::hitCast(){
   // }
   
-  // SimCalorimeterHit LCIO2BuildProcessor::hitCast(SimCalorimeterHit* aHit){
+  // SimCalorimeterHit AHCALLCIO2BuildProcessor::hitCast(SimCalorimeterHit* aHit){
   //   return dynamic_cast<SimCalorimeterHit*>aHit;
   // }
 
-  // SimCalorimeterHit LCIO2BuildProcessor::hitCast(SimCalorimeterHit* aHit){
+  // SimCalorimeterHit AHCALLCIO2BuildProcessor::hitCast(SimCalorimeterHit* aHit){
   //   return dynamic_cast<SimCalorimeterHit*>aHit;
   // }
 
-  // EVENT::CalorimeterHit* LCIO2BuildProcessor::hitCast(EVENT::CalorimeterHit* aHit){
+  // EVENT::CalorimeterHit* AHCALLCIO2BuildProcessor::hitCast(EVENT::CalorimeterHit* aHit){
   //   return dynamic_cast<CalorimeterHit*>aHit;
   // }
 
   /************************************************************************************/
-  void LCIO2BuildProcessor::printParameters(){
+  void AHCALLCIO2BuildProcessor::printParameters(){
     std::cerr << "============= LCIO2Build Processor =================" <<std::endl;
     std::cerr << "Converting Simulation Hits to build ROOT file " <<std::endl;
     std::cerr << "Input Collection name : "; for(unsigned int i = 0; i < _calorimInpCollections.size(); i++) std::cerr << _calorimInpCollections.at(i) << " ";

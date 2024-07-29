@@ -76,10 +76,10 @@ SelectionString=
 SourceBFile=data/PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_e-_result.root
 SourceBTree=ntp
 
-SourceCFile=data/PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_pi-_result.root
+SourceCFile=data/PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_nu_e_result.root
 SourceCTree=ntp
 
-SourceOFile=data/PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_mu-_result.root
+SourceOFile=data/PID_0.5_4.5_8.5_GeV_e_nue_neutron/resolution_neutron_result.root
 SourceOTree=ntp
 
 ##------------------------------------------------
@@ -87,48 +87,16 @@ SourceOTree=ntp
 ##IMPORTANT dont leave a blank line between the initial and the end variables line
 ##variables the optimization starts with
 InitialVariables:
-["nhit","F","","nhit"]
-["sume","F","","sume"]
 ["weighte","F","","weighte"]
 ["bar_z","F","","bar_z"]
 ["mol","F","","mol"]
-["radius90_layer_0","F","","radius90_layer_0"]
 ["radius90_layer_1","F","","radius90_layer_1"]
-["radius90_layer_2","F","","radius90_layer_2"]
-["radius90_layer_3","F","","radius90_layer_3"]
-["radius90_layer_4","F","","radius90_layer_4"]
 ["radius90_layer_5","F","","radius90_layer_5"]
-["radius90_layer_6","F","","radius90_layer_6"]
-["radius90_layer_7","F","","radius90_layer_7"]
-["radius90_layer_8","F","","radius90_layer_8"]
-["radius90_layer_9","F","","radius90_layer_9"]
 ["radius90_layer_10","F","","radius90_layer_10"]
-["radius90_layer_11","F","","radius90_layer_11"]
-["radius90_layer_12","F","","radius90_layer_12"]
-["radius90_layer_13","F","","radius90_layer_13"]
-["radius90_layer_14","F","","radius90_layer_14"]
-["shower_sume_max_layer","F","","shower_sume_max_layer"]
-["shower_sume_start_layer","F","","shower_sume_start_layer"]
-["shower_sume_end_layer","F","","shower_sume_end_layer"]
 ["shower_sume_start_10_layer","F","","shower_sume_start_10_layer"]
 ["shower_sume_end_10_layer","F","","shower_sume_end_10_layer"]
-["shower_sume_average","F","","shower_sume_average"]
-["shower_sume_max","F","","shower_sume_max"]
-["sume_layer_0","F","","sume_layer_0"]
 ["sume_layer_1","F","","sume_layer_1"]
-["sume_layer_2","F","","sume_layer_2"]
-["sume_layer_3","F","","sume_layer_3"]
-["sume_layer_4","F","","sume_layer_4"]
-["sume_layer_5","F","","sume_layer_5"]
-["sume_layer_6","F","","sume_layer_6"]
-["sume_layer_7","F","","sume_layer_7"]
-["sume_layer_8","F","","sume_layer_8"]
-["sume_layer_9","F","","sume_layer_9"]
-["sume_layer_10","F","","sume_layer_10"]
-["sume_layer_11","F","","sume_layer_11"]
-["sume_layer_12","F","","sume_layer_12"]
-["sume_layer_13","F","","sume_layer_13"]
-["sume_layer_14","F","","sume_layer_14"]
+["MIP_Likeness","F","","MIP_Likeness"]
 EndVariables
 
 ##---------------------------------------------------

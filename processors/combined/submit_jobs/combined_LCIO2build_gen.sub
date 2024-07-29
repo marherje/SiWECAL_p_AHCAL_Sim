@@ -1,0 +1,10 @@
+# Unix submit description file                                                                                                                                                                 
+# simple Marlin job
+executable              = XcondorfileX.sh
+log                     = XcondorfileX.log
+output                  = outfile_XcondorfileX.txt
+error                   = errors_XcondorfileX.txt
+should_transfer_files   = Yes
+when_to_transfer_output = ON_EXIT
++JobFlavour             = "corto"
+queue 1

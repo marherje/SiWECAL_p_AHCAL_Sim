@@ -43,10 +43,10 @@ RM = /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E remove
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor
+CMAKE_SOURCE_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build
+CMAKE_BINARY_DIR = /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build
 
 # Utility rule file for NightlyTest.
 
@@ -71,6 +71,6 @@ CMakeFiles/NightlyTest.dir/clean:
 .PHONY : CMakeFiles/NightlyTest.dir/clean
 
 CMakeFiles/NightlyTest.dir/depend:
-	cd /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/build/CMakeFiles/NightlyTest.dir/DependInfo.cmake --color=$(COLOR)
+	cd /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/build/CMakeFiles/NightlyTest.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/NightlyTest.dir/depend
 

@@ -1,3 +1,3 @@
-/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so.0.1.0
-/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so.0.1
-/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so
+/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/lib/libAHCALLCIO2BuildProcessor.so.0.1.0
+/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/lib/libAHCALLCIO2BuildProcessor.so.0.1
+/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/lib/libAHCALLCIO2BuildProcessor.so

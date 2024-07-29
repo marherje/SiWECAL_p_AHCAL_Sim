@@ -22,6 +22,6 @@ source $ORIGIN/init_ilcsoft_v02-02-03.sh
 #export MARLIN_DLL=$PWD/lib/libConversionProcessor.so:$MARLIN_DLL
 export MARLIN_DLL=$PWD/lib/libAHCALLCIO2BuildProcessor.so:$MARLIN_DLL
 
-Marlin steering/templates/tests_JP_TB2022-06_CONF6/AHCAL_LCIO2Build_test.xml
+Marlin steering/TB2022-06_CONF6/AHCALLCIO2Build_test.xml
 
 mv *root test_outputs/.

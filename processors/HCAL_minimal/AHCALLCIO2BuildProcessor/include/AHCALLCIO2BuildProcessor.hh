@@ -1,5 +1,5 @@
-#ifndef LCIO2BuildProcessor_HH
-#define LCIO2BuildProcessor_HH 1
+#ifndef AHCALLCIO2BuildProcessor_HH
+#define AHCALLCIO2BuildProcessor_HH 1
 
 #include "marlin/Processor.h"
 #include "lcio.h"
@@ -31,7 +31,7 @@ namespace CALICE
   * @version 1.0
   */
 
-  class LCIO2BuildProcessor : public Processor {
+  class AHCALLCIO2BuildProcessor : public Processor {
 
   private:
     //processor parameters:
@@ -41,15 +41,15 @@ namespace CALICE
 
   public:
 
-    virtual Processor*  newProcessor() { return new LCIO2BuildProcessor ; }
+    virtual Processor*  newProcessor() { return new AHCALLCIO2BuildProcessor ; }
 
     /**Constructor
     */
-    LCIO2BuildProcessor() ;
+    AHCALLCIO2BuildProcessor() ;
 
     /**Destructor
     */
-    ~LCIO2BuildProcessor() {};
+    ~AHCALLCIO2BuildProcessor() {};
 
     /**Initialise
     */
@@ -91,34 +91,25 @@ namespace CALICE
     vector<std::string> _calorimInpCollections;/**<input collection name*/
     //    vector<std::string> _calorimOutCollections;/**<output collection name*/
 
-    //    std::map<std::string, int> _colDict;
-    vector<std::string> _siThicknesses;
-    vector<float> _siThicknesses_float;
-    // std::string _hitType;
-
     int _nRun ; /**<run number*/
     int _nEvt ; /**<evt number*/
     // Event
     int _nHits;
     //std::vector<float> _energy, _positionX, _positionY, _positionZ;
-    int event, spill, cycle, bcid, bcid_first_sca_full, bcid_merge_end, id_run, id_dat, nhit_slab, nhit_chip, nhit_chan, nhit_len;
+    int event, spill, cycle, bcid, bcid_first_sca_full, bcid_merge_end, id_run, id_dat, nhit_layer, nhit_chip, nhit_chan, nhit_len;
     float sum_energy, sum_energy_w, sum_energy_lg;
-    std::vector<int> hit_slab, hit_chip, hit_chan, hit_sca, hit_adc_high, hit_adc_low, hit_n_scas_filled, hit_isHit, hit_isMasked, hit_isCommissioned, hit_positron, hit_nMC;
+    std::vector<int> hit_layer, hit_chip, hit_chan, hit_sca, hit_adc_high, hit_adc_low, hit_n_scas_filled, hit_isHit, hit_isMasked, hit_isCommissioned, hit_positron, hit_nMC;
     std::vector<float> hit_energy, hit_energy_w, hit_energy_lg, hit_x, hit_y, hit_z;
     //std::vector<int> _cellID0, _cellID1, _nMCContributions, _colType;
     
-    std::vector<std::string> _FixedPosZ;
-    std::vector<std::string> _GeV2MIPFactors;
     float _GeV2MIP;
-    std::vector<std::string> _MapFilenames;
-    int _NSlabs;
-    float _FirstSlabPosZ, _SlabSpacing, _HalfCenterGap;
-    std::vector<int> _SlabMapIndices;
+    int _NLayers;
+    std::vector<std::string> _FixedPosZ;
     std::vector<float> _FixedPosZ_float;
-    std::vector<float> _GeV2MIPFactors_float ;
-    std::vector<std::vector<std::vector<float>>> _maps;
-    // std::vector<std::vector<std::vector<float>>> _maps(_MapFilenames.size(), std::vector<std::vector<float>>(1024, std::vector<float>(2)));
-    float _deltaZ;
+    float _FirstLayerPosZ, _LayerSpacing, _LayerThickness;
+
+    float _GeV2MIPFactor_float;
+
     bool _printType;
     bool _ConversionGeV2MIP;
     TFile* _rootout;
