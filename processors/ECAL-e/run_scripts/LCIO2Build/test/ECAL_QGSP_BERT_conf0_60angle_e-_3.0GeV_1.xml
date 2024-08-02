@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="LCIO2BuildConversion"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_10.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_11.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_12.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_13.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_14.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_15.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_16.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_17.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_18.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_19.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_1.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_20.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_2.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_3.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_4.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_5.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_6.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_7.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_8.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF0/lcio/ECAL_QGSP_BERT_conf0_60anglePos1_e-_3.0GeV_9.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="1000"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="LCIO2BuildConversion" type="LCIO2BuildProcessor">
+		<parameter name="Input_Collections" type="string">SiEcalCollection</parameter>
+		<parameter name="Energy_Conf_Name" type="string">/data_ilc/flc/jimenez/simulations/TB2022/CONF0/ECAL_QGSP_BERT_conf0_60angle_e-_3.0GeV_1_build.root</parameter>
+		<parameter name="WriteRootfile" type="bool">true</parameter>
+	</processor>
+</marlin>

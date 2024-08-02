@@ -23,14 +23,6 @@ using std::vector;
 
 namespace CALICE
 {
-  /**
-  * @brief Class doing the conversion between GeV and MIP + Correction of K layer (not smart!!)
-  *
-  * @autho fabricio.jm@cern.ch, based on that of
-  * eldwan.brianne@desy.de
-  * @version 1.0
-  */
-
   class AHCALLCIO2BuildProcessor : public Processor {
 
   private:
@@ -96,19 +88,17 @@ namespace CALICE
     // Event
     int _nHits;
     //std::vector<float> _energy, _positionX, _positionY, _positionZ;
-    int event, spill, cycle, bcid, bcid_first_sca_full, bcid_merge_end, id_run, id_dat, nhit_layer, nhit_chip, nhit_chan, nhit_len;
+    int event, spill, cycle, bcid, bcid_first_sca_full, bcid_merge_end, id_run, id_dat, nhit_slab, nhit_chip, nhit_chan, nhit_len;
     float sum_energy, sum_energy_w, sum_energy_lg;
-    std::vector<int> hit_layer, hit_chip, hit_chan, hit_sca, hit_adc_high, hit_adc_low, hit_n_scas_filled, hit_isHit, hit_isMasked, hit_isCommissioned, hit_positron, hit_nMC;
+    std::vector<int> hit_slab, hit_chip, hit_chan, hit_sca, hit_adc_high, hit_adc_low, hit_n_scas_filled, hit_isHit, hit_isMasked, hit_isCommissioned, hit_positron, hit_nMC;
     std::vector<float> hit_energy, hit_energy_w, hit_energy_lg, hit_x, hit_y, hit_z;
     //std::vector<int> _cellID0, _cellID1, _nMCContributions, _colType;
     
-    float _GeV2MIP;
-    int _NLayers;
+    float _GeV2MIPFactor;
+    int _NSlabs;
     std::vector<std::string> _FixedPosZ;
     std::vector<float> _FixedPosZ_float;
-    float _FirstLayerPosZ, _LayerSpacing, _LayerThickness;
-
-    float _GeV2MIPFactor_float;
+    float _FirstSlabPosZ, _SlabSpacing, _SlabThickness;
 
     bool _printType;
     bool _ConversionGeV2MIP;

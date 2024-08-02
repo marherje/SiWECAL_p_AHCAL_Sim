@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="SiWECALShaping"></processor>
+		<processor name="MyLCIOOutputProcessor"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">
+		/data_ilc/flc/jimenez/simulations/TB2022-03/CONF1/lcio/ECAL_QGSP_BERT_conf1_e-_1.0GeV_1.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="1000"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="MyLCIOOutputProcessor" type="LCIOOutputProcessor">
+		<parameter name="LCIOOutputFile" type="string">/data_ilc/flc/jimenez/simulations/TB2022-03/CONF1/lcio/ECAL_QGSP_BERT_conf1_e-_1.0GeV_1_shaped.slcio</parameter>
+		<parameter name="LCIOWriteMode" type="string">WRITE_NEW</parameter>
+	</processor>
+	<processor name="SiWECALShaping" type="ShapingProcessor">
+		<parameter name="Input_Collections" type="string">SiEcalCollection</parameter>
+		<parameter name="Output_Collections" type="string">ShapedSiEcalCollection</parameter>
+		<parameter name="ShapingProcessor_MIPThreshold" type="double">0.5</parameter>
+		<parameter name="ShapingProcessor_nbinsI" type="int">400</parameter>
+		<parameter name="ShapingProcessor_nbinsF" type="int">400</parameter>
+		<parameter name="ShapingProcessor_nbinsS" type="int">100</parameter>
+		<parameter name="ShapingProcessor_bwI" type="double">0.5</parameter>
+		<parameter name="ShapingProcessor_bwF" type="double">0.5</parameter>
+		<parameter name="ShapingProcessor_bwS" type="double">5</parameter>
+		<parameter name="ShapingProcessor_delay" type="double">160</parameter>
+		<parameter name="ShapingProcessor_useHistInput" type="bool">true</parameter>
+		<parameter name="ShapingProcessor_filterNoise" type="bool">true</parameter>
+		<parameter name="ShapingProcessor_FSNoise" type="double">0.083333</parameter>
+		<parameter name="ShapingProcessor_SSNoise" type="double">0.05</parameter>
+		<parameter name="ShapingProcessor_AuxFilename" type="string">shaped_aux.root</parameter>
+		<parameter name="MIP2GeVFactors" type="string">0.0001981 0.0001976 0.0001489 0.00015 0.0000932 0.0000934 0.0000926 0.0001487 0.0001494 0.0001495 0.0001499 0.0000934 0.0000931 0.000094 0.0000938</parameter>
+		<parameter name="FixedPosZ" type="string">6.225  21.225  36.15  51.15  66.06  81.06  96.06 111.15 126.15 141.15 156.15 171.06 186.06 201.06 216.06</parameter>
+		<parameter name="WriteRootfile" type="bool">true</parameter>
+	</processor>
+</marlin>

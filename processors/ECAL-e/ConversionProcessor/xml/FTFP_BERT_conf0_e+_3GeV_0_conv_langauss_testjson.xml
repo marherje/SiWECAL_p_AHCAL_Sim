@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="SiWECALConversion"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">/eos/project/s/siw-ecal/TB2017-06/2017_SiECAL_DESY/data_calib3/conf0/ECAL_FTFP_BERT_conf0_e+_3GeV_0.slcio</parameter>
+		<parameter name="MaxRecordNumber" value="1000"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="SiWECALConversion" type="ConversionProcessor">
+		<parameter name="Input_Collections" type="string">SiEcalCollection</parameter>
+		<parameter name="Energy_Conf_Name" type="string">../digi_output/Conversion_v03/ECAL_FTFP_BERT_conf0_e+_3GeV_0_conv_langauss_aux.root</parameter>
+		<parameter name="MIPFitMode" type="int">3</parameter>
+	</processor>
+</marlin>

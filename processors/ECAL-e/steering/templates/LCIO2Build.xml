@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="LCIO2BuildConversion"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      input.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!-- parameter name="MaxRecordNumber" value="100" /-->
+    <parameter name="MaxRecordNumber" value="1000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+  </global>
+
+
+  <processor name="LCIO2BuildConversion" type="LCIO2BuildProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <!--parameter name="Input_Collection" type="string"> ecalSD </parameter-->
+    <!-- <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>-->
+    <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <!-- <parameter name="Output_Collections" type="string"> ecalGeV2MIP </parameter> -->
+    <parameter name="OutputBuildFile" type="string"> output.root </parameter>
+    <parameter name="FixedPosZ" type="string">
+		    6.06 19.86 33.825 47.625 61.25 75.15 88.94 104.15 119.35 134.55 149.75 164.86 180.06  195.26 210.46
+		</parameter>
+		<parameter name="ConversionGeV2MIP" type="bool">true</parameter>
+		<!-- parameter name="GeV2MIP" type="string">0.000196864 0.00019701 0.000198652 0.000196795 0.000149408 0.000148325 0.000149918 0.000149788 0.000148075 0.000149355 9.38405e-05 9.23718e-05 9.36233e-05 9.40882e-05 9.38405e-05</parameter --> 
+    <parameter name="GeV2MIP" type="string">0.0006669074379261876 -0.0008376614586182808 -0.0007720117703473585 -0.0008487667192411269 0.00021830833525952954 0.00019314857992348307 0.0002092742178472347 0.00023532985490966432 0.0001744014845653197 0.000173319058379128 0.00010865495606998129 0.0001084279903702469 0.00010508206768339399 0.00010649746022816474 0.00010362283001331107</parameter>
+    <!-- parameter name="WriteRootfile" type="bool"> false </parameter-->
+    <parameter name="WriteRootfile" type="bool"> true </parameter>
+  </processor>
+</marlin>

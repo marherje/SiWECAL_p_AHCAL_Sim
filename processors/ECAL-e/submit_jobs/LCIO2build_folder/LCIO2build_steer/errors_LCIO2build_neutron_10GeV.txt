@@ -1,0 +1,9 @@
+Error in <TSystem::ExpandFileName>: input: $HOME/.root.mimes, output: $HOME/.root.mimes
+============= LCIO2Build Processor =================
+Converting Simulation Hits to build ROOT file 
+Input Collection name : SiEcalCollection 
+
+=======================================================
+mv: cannot stat 'outfile*': No such file or directory
+mv: cannot stat '*log': No such file or directory
+mv: cannot stat 'error*': No such file or directory

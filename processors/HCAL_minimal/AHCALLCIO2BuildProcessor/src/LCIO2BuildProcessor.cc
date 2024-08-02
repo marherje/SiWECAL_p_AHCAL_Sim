@@ -74,28 +74,28 @@ namespace CALICE
 
     vector<string> FixedPosZExample;
     registerProcessorParameter("FixedPosZ",
-                               "vector of z layer positions",
+                               "vector of z slabs positions",
                                _FixedPosZ,
                                FixedPosZExample);
         
-    registerProcessorParameter("NLayers",
-                               "Number of layers",
-                               _NLayers,
+    registerProcessorParameter("NSlabs",
+                               "Number of slabs",
+                               _NSlabs,
                                int(9999));
 
-    registerProcessorParameter("FirstLayerPosZ",
-                               "Position of first layer",
-                               _FirstLayerPosZ,
+    registerProcessorParameter("FirstSlabsPosZ",
+                               "Position of first slab",
+                               _FirstSlabPosZ,
                                float(9999));
 
-    registerProcessorParameter("LayerSpacing",
-                               "Separation between layer",
-                               _LayerSpacing,
+    registerProcessorParameter("SlabSpacing",
+                               "Separation between slabs",
+                               _SlabSpacing,
                                float(9999));
     
-    registerProcessorParameter("LayerThickness",
-                               "Thickness of one layer",
-                               _LayerThickness,
+    registerProcessorParameter("SlabThickness",
+                               "Scintillator thickness per slab",
+                               _SlabThickness,
                                float(9999));
 
     registerProcessorParameter("ConversionGeV2MIP",
@@ -103,9 +103,9 @@ namespace CALICE
                                _ConversionGeV2MIP,
                                false);
 
-    registerProcessorParameter("GeV2MIPFactor_float",
+    registerProcessorParameter("GeV2MIPFactor",
                                "GeV2MIP conversion",
-			       _GeV2MIPFactor_float,
+			       _GeV2MIPFactor,
                                float(9999));
             
   }
@@ -130,7 +130,7 @@ namespace CALICE
     _treeout->Branch("bcid_merge_end", &bcid_merge_end);
     _treeout->Branch("id_run", &id_run);
     _treeout->Branch("id_dat", &id_dat);
-    _treeout->Branch("nhit_layer", &nhit_layer);
+    _treeout->Branch("nhit_slab", &nhit_slab);
     _treeout->Branch("nhit_chip", &nhit_chip);
     _treeout->Branch("nhit_chan", &nhit_chan);
     _treeout->Branch("nhit_len", &nhit_len);
@@ -139,7 +139,7 @@ namespace CALICE
     _treeout->Branch("sum_energy", &sum_energy);
     _treeout->Branch("sum_energy_lg", &sum_energy_lg);
 
-    _treeout->Branch("hit_layer", &hit_layer);
+    _treeout->Branch("hit_slab", &hit_slab);
     _treeout->Branch("hit_chip", &hit_chip);
     _treeout->Branch("hit_chan", &hit_chan);
     _treeout->Branch("hit_sca", &hit_sca);
@@ -159,21 +159,22 @@ namespace CALICE
 
 
     if(_FixedPosZ.size() != 0) {
-      for (int ilayer = 0; ilayer < int(_FixedPosZ.size()); ilayer++){
-        _FixedPosZ_float.push_back(stof(_FixedPosZ[ilayer]));
+      for (int islab = 0; islab < int(_FixedPosZ.size()); islab++){
+        _FixedPosZ_float.push_back(stof(_FixedPosZ[islab]));
       }
+      if(_SlabThickness == 9999.){ streamlog_out(ERROR)<<"Missing slab thickness"<<std::endl;}
     }
     else{ 
-      if(_NLayers == 9999){ streamlog_out(ERROR)<<"Missing number of layers"<<std::endl;}
+      if(_NSlabs == 9999){ streamlog_out(ERROR)<<"Missing number of slabs"<<std::endl;}
       else {
-	if(_FirstLayerPosZ == 9999.){ streamlog_out(ERROR)<<"Missing first layer position"<<std::endl;}
+	if(_FirstSlabPosZ == 9999.){ streamlog_out(ERROR)<<"Missing first slab position"<<std::endl;}
 	else {
-	  if(_LayerSpacing == 9999.){ streamlog_out(ERROR)<<"Missing layer separation"<<std::endl;}
+	  if(_SlabSpacing == 9999.){ streamlog_out(ERROR)<<"Missing slab separation"<<std::endl;}
 	  else {
-	    if(_LayerThickness == 9999.){ streamlog_out(ERROR)<<"Missing layer thickness"<<std::endl;}
+	    if(_SlabThickness == 9999.){ streamlog_out(ERROR)<<"Missing slab thickness"<<std::endl;}
 	    else{
-	      for (int ilayer = 0; ilayer < _NLayers; ilayer++){
-		_FixedPosZ_float.push_back(_FirstLayerPosZ + _LayerSpacing*ilayer);
+	      for (int islab = 0; islab < _NSlabs; islab++){
+		_FixedPosZ_float.push_back(_FirstSlabPosZ + _SlabSpacing*islab);
 	      }
 	    }
 	  }
@@ -183,12 +184,13 @@ namespace CALICE
    
 
     if(_ConversionGeV2MIP==true){
-      if(_GeV2MIPFactor_float==9999) streamlog_out(ERROR)<< "Missing MIP info "<<std::endl;
+      if(_GeV2MIPFactor==9999) streamlog_out(ERROR)<< "Missing MIP info "<<std::endl;
     }
     
-    streamlog_out(DEBUG)<<"GeV2MIP value: "<<_GeV2MIPFactor_float<<std::endl;
+    streamlog_out(DEBUG)<<"GeV2MIP value: "<<_GeV2MIPFactor<<std::endl;
     streamlog_out(DEBUG)<<"FixedPosZ size: "<<_FixedPosZ.size()<<std::endl;
-    streamlog_out(DEBUG)<<"N Layers: "<<_NLayers<<", First layer pos Z: "<<_FirstLayerPosZ<<", Layer spacing: "<<_LayerSpacing<<std::endl;
+    streamlog_out(DEBUG)<<"N Slabs: "<<_NSlabs<<", First slab pos Z: "<<_FirstSlabPosZ<<", Slab spacing: "<<_SlabSpacing<<std::endl;
+    streamlog_out(DEBUG)<<"Detector Thickness: "<<_SlabThickness<<std::endl;
 
     _printType = true;
 
@@ -246,8 +248,8 @@ namespace CALICE
           sum_energy_lg = 0.;
           sum_energy = 0.;
 
-          vector<int> layers_hit, chans_hit, chips_hit;
-          int i_layer;
+          vector<int> slabs_hit, chans_hit, chips_hit;
+          int i_slab = 0;
           float gap_hit_x, gap_hit_y;
 
           // Hits loop
@@ -276,49 +278,30 @@ namespace CALICE
     
 	    //streamlog_out(DEBUG)<<"CellID0: "<<aHit->getCellID0()<<", CellID1: "<<aHit->getCellID1()<<endl;
 
-	    // Insertion Jesus                                                                  
-	    vector<float> hitZtolayer;
+	    vector<float> hitZtoslab;
 	    float smallestdistance=9999.;
 	    float hitZ=aHit->getPosition()[2];
-	    int NLayers=0;
-
-            if(_NLayers != 9999.) { NLayers=_NLayers; }
-            else { streamlog_out(ERROR)<<"Missing number of layers"<<std::endl; }
-
-	    for (int ilayer = 0; ilayer < NLayers; ilayer++){
-	      hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
-	      if(ilayer==0) {
-                smallestdistance=hitZtolayer.at(0);
-                i_layer=0;
-              }
-              else if(hitZtolayer.at(ilayer) == 0.) {
-                smallestdistance=hitZtolayer.at(ilayer);
-                i_layer=ilayer;
-                break;
-              }
-              else if(hitZtolayer.at(ilayer) < smallestdistance) {
-                smallestdistance=hitZtolayer.at(ilayer);
-                i_layer=ilayer;
+	    
+	    if( _FixedPosZ_float.size() == 0) streamlog_out(ERROR)<<"missing layer info"<<endl;
+	    
+	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+	      hitZtoslab.push_back(abs(_FixedPosZ_float[islab]-hitZ));
+	    }
+	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+	      streamlog_out(DEBUG)<<"layer "<<islab<<" distance: "<<hitZtoslab.at(islab)<<endl;
+              if(hitZtoslab.at(islab) < _SlabThickness) {
+		i_slab = islab;
+		hit_slab.push_back(i_slab);
+		break;
               }
             }
-            streamlog_out(DEBUG)<<"Closest layer: "<<i_layer<<". Distance: "<<hitZtolayer.at(i_layer)<<endl;
+	   
+            streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtoslab.at(i_slab)<<endl;
 	    
-	    for (int ilayer = 0; ilayer < NLayers; ilayer++){
-	      float thislayerpos = _FirstLayerPosZ + ilayer*_LayerSpacing;
-	      if ( (thislayerpos > (aHit->getPosition()[2] - _LayerThickness) ) &&
-		(thislayerpos < (aHit->getPosition()[2] + _LayerThickness) ) ) {
-		hit_layer.push_back(ilayer);
-	      }
-	      else if (thislayerpos == aHit->getPosition()[2]) {
-		hit_layer.push_back(ilayer);
-	      }
-	    }
-	    
-	    // End insertion Jesus             
 
 	    if (_ConversionGeV2MIP) {
-              hit_energy.push_back(aHit->getEnergy() / _GeV2MIPFactor_float);
-	      sum_energy += aHit->getEnergy() / _GeV2MIPFactor_float;
+              hit_energy.push_back(aHit->getEnergy() / _GeV2MIPFactor);
+	      sum_energy += aHit->getEnergy() / _GeV2MIPFactor;
             }
             else {
               hit_energy.push_back(aHit->getEnergy());
@@ -336,7 +319,7 @@ namespace CALICE
 
   _treeout->Fill();
   // Clear vectors
-  hit_layer.clear();
+  hit_slab.clear();
   hit_chip.clear();
   hit_chan.clear();
   hit_sca.clear();

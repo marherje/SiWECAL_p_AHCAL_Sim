@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="LCIO2BuildConversion"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_1.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_2.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_3.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_4.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_5.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_6.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_7.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_8.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_9.slcio
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/generation/run_scripts/ECAL-e_test/data/TB2022-06_QGSP_BERT_TB2022-06_pi-_10GeV_10.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!-- parameter name="MaxRecordNumber" value="100" /-->
+    <parameter name="MaxRecordNumber" value="10000000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> MESSAGE </parameter>
+  </global>
+
+
+  <processor name="LCIO2BuildConversion" type="LCIO2BuildProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <!--parameter name="Input_Collection" type="string"> ecalSD </parameter-->
+    <!-- <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>-->
+    <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <!-- <parameter name="Output_Collections" type="string"> ecalGeV2MIP </parameter> -->
+    <parameter name="OutputBuildFile" type="string"> output_LCIO2Build_TB2022-06_pi-_10GeV.root </parameter>
+    <parameter name="MappingFiles" type="string">
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt
+      /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt
+    </parameter>
+    <parameter name="FixedPosZ" type="string">
+      -444.205 -429.205 -414.205 -399.205 -384.28 -369.28 -354.28 -339.28 -324.28 -309.28 -294.37 -279.37 -264.37 -249.37 -234.37
+    </parameter>
+    <!-- 6.06 19.86 33.825 47.625 61.25 75.15 88.94 104.15 119.35 134.55 149.75 164.86 180.06 195.26 210.46 -->
+      <!--  -4.330e+02 -4.179e+02 -4.030e+02 -3.880e+02 -3.730e+02 -3.580e+02 -3.430e+02 -3.280e+02 -3.130e+02 -2.980e+02 -2.830e+02 -2.681e+02 -2.532e+02 -2.381e+02 -2.231e+02-->
+   <parameter name="ConversionGeV2MIP" type="bool">true</parameter>
+    <parameter name="GeV2MIPFactors" type="string">
+      0.000193906 0.000194439 0.000194733 0.000194526 0.000147284 0.000147944 0.000148182 0.000148122 0.00014839 0.000149147 9.25512e-05 9.21431e-05 9.26852e-05 9.30067e-05 9.22774e-05
+    </parameter>
+    <parameter name="SiThicknesses" type="string"> 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320 </parameter>
+    <!-- parameter name="WriteRootfile" type="bool"> false </parameter-->
+    <parameter name="WriteRootfile" type="bool"> true </parameter>
+  </processor>
+</marlin>

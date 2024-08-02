@@ -18,9 +18,9 @@ template_sh=combined_LCIO2build_gen.sh
 template_sub=combined_LCIO2build_gen.sub
 
 
-for particle in e- #neutron nu_e #neutron kaon- e- pi- mu-
+for particle in e- neutron kaon- pi- mu-
 do
-  for energy in 6 #100 125 150 175 200 #2 4 6 8 10 20 30 40 50 60 70 80 90 100 125 150 175 200
+  for energy in 6 60 100 #100 125 150 175 200 #2 4 6 8 10 20 30 40 50 60 70 80 90 100 125 150 175 200
   do
       filename="combined_LCIO2build_"$particle"_"$energy"GeV"
       cp $template_steer combined_LCIO2build_folder/combined_LCIO2build_steer/$filename".xml"

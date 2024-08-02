@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="LCIO2BuildConversion"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">/data_ilc/flc/jimenez/simulations/TB2022/CONF0/lcio/ECAL_QGSP_BERT_conf0_e-_3.0GeV_1.slcio</parameter>
+		<parameter name="MaxRecordNumber" value="100"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="LCIO2BuildConversion" type="LCIO2BuildProcessor">
+		<parameter name="Input_Collections" type="string">SiEcalCollection</parameter>
+		<parameter name="Energy_Conf_Name" type="string">/data_ilc/flc/jimenez/simulations/TB2022/CONF0/build/ECAL_QGSP_BERT_conf0_e-_3.0GeV_1.root</parameter>
+		<parameter name="WriteRootfile" type="bool">true</parameter>
+	</processor>
+</marlin>
