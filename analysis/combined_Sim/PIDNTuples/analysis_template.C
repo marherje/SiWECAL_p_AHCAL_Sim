@@ -359,14 +359,15 @@ float MIP_Likeness_total(float nhits_e_layer[N_ECAL_LAYERS], float nhits_h_layer
 }
 
 void hcal_ecal_ratio(float &nhit_ratio, float &sume_ratio, float &weight_ratio, int nhit_e, float sume_e, float weight_e, int nhit_h, float sume_h, float weight_h) {
-  if(nhit_e>0) nhit_ratio = nhit_h/nhit_e;
-  if(sume_e>0) sume_ratio = sume_h/sume_e;
-  if(weight_e>0) weight_ratio = weight_h/weight_e;
+  //I'll sum 1 hit in each detector to escape problems with 0, simple.
+  nhit_ratio = (nhit_h+1)/(nhit_e+1);
+  sume_ratio = (sume_h+1)/(sume_e+1);
+  weight_ratio = (weight_h+1)/(weight_e+1);
   
   // Cut down
-  if(nhit_ratio>100.) nhit_ratio = 100.;
-  if(sume_ratio>100.) sume_ratio = 100.;
-  if(weight_ratio>100.) weight_ratio = 100.;
+  //if(nhit_ratio>100.) nhit_ratio = 100.;
+  //if(sume_ratio>100.) sume_ratio = 100.;
+  //if(weight_ratio>100.) weight_ratio = 100.;
 
   return 0;
 }

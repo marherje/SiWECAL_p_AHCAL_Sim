@@ -347,10 +347,7 @@ class QueHelper:
 
         '#requirements = (OpSysAndVer == "SL6")',
         'requirements = (OpSysAndVer == "CentOS7")',
-
-        '#RequestMemory  =  2000',
-        '#+RequestRuntime = tomorrow',
-        '+JobFlavour = largo',
+        '+JobFlavour = "normal"',
         'queue',
       ]
 

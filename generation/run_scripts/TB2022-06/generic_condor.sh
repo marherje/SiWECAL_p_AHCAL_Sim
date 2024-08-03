@@ -41,7 +41,7 @@ cat > ${local}/macros/$macfile <<EOF
 /gps/pos/centre -0. -0. -10000. mm
 /gps/pos/sigma_x 23.5 mm
 /gps/pos/sigma_y 29.7 mm
-/gps/ang/rot1 0 0 1
+/gps/ang/rot1 1 0 0
 /gps/ang/rot2 0 1 0
 
 /gps/ene/type Mono

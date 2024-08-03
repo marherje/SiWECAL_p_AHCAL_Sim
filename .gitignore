@@ -90,10 +90,10 @@ analysis/ECAL_Sim/ShowerStudy/test_folder/
 analysis/ECAL_Sim/ShowerStudy/plots*/
 
 # ML outputs
-analysis/ECAL_Sim/ML4PID/PSOforECALPID/output
-analysis/ECAL_Sim/ML4PID/PSOforECALPID/logs
-analysis/ECAL_Sim/ML4PID/PSOforECALPID/SAVELOGS
+analysis/ML4PID/PSOforECALPID/output
+analysis/ML4PID/PSOforECALPID/logs
+analysis/ML4PID/PSOforECALPID/SAVELOGS
 
-analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/output
-analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/logs
-analysis/ECAL_Sim/ML4PID/PSOforECALPID_4cat/SAVELOGS
+analysis/ML4PID/PSOforECALPID_4cat/output
+analysis/ML4PID/PSOforECALPID_4cat/logs
+analysis/ML4PID/PSOforECALPID_4cat/SAVELOGS
