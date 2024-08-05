@@ -16,28 +16,19 @@
 
   <global>
     <parameter name="LCIOInputFiles">
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_1.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_2.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_3.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_4.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_5.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_6.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_7.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_8.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_9.slcio
-      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_XPARTICLEX_XENERGYXGeV_10.slcio
+      /lustre/ific.uv.es/prj/gl/abehep.flc/SiWECAL/SiWECAL_p_AHCAL_Sim/TB2022-06_QGSP_BERT_TB2022-06_e-_6GeV_1.slcio
     </parameter>
     <!-- limit the number of processed records (run+evt): -->
     <!-- parameter name="MaxRecordNumber" value="100" /-->
     <parameter name="MaxRecordNumber" value="100" />
     <parameter name="SkipNEvents" value="0" />
     <parameter name="SupressCheck" value="false" />
-    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> ERROR </parameter>
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
   </global>
 
 
   <processor name="AHCALLCIO2BuildConversion" type="AHCALLCIO2BuildProcessor">
-    <parameter name="OutputBuildFile" type="string"> output_AHCALLCIO2Build_TB2022-06_XPARTICLEX_XENERGYXGeV.root </parameter>
+    <parameter name="OutputBuildFile" type="string"> output_AHCALLCIO2Build_TB2022-06_e-_6GeV.root </parameter>
     <parameter name="Input_Collections" type="string"> PreShowerCollection HCALCollection </parameter> 
     <parameter name="FixedPosZ" type="string"> 5.8 38.7 64.9 91.1 117.3 143.5 169.7 195.9 222.1 248.3 274.5 300.7 326.9 353.1 379.3 405.5 431.7 457.9 484.1 510.3 536.5 562.7 588.9 615.1 641.3 667.5 693.7 719.9 746.1 772.3 798.5 824.7 850.9 877.1 903.3 929.5 955.7 981.9 1008.1 1060.5 1112.9 </parameter>
     <parameter name="SlabThickness" type="float"> 3 </parameter>

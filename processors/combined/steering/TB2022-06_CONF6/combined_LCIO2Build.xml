@@ -70,6 +70,7 @@
     <parameter name="SlabThickness" type="float"> 3 </parameter>
     <parameter name="ConversionGeV2MIP" type="bool">true</parameter>
     <parameter name="GeV2MIPFactor" type="float"> 0.000488 </parameter>
+    <parameter name="MIPThreshold" type="float"> 0.5  </parameter>
     <parameter name="WriteRootfile" type="bool"> true </parameter>
   </processor>
 
