@@ -89,12 +89,13 @@ namespace CALICE
     int _nHits;
     //std::vector<float> _energy, _positionX, _positionY, _positionZ;
     int event, spill, cycle, bcid, bcid_first_sca_full, bcid_merge_end, id_run, id_dat, nhit_slab, nhit_chip, nhit_chan, nhit_len;
-    float sum_energy, sum_energy_w, sum_energy_lg;
+    float sum_energy, sum_energy_w, sum_energy_og;
     std::vector<int> hit_slab, hit_chip, hit_chan, hit_sca, hit_adc_high, hit_adc_low, hit_n_scas_filled, hit_isHit, hit_isMasked, hit_isCommissioned, hit_positron, hit_nMC;
-    std::vector<float> hit_energy, hit_energy_w, hit_energy_lg, hit_x, hit_y, hit_z;
+    std::vector<float> hit_energy, hit_energy_w, hit_energy_og, hit_x, hit_y, hit_z;
     //std::vector<int> _cellID0, _cellID1, _nMCContributions, _colType;
     
     float _GeV2MIPFactor;
+    float _MIPThreshold;
     int _NSlabs;
     std::vector<std::string> _FixedPosZ;
     std::vector<float> _FixedPosZ_float;

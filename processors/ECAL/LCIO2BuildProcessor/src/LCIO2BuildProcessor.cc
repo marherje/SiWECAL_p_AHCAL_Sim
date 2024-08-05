@@ -111,6 +111,11 @@ namespace CALICE
                                _ConversionGeV2MIP,
                                false);
     
+    registerProcessorParameter("MIPThreshold",
+                               "Minimum energy (in MIPs) to count a hit",
+                               _MIPThreshold,
+                               float(0.));
+
     // vector<string> MapFilenamesExample = {"/home/llr/ilc/jimenez/Projects/Simulations/SiWECAL-Sim/processors/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt", "/home/llr/ilc/jimenez/Projects/Simulations/SiWECAL-Sim/processors/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt"};
     vector<string> MapFilenamesExample = {"", ""}; 
       //{"/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev10_chip_channel_x_y_mapping.txt", "/nfs/dust/ilc/user/marquezh/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/mapping/fev11_cob_rotate_chip_channel_x_y_mapping.txt"};
@@ -167,7 +172,7 @@ namespace CALICE
 
     // _treeout->Branch("sum_hg", &sum_hg);
     _treeout->Branch("sum_energy", &sum_energy);
-    _treeout->Branch("sum_energy_lg", &sum_energy_lg);
+    _treeout->Branch("sum_energy_og", &sum_energy_og);
 
     _treeout->Branch("hit_slab", &hit_slab);
     _treeout->Branch("hit_chip", &hit_chip);
@@ -182,7 +187,7 @@ namespace CALICE
 
     _treeout->Branch("hit_energy", &hit_energy);
     _treeout->Branch("hit_energy_w", &hit_energy_w);
-    _treeout->Branch("hit_energy_lg", &hit_energy_lg);
+    _treeout->Branch("hit_energy_og", &hit_energy_og);
     _treeout->Branch("hit_x", &hit_x);
     _treeout->Branch("hit_y", &hit_y);
     _treeout->Branch("hit_z", &hit_z);
@@ -242,7 +247,9 @@ namespace CALICE
       }
     }
     
+    streamlog_out(DEBUG)<<"PARAMETER READING"<<std::endl;
     streamlog_out(DEBUG)<<"GeV2MIP size: "<<_GeV2MIPFactors.size()<<", GeV2MIP: "<<_GeV2MIP<<std::endl;
+    streamlog_out(DEBUG)<<"Threshold energy (MIPS): "<<_MIPThreshold<<std::endl;
     streamlog_out(DEBUG)<<"FixedPosZ size: "<<_FixedPosZ.size()<<std::endl;
     streamlog_out(DEBUG)<<"siThicknesses size: "<<_siThicknesses.size()<<std::endl;
     streamlog_out(DEBUG)<<"N Slabs: "<<_NSlabs<<", First slab pos Z: "<<_FirstSlabPosZ<<", Slab spacing: "<<_SlabSpacing<<std::endl;
@@ -317,6 +324,7 @@ namespace CALICE
     const std::vector<std::string> *cnames = evt->getCollectionNames();
     
     std::vector<float> this_energyCont;
+
     // int this_nMC;
     for(unsigned int icol = 0; icol < _calorimInpCollections.size(); icol++)
     {
@@ -348,7 +356,7 @@ namespace CALICE
           id_dat = -1;
           nhit_len = noHits;
 
-          sum_energy_lg = 0.;
+          sum_energy_og = 0.;
           sum_energy = 0.;
 
           vector<int> slabs_hit, chans_hit, chips_hit;
@@ -373,24 +381,19 @@ namespace CALICE
             hit_isHit.push_back(1);
             hit_isMasked.push_back(0);
             hit_isCommissioned.push_back(1);
-
-            hit_energy_lg.push_back(aHit->getEnergy());
-            hit_x.push_back(aHit->getPosition()[0]);
-            hit_y.push_back(aHit->getPosition()[1]);
-            hit_z.push_back(aHit->getPosition()[2]);
-    
+                
 	    //streamlog_out(DEBUG)<<"CellID0: "<<aHit->getCellID0()<<", CellID1: "<<aHit->getCellID1()<<endl;
 
 	    // Insertion Jesus                                                                  
 	    vector<float> hitZtolayer;
 	    float smallestdistance=9999.;
 	    float hitZ=aHit->getPosition()[2];
-	    int NLayers=0;
+	    
 
-	    if(_FixedPosZ.size() == 0) streamlog_out(ERROR)<<"Missing number slab info"<<std::endl;
+	    if(_FixedPosZ.size() == 0) streamlog_out(ERROR)<<"Missing slabs info"<<std::endl;
 
-            for (int ilayer = 0; ilayer < NLayers; ilayer++){
-              hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
+            for (int ilayer = 0; _FixedPosZ_float.size(); ilayer++){
+	      hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
               //streamlog_out(DEBUG)<<"Layer comparing: "<<ilayer<<", Distance: "<<hitZtolayer.at(ilayer)<<endl;
               if(ilayer==0) {
                 smallestdistance=hitZtolayer.at(0);
@@ -408,7 +411,7 @@ namespace CALICE
             }
             streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtolayer.at(i_slab)<<endl;
 
-	    for (int ilayer = 0; ilayer < NLayers; ilayer++){
+	    for (int ilayer = 0; ilayer < _FixedPosZ_float.size(); ilayer++){
 	      if ( (_FixedPosZ_float[ilayer] > (aHit->getPosition()[2] - _siThicknesses_float.at(ilayer)) ) &&
 		(_FixedPosZ_float[ilayer] < (aHit->getPosition()[2] + _siThicknesses_float.at(ilayer)) ) ) {
 		hit_slab.push_back(ilayer);
@@ -421,12 +424,26 @@ namespace CALICE
 	    // End insertion Jesus             
 
 	    if (_ConversionGeV2MIP) {
-              hit_energy.push_back(aHit->getEnergy() / _GeV2MIPFactors_float[i_slab]);
-              sum_energy += aHit->getEnergy() / _GeV2MIPFactors_float[i_slab];
-            }
-            else {
-              hit_energy.push_back(aHit->getEnergy());
-              sum_energy += aHit->getEnergy();
+	      float thisenergy = aHit->getEnergy() / _GeV2MIPFactors_float[i_slab];
+	      hit_energy_og.push_back(thisenergy);
+	      sum_energy_og += thisenergy;
+	      if(thisenergy > _MIPThreshold){
+		hit_energy.push_back(thisenergy);
+		sum_energy += thisenergy;
+		hit_x.push_back(aHit->getPosition()[0]);
+		hit_y.push_back(aHit->getPosition()[1]);
+		hit_z.push_back(aHit->getPosition()[2]);
+	      }	      
+	    }
+	    else {
+	      float thisenergy = aHit->getEnergy();
+	      hit_energy_og.push_back(thisenergy);
+              hit_energy.push_back(thisenergy);
+              sum_energy += thisenergy;
+	      sum_energy_og += thisenergy;
+	      hit_x.push_back(aHit->getPosition()[0]);
+	      hit_y.push_back(aHit->getPosition()[1]);
+	      hit_z.push_back(aHit->getPosition()[2]);
             }
 
             // hit_chip hit_chan
@@ -441,8 +458,7 @@ namespace CALICE
               if (in_x < 0.1 && in_y < 0.1) {
                 hit_chip.push_back(icell/64);
                 hit_chan.push_back(icell%64);
-              }
-              
+              }    
             }
 
             // ** Note ** //
@@ -460,11 +476,9 @@ namespace CALICE
 	    // I fixed most of this issue with the insertion above
 	    // Also added debugging tools to know what is going wrong in case the slabs positions is not correct
 	    // or if MIP values or Si Thicknesses values are missing
-
-          }//end loop over SimCalorimeterHits
-
-          sum_energy_lg = sum_energy;
-          
+	
+	}//end loop over SimCalorimeterHits
+     
           vector<int>::iterator it1;
           // nhit_slab
           slabs_hit = hit_slab;
@@ -491,39 +505,38 @@ namespace CALICE
           chips_hit.resize(distance(chips_hit.begin(), it3));
           nhit_chip = chips_hit.size();
 	  streamlog_out(DEBUG)<<"chips_hit.size(): "<<chips_hit.size()<<endl;
-
+	
         }//end if col
       }//end if find col names
 
           
     }//end for loop
 
-  _treeout->Fill();
-  // Clear vectors
-  hit_slab.clear();
-  hit_chip.clear();
-  hit_chan.clear();
-  hit_sca.clear();
-  hit_adc_high.clear();
-  hit_adc_low.clear();
-  hit_n_scas_filled.clear();
-  hit_isHit.clear();
-  hit_isMasked.clear();
-  hit_isCommissioned.clear();
-
-  hit_energy.clear();
-  hit_energy_lg.clear();
-  hit_x.clear();
-  hit_y.clear();
-  hit_z.clear();
-  //-- note: this will not be printed if compiled w/o MARLINDEBUG=1 !
-
-  streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber()
-  << "   in run:  " << evt->getRunNumber() << std::endl ;
-
-
-  _nEvt ++ ;
-
+    streamlog_out(DEBUG) << "   processing event: " << evt->getEventNumber()
+                         << "   in run:  " << evt->getRunNumber() << std::endl ;
+    if(_ConversionGeV2MIP) streamlog_out(DEBUG) <<"(Inthis event) Total hits: "<<hit_energy_og.size()<<". Hits over threshold: "<<hit_energy.size()<<std::endl;
+    
+    _treeout->Fill();
+    // Clear vectors
+    hit_slab.clear();
+    hit_chip.clear();
+    hit_chan.clear();
+    hit_sca.clear();
+    hit_adc_high.clear();
+    hit_adc_low.clear();
+    hit_n_scas_filled.clear();
+    hit_isHit.clear();
+    hit_isMasked.clear();
+    hit_isCommissioned.clear();
+    
+    hit_energy.clear();
+    hit_energy_og.clear();
+    hit_x.clear();
+    hit_y.clear();
+    hit_z.clear();
+    
+    _nEvt ++ ;
+    
   }
 
   /************************************************************************************/

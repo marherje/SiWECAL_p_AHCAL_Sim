@@ -1,0 +1,57 @@
+{
+    "marlin": {
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "@xsi:noNamespaceSchemaLocation": "http://ilcsoft.desy.de/marlin/marlin.xsd",
+        "execute": {
+            "processor": {
+                "@name": "SiWECALConversion"
+            }
+        },
+        "global": {
+            "parameter": [
+                {
+                    "@name": "LCIOInputFiles",
+                    "#text": "/eos/project/s/siw-ecal/TB2017-06/2017_SiECAL_DESY/data_calib3/conf0/ECAL_FTFP_BERT_conf0_e+_3GeV_0.slcio"
+                },
+                {
+                    "@name": "MaxRecordNumber",
+                    "@value": "1000"
+                },
+                {
+                    "@name": "SkipNEvents",
+                    "@value": "0"
+                },
+                {
+                    "@name": "SupressCheck",
+                    "@value": "false"
+                },
+                {
+                    "@name": "Verbosity",
+                    "@options": "DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT",
+                    "#text": "DEBUG"
+                }
+            ]
+        },
+        "processor": {
+            "@name": "SiWECALConversion",
+            "@type": "ConversionProcessor",
+            "parameter": [
+                {
+                    "@name": "Input_Collections",
+                    "@type": "string",
+                    "#text": "SiEcalCollection"
+                },
+                {
+                    "@name": "Energy_Conf_Name",
+                    "@type": "string",
+                    "#text": "../digi_output/Conversion_v03/ECAL_FTFP_BERT_conf0_e+_3GeV_0_conv_langauss_aux.root"
+                },
+                {
+                    "@name": "MIPFitMode",
+                    "@type": "int",
+                    "#text": "3"
+                }
+            ]
+        }
+    }
+}

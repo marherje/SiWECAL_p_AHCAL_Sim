@@ -557,32 +557,32 @@ NightlyTest/fast:
 	$(MAKE) -f CMakeFiles/NightlyTest.dir/build.make CMakeFiles/NightlyTest.dir/build
 .PHONY : NightlyTest/fast
 
-src/LCIO2BuildProcessor.o: src/LCIO2BuildProcessor.cc.o
+src/AHCALLCIO2BuildProcessor.o: src/AHCALLCIO2BuildProcessor.cc.o
 
-.PHONY : src/LCIO2BuildProcessor.o
+.PHONY : src/AHCALLCIO2BuildProcessor.o
 
 # target to build an object file
-src/LCIO2BuildProcessor.cc.o:
-	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.o
-.PHONY : src/LCIO2BuildProcessor.cc.o
+src/AHCALLCIO2BuildProcessor.cc.o:
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/AHCALLCIO2BuildProcessor.cc.o
+.PHONY : src/AHCALLCIO2BuildProcessor.cc.o
 
-src/LCIO2BuildProcessor.i: src/LCIO2BuildProcessor.cc.i
+src/AHCALLCIO2BuildProcessor.i: src/AHCALLCIO2BuildProcessor.cc.i
 
-.PHONY : src/LCIO2BuildProcessor.i
+.PHONY : src/AHCALLCIO2BuildProcessor.i
 
 # target to preprocess a source file
-src/LCIO2BuildProcessor.cc.i:
-	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.i
-.PHONY : src/LCIO2BuildProcessor.cc.i
+src/AHCALLCIO2BuildProcessor.cc.i:
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/AHCALLCIO2BuildProcessor.cc.i
+.PHONY : src/AHCALLCIO2BuildProcessor.cc.i
 
-src/LCIO2BuildProcessor.s: src/LCIO2BuildProcessor.cc.s
+src/AHCALLCIO2BuildProcessor.s: src/AHCALLCIO2BuildProcessor.cc.s
 
-.PHONY : src/LCIO2BuildProcessor.s
+.PHONY : src/AHCALLCIO2BuildProcessor.s
 
 # target to generate assembly for a file
-src/LCIO2BuildProcessor.cc.s:
-	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.s
-.PHONY : src/LCIO2BuildProcessor.cc.s
+src/AHCALLCIO2BuildProcessor.cc.s:
+	$(MAKE) -f CMakeFiles/AHCALLCIO2BuildProcessor.dir/build.make CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/AHCALLCIO2BuildProcessor.cc.s
+.PHONY : src/AHCALLCIO2BuildProcessor.cc.s
 
 # Help Target
 help:
@@ -627,9 +627,9 @@ help:
 	@echo "... test"
 	@echo "... NightlyTest"
 	@echo "... rebuild_cache"
-	@echo "... src/LCIO2BuildProcessor.o"
-	@echo "... src/LCIO2BuildProcessor.i"
-	@echo "... src/LCIO2BuildProcessor.s"
+	@echo "... src/AHCALLCIO2BuildProcessor.o"
+	@echo "... src/AHCALLCIO2BuildProcessor.i"
+	@echo "... src/AHCALLCIO2BuildProcessor.s"
 .PHONY : help
 
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+	<execute>
+		<processor name="LCIO2BuildConversion"></processor>
+	</execute>
+	<global>
+		<parameter name="LCIOInputFiles">
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_10.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_11.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_12.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_13.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_14.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_15.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_16.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_17.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_18.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_19.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_1.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_20.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_2.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_3.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_4.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_5.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_6.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_7.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_8.slcio
+		/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/lcio/ECAL_QGSP_BERT_conf2_e-_300GeV_9.slcio
+		</parameter>
+		<parameter name="MaxRecordNumber" value="2000"></parameter>
+		<parameter name="SkipNEvents" value="0"></parameter>
+		<parameter name="SupressCheck" value="false"></parameter>
+		<parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT">DEBUG</parameter>
+	</global>
+	<processor name="LCIO2BuildConversion" type="LCIO2BuildProcessor">
+		<parameter name="Input_Collections" type="string">SiEcalCollection</parameter>
+		<parameter name="Energy_Conf_Name" type="string">/data_ilc/flc/jimenez/simulations/TB2022-06/CONF2/build/ECAL_QGSP_BERT_conf2_e-_300GeV_2kevt_build.root</parameter>
+		<parameter name="WriteRootfile" type="bool">true</parameter>
+	</processor>
+	<parameter name="FixedPosZ" type="string">
+		    6.06 19.86 33.825 47.625 61.25 75.15 88.94 104.15 119.35 134.55 149.75 164.86 180.06  195.26 210.46
+		</parameter>
+		<parameter name="ConversionGeV2MIP" type="bool">true</parameter>
+		<parameter name="GeV2MIP" type="string">
+		    9.2155e-05     9.25726e-05   0.000197515  0.000197983 9.28397e-05    0.000148522  0.000149022 0.000149102 0.000149146    0.000149257   0.000149629  9.37966e-05 9.35164e-05    9.36113e-05   9.3631e-05	
+		</parameter>
+</marlin>

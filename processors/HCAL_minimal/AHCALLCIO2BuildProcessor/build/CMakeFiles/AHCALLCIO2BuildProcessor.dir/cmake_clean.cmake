@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/LCIO2BuildProcessor.cc.o"
+  "CMakeFiles/AHCALLCIO2BuildProcessor.dir/src/AHCALLCIO2BuildProcessor.cc.o"
   "lib/libAHCALLCIO2BuildProcessor.pdb"
   "lib/libAHCALLCIO2BuildProcessor.so"
   "lib/libAHCALLCIO2BuildProcessor.so.0.1"

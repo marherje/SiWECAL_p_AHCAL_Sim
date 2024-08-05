@@ -117,6 +117,7 @@ output                  = outfile_$condorfile.txt
 error                   = errors_$condorfile.txt
 should_transfer_files   = Yes
 when_to_transfer_output = ON_EXIT
++JobFlavour             = "largo"
 queue 1
 EOF
 

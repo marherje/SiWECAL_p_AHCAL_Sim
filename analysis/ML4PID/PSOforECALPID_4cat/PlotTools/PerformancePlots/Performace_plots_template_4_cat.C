@@ -535,7 +535,7 @@ void drawVariablesLegend(vector<TString> varnames) {
 
 void drawCorrelation(TString particle, vector<TString> varnames, TH2F * hA, bool save=false) {
 
-  auto c_A = new TCanvas("c_Xproduction_X_Correlation_"+particle,"c_Xproduction_X_Correlation_"+particle,800,800);
+  auto c_A = new TCanvas("c_XproductionX_Correlation_"+particle,"c_XproductionX_Correlation_"+particle,800,800);
   c_A->cd();
   hA->SetTitle("|Variable correlation| ("+particle+")");
   hA->GetXaxis()->LabelsOption("h");

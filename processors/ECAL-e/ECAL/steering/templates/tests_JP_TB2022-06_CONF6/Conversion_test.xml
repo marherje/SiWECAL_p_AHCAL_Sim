@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="SiWECALConversion"/>
+  </execute>
+
+  <global>
+    <parameter name="LCIOInputFiles">
+      ../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_100GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_10GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_150GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_200GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_20GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_40GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_60GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_80GeV_9.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_10.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_1.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_2.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_3.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_4.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_5.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_6.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_7.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_8.slcio
+../../generation/run_scripts/TB2022-06/data/TB2022-06_QGSP_BERT_TB2022-06_mu-_90GeV_9.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <!--parameter name="MaxRecordNumber" value="20000" /-->
+    <parameter name="MaxRecordNumber" value="5000" />
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+  </global>
+
+
+<processor name="SiWECALConversion" type="ConversionProcessor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>
+    <parameter name="NSlabs" type="int"> 15 </parameter>
+    <parameter name="ConvAuxFile" type="string"> output_conv_TB2022-06_conf6_all.root </parameter>
+    <!-- MIP fit mode: 1 (Gaus), 2 (Landau), 3 (LanGaus) -->
+    <parameter name="MIPFitMode" type="int"> 3 </parameter>
+  </processor>
+
+</marlin>

@@ -1,0 +1,3 @@
+/lhome/ific/m/marherje/Simplified_ECAL_PID/processors/ECAL/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so.0.1.0
+/lhome/ific/m/marherje/Simplified_ECAL_PID/processors/ECAL/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so.0.1
+/lhome/ific/m/marherje/Simplified_ECAL_PID/processors/ECAL/LCIO2BuildProcessor/lib/libLCIO2BuildProcessor.so

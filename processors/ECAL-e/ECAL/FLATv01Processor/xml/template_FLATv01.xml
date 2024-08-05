@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<!-- ?xml-stylesheet type="text/xsl" href="http://ilcsoft.desy.de/marlin/marlin.xsl"? -->
+<!-- ?xml-stylesheet type="text/xsl" href="marlin.xsl"? -->
+
+<!--##########################################
+#                                        #
+#     Example steering file for marlin   #
+#                                        #
+##########################################-->
+
+
+<marlin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ilcsoft.desy.de/marlin/marlin.xsd">
+  <execute>
+    <processor name="ProgressHandler"/>
+    <processor name="FLATv01Conversion"/>
+  </execute>
+
+  <global>
+    <!-- /eos/project-s/siw-ecal/ildtestsamples/rec_Pqqh_bb_eL_pR_2020/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I402218.Pqqh_bb.eR.pL.n000_037.d_rec_00015203_894.slcio -->
+    <parameter name="LCIOInputFiles">
+      /data_ilc/flc/kunath/shared/rv02-02.sv02-02.mILD_l5_o1_v02.E250-SetA.I402209.Pqqh_bb.eL.pR.n000_024.d_rec_00015215_42.slcio
+    </parameter>
+    <!-- limit the number of processed records (run+evt): -->
+    <parameter name="MaxRecordNumber" value="100" />
+    <!--parameter name="MaxRecordNumber" value="2000" /-->
+    <parameter name="SkipNEvents" value="0" />
+    <parameter name="SupressCheck" value="false" />
+    <parameter name="Verbosity" options="DEBUG0-4,MESSAGE0-4,WARNING0-4,ERROR0-4,SILENT"> DEBUG </parameter>
+  </global>
+
+
+  <processor name="FLATv01Conversion" type="FLATv01Processor">
+    <!-- Name of SimCalorimeterHit input collections -->
+    <!--parameter name="Input_Collection" type="string"> ecalSD </parameter-->
+    <!-- <parameter name="Input_Collections" type="string"> SiEcalCollection </parameter>-->
+    <parameter name="Input_Collections" type="string"> ECalBarrelSiHitsEven ECalBarrelSiHitsOdd ECalEndcapSiHitsEven ECalEndcapSiHitsOdd HcalBarrelRegCollection HcalEndcapRingCollection HcalEndcapsCollection  </parameter>
+    <!-- Name of the Sim Calorimeter Hit output collection converted to MIP -->
+    <!-- <parameter name="Output_Collections" type="string"> ecalGeV2MIP </parameter> -->
+    <parameter name="Energy_Conf_Name" type="string"> flat_example_newsample.root </parameter>
+    <!-- parameter name="WriteRootfile" type="bool"> false </parameter-->
+    <parameter name="WriteRootfile" type="bool"> true </parameter>
+    <!-- Map for changing K from Simulation to K in database (example in Sim K = 31 -> K = 14) -->
+  </processor>
+  <processor name="ProgressHandler" type="ProgressHandler">
+    <!--Report event/run numbers at fixed time intervals, and handle SIGINT (Ctrl-C) for a graceful exit.-->
+    <!--The number of seconds after which the number of processed events will be shown.-->
+    <parameter name="ReportInterval" type="int" value="20"/>
+  </processor>
+</marlin>

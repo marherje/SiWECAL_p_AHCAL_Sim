@@ -1502,7 +1502,7 @@ unistd.h
 sys/types.h
 -
 
-/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/src/LCIO2BuildProcessor.cc
+/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/src/AHCALLCIO2BuildProcessor.cc
 AHCALLCIO2BuildProcessor.hh
 /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/HCAL_minimal/AHCALLCIO2BuildProcessor/src/AHCALLCIO2BuildProcessor.hh
 iostream
