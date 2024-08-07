@@ -385,42 +385,29 @@ namespace CALICE
 	    //streamlog_out(DEBUG)<<"CellID0: "<<aHit->getCellID0()<<", CellID1: "<<aHit->getCellID1()<<endl;
 
 	    // Insertion Jesus                                                                  
-	    vector<float> hitZtolayer;
+	    vector<float> hitZtoslab;
 	    float smallestdistance=9999.;
 	    float hitZ=aHit->getPosition()[2];
 	    
-
 	    if(_FixedPosZ.size() == 0) streamlog_out(ERROR)<<"Missing slabs info"<<std::endl;
 
-            for (int ilayer = 0; _FixedPosZ_float.size(); ilayer++){
-	      hitZtolayer.push_back(abs(_FixedPosZ_float[ilayer]-hitZ));
-              //streamlog_out(DEBUG)<<"Layer comparing: "<<ilayer<<", Distance: "<<hitZtolayer.at(ilayer)<<endl;
-              if(ilayer==0) {
-                smallestdistance=hitZtolayer.at(0);
-                i_slab=0;
-              }
-              else if(hitZtolayer.at(ilayer) == 0.) {
-                smallestdistance=hitZtolayer.at(ilayer);
-                i_slab=ilayer;
-                break;
-              }
-              else if(hitZtolayer.at(ilayer) < smallestdistance) {
-                smallestdistance=hitZtolayer.at(ilayer);
-                i_slab=ilayer;
-              }
-            }
-            streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtolayer.at(i_slab)<<endl;
-
-	    for (int ilayer = 0; ilayer < _FixedPosZ_float.size(); ilayer++){
-	      if ( (_FixedPosZ_float[ilayer] > (aHit->getPosition()[2] - _siThicknesses_float.at(ilayer)) ) &&
-		(_FixedPosZ_float[ilayer] < (aHit->getPosition()[2] + _siThicknesses_float.at(ilayer)) ) ) {
-		hit_slab.push_back(ilayer);
-	      }
-	      else if (_FixedPosZ_float[ilayer] == aHit->getPosition()[2]) {
-		hit_slab.push_back(ilayer);
-	      }
+	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+	      hitZtoslab.push_back(abs(_FixedPosZ_float[islab]-hitZ));
 	    }
-	    
+	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+	      streamlog_out(DEBUG)<<"layer "<<islab<<" distance: "<<hitZtoslab.at(islab)<<endl;
+	      if ( (_FixedPosZ_float[islab] > (aHit->getPosition()[2] - _siThicknesses_float.at(islab)) ) &&
+		   (_FixedPosZ_float[islab] < (aHit->getPosition()[2] + _siThicknesses_float.at(islab)) ) ) {
+                i_slab = islab;
+		break;
+	      }
+              else if (_FixedPosZ_float[islab] == aHit->getPosition()[2]) {
+		i_slab = islab;
+		break;
+              }
+	    }
+	    streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtoslab.at(i_slab)<<endl;
+	    	    
 	    // End insertion Jesus             
 
 	    if (_ConversionGeV2MIP) {
@@ -433,6 +420,21 @@ namespace CALICE
 		hit_x.push_back(aHit->getPosition()[0]);
 		hit_y.push_back(aHit->getPosition()[1]);
 		hit_z.push_back(aHit->getPosition()[2]);
+		hit_slab.push_back(i_slab);
+	
+		if (aHit->getPosition()[0] > 0) gap_hit_x = aHit->getPosition()[0] + _HalfCenterGap;
+		else gap_hit_x = aHit->getPosition()[0] - _HalfCenterGap;
+		if (aHit->getPosition()[1] > 0) gap_hit_y = aHit->getPosition()[1] + _HalfCenterGap;
+		else gap_hit_y = aHit->getPosition()[1] - _HalfCenterGap;
+
+		for (int icell = 0; icell < 1024; icell++) {
+		  float in_x = fabs(_maps[_SlabMapIndices[i_slab]][icell][0] - gap_hit_x);
+		  float in_y = fabs(_maps[_SlabMapIndices[i_slab]][icell][1] - gap_hit_y);
+		  if (in_x < 0.1 && in_y < 0.1) {
+		    hit_chip.push_back(icell/64);
+		    hit_chan.push_back(icell%64);
+		  }
+		}
 	      }	      
 	    }
 	    else {
@@ -444,22 +446,22 @@ namespace CALICE
 	      hit_x.push_back(aHit->getPosition()[0]);
 	      hit_y.push_back(aHit->getPosition()[1]);
 	      hit_z.push_back(aHit->getPosition()[2]);
-            }
+	      hit_slab.push_back(i_slab);
+	      
+	      if (aHit->getPosition()[0] > 0) gap_hit_x = aHit->getPosition()[0] + _HalfCenterGap;
+	      else gap_hit_x = aHit->getPosition()[0] - _HalfCenterGap;
+	      if (aHit->getPosition()[1] > 0) gap_hit_y = aHit->getPosition()[1] + _HalfCenterGap;
+	      else gap_hit_y = aHit->getPosition()[1] - _HalfCenterGap;
 
-            // hit_chip hit_chan
-            if (aHit->getPosition()[0] > 0) gap_hit_x = aHit->getPosition()[0] + _HalfCenterGap;
-            else gap_hit_x = aHit->getPosition()[0] - _HalfCenterGap;
-            if (aHit->getPosition()[1] > 0) gap_hit_y = aHit->getPosition()[1] + _HalfCenterGap;
-            else gap_hit_y = aHit->getPosition()[1] - _HalfCenterGap;
-
-            for (int icell = 0; icell < 1024; icell++) {
-              float in_x = fabs(_maps[_SlabMapIndices[i_slab]][icell][0] - gap_hit_x);
-              float in_y = fabs(_maps[_SlabMapIndices[i_slab]][icell][1] - gap_hit_y);
-              if (in_x < 0.1 && in_y < 0.1) {
-                hit_chip.push_back(icell/64);
-                hit_chan.push_back(icell%64);
-              }    
-            }
+	      for (int icell = 0; icell < 1024; icell++) {
+		float in_x = fabs(_maps[_SlabMapIndices[i_slab]][icell][0] - gap_hit_x);
+		float in_y = fabs(_maps[_SlabMapIndices[i_slab]][icell][1] - gap_hit_y);
+		if (in_x < 0.1 && in_y < 0.1) {
+		  hit_chip.push_back(icell/64);
+		  hit_chan.push_back(icell%64);
+		}
+	      }
+	    }
 
             // ** Note ** //
             // I didn't find a straightforward way to fill hit_slab,

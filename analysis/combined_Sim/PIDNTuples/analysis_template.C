@@ -74,10 +74,8 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
   float hit_count[N_ECAL_LAYERS];
   float sume[N_ECAL_LAYERS];
   float sume_w[N_ECAL_LAYERS];
-  
   float sume_total = 1.;
   float sume_w_total = 1.;
-
   float weight = 1.;
 
   // Initial values
@@ -86,7 +84,6 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
     sume[ilayer] = 0. ;
     sume_w[ilayer] = 0. ;
   }
-  
   if(hit_energy->size() > 0){
     for (int j = 0; j < hit_energy->size(); j++) {
       if( masked && hit_isMasked->at(j) == 1 ) continue;
@@ -118,12 +115,10 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
       if(count_type == "weight") hlv[ilayer] = sume_w[ilayer]*weight;
     }
     else hlv[ilayer] = 0.;
-  
   }
   //cout<<"| DEBUG(hits_layer) | "<<"Mode: "<<count_type<<", normalized: "<<normalized<<endl;
   //cout<<"| DEBUG(hits_layer) | "<<"Hit energy size: "<<hit_energy->size()<<". Hit slab size: "<<hit_slab->size()<<endl;
   //cout<<"| DEBUG(hits_layer) | "<<"hlv: "<<hlv[0]<<" "<<hlv[1]<<" "<<hlv[2]<<" "<<hlv[3]<<" "<<hlv[4]<<" "<<hlv[5]<<" "<<hlv[6]<<" "<<hlv[7]<<" "<<hlv[8]<<" "<<hlv[9]<<" "<<hlv[10]<<" "<<hlv[11]<<" "<<hlv[12]<<" "<<hlv[13]<<" "<<hlv[14]<<endl;
-    
   
   return 0;
 }
@@ -331,38 +326,44 @@ void shower_variables_hcal(float entries, float array[N_HCAL_LAYERS], float arra
 float MIP_Likeness_ecal(float nhits_layer[N_ECAL_LAYERS]) {
   float score = 0.;
   for(int i=0; i<N_ECAL_LAYERS; i++) {
+    if(nhits_layer[i] == 0) score -= 1.;
     if(nhits_layer[i] > 0) score += 1./(nhits_layer[i]);
   }
-  score = score/N_ECAL_LAYERS;
+  score = (score/N_ECAL_LAYERS + 1.)/2.;
   return score;
 }
 
 float MIP_Likeness_hcal(float nhits_layer[N_HCAL_LAYERS]) {
   float score = 0.;
   for(int i=0; i<N_HCAL_LAYERS; i++) {
+    if(nhits_layer[i] == 0) score -= 1.;
     if(nhits_layer[i] > 0) score += 1./(nhits_layer[i]);
   }
-  score = score/N_HCAL_LAYERS;
+  score = (score/N_HCAL_LAYERS + 1.)/2.;
   return score;
 }
 
 float MIP_Likeness_total(float nhits_e_layer[N_ECAL_LAYERS], float nhits_h_layer[N_HCAL_LAYERS]) {
   float score = 0.;
+  float score_e = 0.;
+  float score_h = 0.;
   for(int i=0; i<N_ECAL_LAYERS; i++) {
-    if(nhits_e_layer[i] > 0) score += 1./(nhits_e_layer[i]);
+    if(nhits_e_layer[i] == 0) score_e -= 1.;
+    if(nhits_e_layer[i] > 0) score_e += 1./(nhits_e_layer[i]);
   }
   for(int i=0; i<N_HCAL_LAYERS; i++) {
-    if(nhits_h_layer[i] > 0) score += 1./(nhits_h_layer[i]);
+    if(nhits_h_layer[i] == 0) score_h -= 1.;
+    if(nhits_h_layer[i] > 0) score_h += 1./(nhits_h_layer[i]);
   }
-  score = score/(N_ECAL_LAYERS+N_HCAL_LAYERS);
+  score = (score_e/N_ECAL_LAYERS + score_h/N_HCAL_LAYERS + 2.)/4.;
   return score;
 }
 
 void hcal_ecal_ratio(float &nhit_ratio, float &sume_ratio, float &weight_ratio, int nhit_e, float sume_e, float weight_e, int nhit_h, float sume_h, float weight_h) {
   //I'll sum 1 hit in each detector to escape problems with 0, simple.
-  nhit_ratio = (nhit_h+1)/(nhit_e+1);
-  sume_ratio = (sume_h+1)/(sume_e+1);
-  weight_ratio = (weight_h+1)/(weight_e+1);
+  nhit_ratio = (nhit_h/N_HCAL_LAYERS+1.)/(nhit_e/N_ECAL_LAYERS+1.);
+  sume_ratio = (sume_h/N_HCAL_LAYERS+1.)/(sume_e/N_ECAL_LAYERS+1.);
+  weight_ratio = (weight_h/N_HCAL_LAYERS+1.)/(weight_e/N_ECAL_LAYERS+1.);
   
   // Cut down
   //if(nhit_ratio>100.) nhit_ratio = 100.;
@@ -373,10 +374,12 @@ void hcal_ecal_ratio(float &nhit_ratio, float &sume_ratio, float &weight_ratio, 
 }
 
 void is_interaction(float &ecal_int, float &hcal_int, float &total_int, int nhit_e, int nhit_h) {
+  ecal_int = 0.;
+  hcal_int = 0.;
+  total_int = 0.;
   if(nhit_e > 0) ecal_int = 1.;
   if(nhit_h > 0) hcal_int = 1.;
   if((nhit_e > 0) or (nhit_h > 0)) total_int = 1.;
-
   return 0;
 }
 
@@ -487,6 +490,38 @@ float moliere_hcal(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD S
   }
   return mol_rad;
 }
+
+float hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y,
+			     vector<int> * hit_isMasked, bool masked=false) {
+  float max_distance = 0.;
+  cout<<"DEBUG1"<<endl;
+  cout<<"hit_slab.size(): "<<hit_slab->size()<<endl;
+  if(hit_slab->size() > 1){
+    for (int i = 0; i < hit_slab->size(); i++){
+      if (masked && hit_isMasked->at(i) == 1) continue;
+      cout<<"DEBUG2"<<endl;
+      int layer1 = hit_slab->at(i);
+      float hit1_x = hit_x->at(i);
+      float hit1_y = hit_y->at(i);
+      cout<<"DEBUG2.1"<<endl;
+      for (int j = i+1; j < hit_slab->size()-1; j++){
+	cout<<"DEBUG3"<<endl;
+	//if(j==i) continue;
+	if (masked && hit_isMasked->at(j) == 1) continue;
+	int layer2 = hit_slab->at(j);
+	cout<<"DEBUG3.1"<<endl;
+	if(layer2 != layer1) continue;
+	float hit2_x = hit_x->at(j);
+	float hit2_y = hit_y->at(j);
+	float distance = pow(pow(hit2_x-hit1_x,2)+pow(hit2_y-hit1_y,2),0.5);
+	if(distance>max_distance) max_distance = distance;
+      }
+    }
+  }
+  cout<<"DEBUG4"<<endl;
+  return max_distance;
+}
+
 
 float moliere_total(vector<float> * e_hit_energy, vector<int> *e_hit_slab, TVectorD W_thicknesses,
                    vector<float> * e_hit_x, vector<float> * e_hit_y, vector<float> * e_hit_z, vector<int> * e_hit_isMasked,
@@ -946,11 +981,11 @@ void analysis (string particle, bool masked=false) {
 
     // branches definitions
     // We will save both the branches and the histos
-    
     Float_t b_ecal_interaction;
     Float_t b_ecal_nhit, b_ecal_sume, b_ecal_weighte, b_ecal_bar_x, b_ecal_bar_y, b_ecal_bar_z, b_ecal_bar_r;
     Float_t b_ecal_mol;
     Float_t b_ecal_MIP_Likeness;
+    Float_t b_ecal_hits_max_distance;
     Float_t b_ecal_radius90_layer_0, b_ecal_radius90_layer_1, b_ecal_radius90_layer_2, b_ecal_radius90_layer_3, b_ecal_radius90_layer_4, b_ecal_radius90_layer_5, b_ecal_radius90_layer_6, b_ecal_radius90_layer_7, b_ecal_radius90_layer_8, b_ecal_radius90_layer_9, b_ecal_radius90_layer_10, b_ecal_radius90_layer_11, b_ecal_radius90_layer_12, b_ecal_radius90_layer_13, b_ecal_radius90_layer_14;
     Float_t b_ecal_bar_x_layer_0, b_ecal_bar_x_layer_1, b_ecal_bar_x_layer_2, b_ecal_bar_x_layer_3, b_ecal_bar_x_layer_4, b_ecal_bar_x_layer_5, b_ecal_bar_x_layer_6, b_ecal_bar_x_layer_7, b_ecal_bar_x_layer_8, b_ecal_bar_x_layer_9, b_ecal_bar_x_layer_10, b_ecal_bar_x_layer_11, b_ecal_bar_x_layer_12, b_ecal_bar_x_layer_13, b_ecal_bar_x_layer_14;
     Float_t b_ecal_bar_y_layer_0, b_ecal_bar_y_layer_1, b_ecal_bar_y_layer_2, b_ecal_bar_y_layer_3, b_ecal_bar_y_layer_4, b_ecal_bar_y_layer_5, b_ecal_bar_y_layer_6, b_ecal_bar_y_layer_7, b_ecal_bar_y_layer_8, b_ecal_bar_y_layer_9, b_ecal_bar_y_layer_10, b_ecal_bar_y_layer_11, b_ecal_bar_y_layer_12, b_ecal_bar_y_layer_13, b_ecal_bar_y_layer_14;
@@ -969,6 +1004,7 @@ void analysis (string particle, bool masked=false) {
     Float_t b_hcal_nhit, b_hcal_sume, b_hcal_weighte, b_hcal_bar_x, b_hcal_bar_y, b_hcal_bar_z, b_hcal_bar_r;
     Float_t b_hcal_mol;
     Float_t b_hcal_MIP_Likeness;
+    Float_t b_hcal_hits_max_distance;
     Float_t b_hcal_radius90_layer_0, b_hcal_radius90_layer_1, b_hcal_radius90_layer_2, b_hcal_radius90_layer_3, b_hcal_radius90_layer_4, b_hcal_radius90_layer_5, b_hcal_radius90_layer_6, b_hcal_radius90_layer_7, b_hcal_radius90_layer_8, b_hcal_radius90_layer_9, b_hcal_radius90_layer_10, b_hcal_radius90_layer_11, b_hcal_radius90_layer_12, b_hcal_radius90_layer_13, b_hcal_radius90_layer_14;
     Float_t b_hcal_bar_x_layer_0, b_hcal_bar_x_layer_1, b_hcal_bar_x_layer_2, b_hcal_bar_x_layer_3, b_hcal_bar_x_layer_4, b_hcal_bar_x_layer_5, b_hcal_bar_x_layer_6, b_hcal_bar_x_layer_7, b_hcal_bar_x_layer_8, b_hcal_bar_x_layer_9, b_hcal_bar_x_layer_10, b_hcal_bar_x_layer_11, b_hcal_bar_x_layer_12, b_hcal_bar_x_layer_13, b_hcal_bar_x_layer_14;
     Float_t b_hcal_bar_y_layer_0, b_hcal_bar_y_layer_1, b_hcal_bar_y_layer_2, b_hcal_bar_y_layer_3, b_hcal_bar_y_layer_4, b_hcal_bar_y_layer_5, b_hcal_bar_y_layer_6, b_hcal_bar_y_layer_7, b_hcal_bar_y_layer_8, b_hcal_bar_y_layer_9, b_hcal_bar_y_layer_10, b_hcal_bar_y_layer_11, b_hcal_bar_y_layer_12, b_hcal_bar_y_layer_13, b_hcal_bar_y_layer_14;
@@ -987,6 +1023,7 @@ void analysis (string particle, bool masked=false) {
     Float_t b_total_nhit, b_total_sume, b_total_weighte, b_total_bar_x, b_total_bar_y, b_total_bar_z, b_total_bar_r;
     Float_t b_total_mol;
     Float_t b_total_MIP_Likeness;
+    Float_t b_total_hits_max_distance;
     Float_t b_total_radius90_layer_0, b_total_radius90_layer_1, b_total_radius90_layer_2, b_total_radius90_layer_3, b_total_radius90_layer_4, b_total_radius90_layer_5, b_total_radius90_layer_6, b_total_radius90_layer_7, b_total_radius90_layer_8, b_total_radius90_layer_9, b_total_radius90_layer_10, b_total_radius90_layer_11, b_total_radius90_layer_12, b_total_radius90_layer_13, b_total_radius90_layer_14;
     Float_t b_total_bar_x_layer_0, b_total_bar_x_layer_1, b_total_bar_x_layer_2, b_total_bar_x_layer_3, b_total_bar_x_layer_4, b_total_bar_x_layer_5, b_total_bar_x_layer_6, b_total_bar_x_layer_7, b_total_bar_x_layer_8, b_total_bar_x_layer_9, b_total_bar_x_layer_10, b_total_bar_x_layer_11, b_total_bar_x_layer_12, b_total_bar_x_layer_13, b_total_bar_x_layer_14;
     Float_t b_total_bar_y_layer_0, b_total_bar_y_layer_1, b_total_bar_y_layer_2, b_total_bar_y_layer_3, b_total_bar_y_layer_4, b_total_bar_y_layer_5, b_total_bar_y_layer_6, b_total_bar_y_layer_7, b_total_bar_y_layer_8, b_total_bar_y_layer_9, b_total_bar_y_layer_10, b_total_bar_y_layer_11, b_total_bar_y_layer_12, b_total_bar_y_layer_13, b_total_bar_y_layer_14;
@@ -1003,7 +1040,7 @@ void analysis (string particle, bool masked=false) {
 
 
     Float_t b_nhit_ratio, b_sume_ratio, b_weighte_ratio;
-    
+        
     // Adding the branches
     outtree->Branch("ecal_interaction",&b_ecal_interaction,"b_ecal_interaction/F");
     outtree->Branch("ecal_nhit",&b_ecal_nhit,"b_ecal_nhit/F");
@@ -1011,6 +1048,7 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("ecal_weighte",&b_ecal_weighte,"b_ecal_weighte/F");
     outtree->Branch("ecal_mol",&b_ecal_mol,"b_ecal_mol/F");
     outtree->Branch("ecal_MIP_Likeness",&b_ecal_MIP_Likeness,"b_ecal_MIP_Likeness/F");
+    outtree->Branch("ecal_hits_max_distance",&b_ecal_hits_max_distance,"b_ecal_hits_max_distance/F");
     outtree->Branch("ecal_radius90_layer_0",&b_ecal_radius90_layer_0,"b_ecal_radius90_layer_0/F");
     outtree->Branch("ecal_radius90_layer_1",&b_ecal_radius90_layer_1,"b_ecal_radius90_layer_1/F");
     outtree->Branch("ecal_radius90_layer_2",&b_ecal_radius90_layer_2,"b_ecal_radius90_layer_2/F");
@@ -1217,14 +1255,13 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("ecal_sume_layer_n_13",&b_ecal_sume_layer_n_13,"b_ecal_sume_layer_n_13/F");
     outtree->Branch("ecal_sume_layer_n_14",&b_ecal_sume_layer_n_14,"b_ecal_sume_layer_n_14/F");
 
-
-
     outtree->Branch("hcal_interaction",&b_hcal_interaction,"b_hcal_interaction/F");
     outtree->Branch("hcal_nhit",&b_hcal_nhit,"b_hcal_nhit/F");
     outtree->Branch("hcal_sume",&b_hcal_sume,"b_hcal_sume/F");
     outtree->Branch("hcal_weighte",&b_hcal_weighte,"b_hcal_weighte/F");
     outtree->Branch("hcal_mol",&b_hcal_mol,"b_hcal_mol/F");
     outtree->Branch("hcal_MIP_Likeness",&b_hcal_MIP_Likeness,"b_hcal_MIP_Likeness/F");
+    outtree->Branch("hcal_hits_max_distance",&b_hcal_hits_max_distance,"b_hcal_hits_max_distance/F");
     outtree->Branch("hcal_radius90_layer_0",&b_hcal_radius90_layer_0,"b_hcal_radius90_layer_0/F");
     outtree->Branch("hcal_radius90_layer_1",&b_hcal_radius90_layer_1,"b_hcal_radius90_layer_1/F");
     outtree->Branch("hcal_radius90_layer_2",&b_hcal_radius90_layer_2,"b_hcal_radius90_layer_2/F");
@@ -1438,6 +1475,7 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_weighte",&b_total_weighte,"b_total_weighte/F");
     outtree->Branch("total_mol",&b_total_mol,"b_total_mol/F");
     outtree->Branch("total_MIP_Likeness",&b_total_MIP_Likeness,"b_total_MIP_Likeness/F");
+    outtree->Branch("total_hits_max_distance",&b_total_hits_max_distance,"b_total_hits_max_distance/F");
     outtree->Branch("total_radius90_layer_0",&b_total_radius90_layer_0,"b_total_radius90_layer_0/F");
     outtree->Branch("total_radius90_layer_1",&b_total_radius90_layer_1,"b_total_radius90_layer_1/F");
     outtree->Branch("total_radius90_layer_2",&b_total_radius90_layer_2,"b_total_radius90_layer_2/F");
@@ -1502,7 +1540,6 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_bar_r_layer_12",&b_total_bar_r_layer_12,"b_total_bar_r_layer_12/F");
     outtree->Branch("total_bar_r_layer_13",&b_total_bar_r_layer_13,"b_total_bar_r_layer_13/F");
     outtree->Branch("total_bar_r_layer_14",&b_total_bar_r_layer_14,"b_total_bar_r_layer_14/F");
-    /*
     outtree->Branch("total_shower_nhit_max_layer",&b_total_shower_nhit_max_layer,"b_total_shower_nhit_max_layer/F");
     outtree->Branch("total_shower_nhit_start_layer",&b_total_shower_nhit_start_layer,"b_total_shower_nhit_start_layer/F");
     outtree->Branch("total_shower_nhit_end_layer",&b_total_shower_nhit_end_layer,"b_total_shower_nhit_end_layer/F");
@@ -1524,7 +1561,6 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_shower_weighte_end_10_layer",&b_total_shower_weighte_end_10_layer,"b_total_shower_weighte_end_10_layer/F");
     outtree->Branch("total_shower_weighte_average",&b_total_shower_weighte_average,"b_total_shower_weighte_average/F");
     outtree->Branch("total_shower_weighte_max",&b_total_shower_weighte_max,"b_total_shower_weighte_max/F");
-    */
     outtree->Branch("total_nhit_layer_0",&b_total_nhit_layer_0,"b_total_nhit_layer_0/F");
     outtree->Branch("total_nhit_layer_1",&b_total_nhit_layer_1,"b_total_nhit_layer_1/F");
     outtree->Branch("total_nhit_layer_2",&b_total_nhit_layer_2,"b_total_nhit_layer_2/F");
@@ -1798,14 +1834,14 @@ void analysis (string particle, bool masked=false) {
 	  
 	  get_energy_ecal(ecal_nhit, ecal_sume, ecal_weighte, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked);
 	  barycenter_ecal(ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_bar_xyzr, ecal_hit_isMasked, masked);
-
 	  hits_layer_ecal(ecal_nhit_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "nhit");
 	  hits_layer_ecal(ecal_nhit_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "nhit");
           hits_layer_ecal(ecal_sume_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "sume");
           hits_layer_ecal(ecal_sume_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "sume");
 	  hits_layer_ecal(ecal_weighte_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "weight");
           hits_layer_ecal(ecal_weighte_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "weight");
-
+	  
+	  float ecal_hits_max_distance_value = hits_max_distance(ecal_hit_slab, ecal_hit_x, ecal_hit_x, ecal_hit_isMasked, masked);
 	  float ecal_MIP_Likeness_value = MIP_Likeness_ecal(ecal_nhit_layer_array);
 	  bool ecal_shower_bool = is_Shower_ecal(ecal_sume, ecal_sume_layer_array);
 
@@ -1846,9 +1882,10 @@ void analysis (string particle, bool masked=false) {
           radius_layer_ecal(ecal_radius90_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked, masked, 0.9, ecal_shower_bool);
 	  bary_layer_ecal(ecal_bar_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked, masked);
 
+
+
 	  get_energy_hcal(hcal_nhit, hcal_sume, hcal_weighte, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked);
           barycenter_hcal(hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_x, hcal_hit_y, hcal_hit_z, hcal_bar_xyzr, hcal_hit_isMasked, masked);
-
           hits_layer_hcal(hcal_nhit_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "nhit");
           hits_layer_hcal(hcal_nhit_layer_n_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, true, "nhit");
           hits_layer_hcal(hcal_sume_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "sume");
@@ -1856,6 +1893,8 @@ void analysis (string particle, bool masked=false) {
           hits_layer_hcal(hcal_weighte_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "weight");
           hits_layer_hcal(hcal_weighte_layer_n_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, true, "weight");
 
+	  //float hcal_hits_max_distance_value = 0.;
+	  float hcal_hits_max_distance_value = hits_max_distance(hcal_hit_slab, hcal_hit_x, hcal_hit_x, hcal_hit_isMasked, masked);
           float hcal_MIP_Likeness_value = MIP_Likeness_hcal(hcal_nhit_layer_array);
           bool hcal_shower_bool = is_Shower_hcal(hcal_sume, hcal_sume_layer_array);
 
@@ -1880,7 +1919,6 @@ void analysis (string particle, bool masked=false) {
           float hcal_sume_shower_averagevalue = hcal_sume/N_HCAL_LAYERS;
           shower_variables_hcal(hcal_sume, hcal_sume_layer_array, hcal_sume_layer_n_array, hcal_sume_shower_maxvalue, hcal_sume_shower_maxvalue_n, hcal_sume_ilayermax,
 				hcal_sume_ilayerstart, hcal_sume_ilayerstart_10, hcal_sume_ilayerend, hcal_sume_ilayerend_10, "sume", hcal_shower_bool);
-
           float hcal_weighte_shower_maxvalue = 0.;
           float hcal_weighte_shower_maxvalue_n = 0.;
           int hcal_weighte_ilayermax = -1;
@@ -1909,8 +1947,12 @@ void analysis (string particle, bool masked=false) {
           barycenter_total(ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked,
 			   hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_x, hcal_hit_y, hcal_hit_z, hcal_hit_isMasked,
 			   total_bar_xyzr, masked);
+	  
+	  
+	  float total_hits_max_distance_value = 0.;
+	  if(ecal_hits_max_distance_value > hcal_hits_max_distance_value ) total_hits_max_distance_value = ecal_hits_max_distance_value;
+	  if(ecal_hits_max_distance_value < hcal_hits_max_distance_value ) total_hits_max_distance_value = hcal_hits_max_distance_value;
 	  float total_MIP_Likeness_value = MIP_Likeness_total(ecal_nhit_layer_array, hcal_nhit_layer_array);
-
 	  float total_nhit_shower_maxvalue = 0.;
           float total_nhit_shower_maxvalue_n = 0.;
           int total_nhit_ilayermax = -1;
@@ -1944,7 +1986,7 @@ void analysis (string particle, bool masked=false) {
 	  
 	  hcal_ecal_ratio(ratio_nhit, ratio_sume, ratio_weighte, ecal_nhit, ecal_sume, ecal_weighte, hcal_nhit, hcal_sume, hcal_weighte);
 
-	  is_interaction(b_ecal_interaction, b_hcal_interaction,b_total_interaction, ecal_nhit, hcal_nhit);
+	  is_interaction(b_ecal_interaction, b_hcal_interaction, b_total_interaction, ecal_nhit, hcal_nhit);
 
 	  // Filling the tree
 	  //cout<<"ecal nhit: "<<ecal_nhit<<endl;
@@ -1956,6 +1998,7 @@ void analysis (string particle, bool masked=false) {
 	  b_ecal_bar_z = ecal_bar_xyzr[2];
 	  b_ecal_bar_r = ecal_bar_xyzr[3];
 	  b_ecal_mol = ecal_mol_value;
+	  b_ecal_hits_max_distance = ecal_hits_max_distance_value;
 	  b_ecal_MIP_Likeness = ecal_MIP_Likeness_value;
 
 	  b_ecal_radius90_layer_0 = ecal_radius90_layer_array[0];
@@ -2151,6 +2194,7 @@ void analysis (string particle, bool masked=false) {
           b_hcal_bar_z = hcal_bar_xyzr[2];
           b_hcal_bar_r = hcal_bar_xyzr[3];
           b_hcal_mol = hcal_mol_value;
+	  b_hcal_hits_max_distance = hcal_hits_max_distance_value;
           b_hcal_MIP_Likeness = hcal_MIP_Likeness_value;
 
           b_hcal_radius90_layer_0 = hcal_radius90_layer_array[0];
@@ -2371,7 +2415,8 @@ void analysis (string particle, bool masked=false) {
           b_total_bar_z = total_bar_xyzr[2];
           b_total_bar_r = total_bar_xyzr[3];
           b_total_mol = total_mol_value;
-          b_total_MIP_Likeness = total_MIP_Likeness_value;
+          b_total_hits_max_distance = total_hits_max_distance_value;
+	  b_total_MIP_Likeness = total_MIP_Likeness_value;
 
 	  b_total_radius90_layer_0 = total_radius90_layer_array[0];
           b_total_radius90_layer_1 = total_radius90_layer_array[1];

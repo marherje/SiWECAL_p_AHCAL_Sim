@@ -6,5 +6,5 @@ output                  = outfile_XcondorfileX.txt
 error                   = errors_XcondorfileX.txt
 should_transfer_files   = Yes
 when_to_transfer_output = ON_EXIT
-+JobFlavour             = "corto"
++JobFlavour             = "normal"
 queue 1

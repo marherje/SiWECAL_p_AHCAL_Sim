@@ -58,6 +58,7 @@
     <parameter name="GeV2MIPFactors" type="string">
       0.000193906 0.000194439 0.000194733 0.000194526 0.000147284 0.000147944 0.000148182 0.000148122 0.00014839 0.000149147 9.25512e-05 9.21431e-05 9.26852e-05 9.30067e-05 9.22774e-05
     </parameter>
+    <parameter name="MIPThreshold" type="float"> 0.5  </parameter>
     <parameter name="SiThicknesses" type="string"> 650 650 650 650 500 500 500 500 500 500 320 320 320 320 320 </parameter>
     <!-- parameter name="WriteRootfile" type="bool"> false </parameter-->
     <parameter name="WriteRootfile" type="bool"> true </parameter>

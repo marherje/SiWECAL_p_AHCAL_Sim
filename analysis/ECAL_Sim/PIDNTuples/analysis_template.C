@@ -184,18 +184,14 @@ void shower_variables(float entries, float array[N_ECAL_LAYERS], float array_n[N
 }
 
 float MIP_Likeness(float nhits_layer[N_ECAL_LAYERS]) {
-  
   float score = 0.;
   for(int i=0; i<N_ECAL_LAYERS; i++) {
+    if(nhits_layer[i] == 0) score -= 1.;
     if(nhits_layer[i] > 0) score += 1./(nhits_layer[i]);
   }
-  score = score/N_ECAL_LAYERS;
-
+  score = (score/N_ECAL_LAYERS + 1.)/2.;
   return score;
-
 }
-
-
 
 float moliere(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD W_thicknesses,
               vector<float> * hit_x, vector<float> * hit_y, vector<float> * hit_z,

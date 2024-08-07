@@ -28,13 +28,13 @@ The CXX compiler identification is GNU, found in "/lhome/ific/m/marherje/SiWECAL
 Determining if the C compiler works passed with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_81e42/fast && /bin/gmake -f CMakeFiles/cmTC_81e42.dir/build.make CMakeFiles/cmTC_81e42.dir/build
+Run Build Command(s):/bin/gmake cmTC_b1926/fast && /bin/gmake -f CMakeFiles/cmTC_b1926.dir/build.make CMakeFiles/cmTC_b1926.dir/build
 gmake[1]: se ingresa al directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_81e42.dir/testCCompiler.c.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc    -o CMakeFiles/cmTC_81e42.dir/testCCompiler.c.o   -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_81e42
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_81e42.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc      -rdynamic CMakeFiles/cmTC_81e42.dir/testCCompiler.c.o  -o cmTC_81e42 
+Building C object CMakeFiles/cmTC_b1926.dir/testCCompiler.c.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc    -o CMakeFiles/cmTC_b1926.dir/testCCompiler.c.o   -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_b1926
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b1926.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc      -rdynamic CMakeFiles/cmTC_b1926.dir/testCCompiler.c.o  -o cmTC_b1926 
 gmake[1]: se sale del directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -42,18 +42,18 @@ gmake[1]: se sale del directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/pro
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_4a554/fast && /bin/gmake -f CMakeFiles/cmTC_4a554.dir/build.make CMakeFiles/cmTC_4a554.dir/build
+Run Build Command(s):/bin/gmake cmTC_7aec1/fast && /bin/gmake -f CMakeFiles/cmTC_7aec1.dir/build.make CMakeFiles/cmTC_7aec1.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c
+Building C object CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c
 Using built-in specs.
 COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc
 Target: x86_64-pc-linux-gnu
 Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
 Thread model: posix
 gcc version 8.2.0 (GCC) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o -version -o /tmp/marherje/cc6nMDUG.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o -version -o /tmp/marherje/cckY9sMM.s
 GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
 	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
 
@@ -76,15 +76,15 @@ GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: 9c89e30d7138ce48871612521942fabb
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o /tmp/marherje/cc6nMDUG.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o /tmp/marherje/cckY9sMM.s
 GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30
 COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
 LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
-Linking C executable cmTC_4a554
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4a554.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o  -o cmTC_4a554 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
+Linking C executable cmTC_7aec1
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7aec1.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o  -o cmTC_7aec1 
 Using built-in specs.
 COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc
 COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper
@@ -94,9 +94,9 @@ Thread model: posix
 gcc version 8.2.0 (GCC) 
 COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
 LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_4a554' '-mtune=generic' '-march=x86-64'
- /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccEWbIFK.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_4a554 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_4a554' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_7aec1' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccGdqh7U.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_7aec1 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_7aec1' '-mtune=generic' '-march=x86-64'
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -122,18 +122,18 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/bin/gmake cmTC_4a554/fast && /bin/gmake -f CMakeFiles/cmTC_4a554.dir/build.make CMakeFiles/cmTC_4a554.dir/build]
+  ignore line: [Run Build Command(s):/bin/gmake cmTC_7aec1/fast && /bin/gmake -f CMakeFiles/cmTC_7aec1.dir/build.make CMakeFiles/cmTC_7aec1.dir/build]
   ignore line: [gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c]
+  ignore line: [Building C object CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc   -v -o CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o   -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc]
   ignore line: [Target: x86_64-pc-linux-gnu]
   ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
   ignore line: [Thread model: posix]
   ignore line: [gcc version 8.2.0 (GCC) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o -version -o /tmp/marherje/cc6nMDUG.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1 -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o -version -o /tmp/marherje/cckY9sMM.s]
   ignore line: [GNU C17 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
   ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
   ignore line: []
@@ -156,15 +156,15 @@ Parsed C implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: 9c89e30d7138ce48871612521942fabb]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o /tmp/marherje/cc6nMDUG.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o /tmp/marherje/cckY9sMM.s]
   ignore line: [GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30]
   ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
   ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking C executable cmTC_4a554]
-  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4a554.dir/link.txt --verbose=1]
-  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o  -o cmTC_4a554 ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking C executable cmTC_7aec1]
+  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_7aec1.dir/link.txt --verbose=1]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc     -v -rdynamic CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o  -o cmTC_7aec1 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/gcc]
   ignore line: [COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper]
@@ -174,13 +174,13 @@ Parsed C implicit link information from above output:
   ignore line: [gcc version 8.2.0 (GCC) ]
   ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
   ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_4a554' '-mtune=generic' '-march=x86-64']
-  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccEWbIFK.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_4a554 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_7aec1' '-mtune=generic' '-march=x86-64']
+  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccGdqh7U.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_7aec1 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/marherje/ccEWbIFK.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/marherje/ccGdqh7U.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -193,7 +193,7 @@ Parsed C implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_4a554] ==> ignore
+    arg [cmTC_7aec1] ==> ignore
     arg [/lib/../lib64/crt1.o] ==> ignore
     arg [/lib/../lib64/crti.o] ==> ignore
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o] ==> ignore
@@ -203,7 +203,7 @@ Parsed C implicit link information from above output:
     arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
     arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
     arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..]
-    arg [CMakeFiles/cmTC_4a554.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_7aec1.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lgcc] ==> lib [gcc]
     arg [--as-needed] ==> ignore
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -229,13 +229,13 @@ Parsed C implicit link information from above output:
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_9aad4/fast && /bin/gmake -f CMakeFiles/cmTC_9aad4.dir/build.make CMakeFiles/cmTC_9aad4.dir/build
+Run Build Command(s):/bin/gmake cmTC_79ac4/fast && /bin/gmake -f CMakeFiles/cmTC_79ac4.dir/build.make CMakeFiles/cmTC_79ac4.dir/build
 gmake[1]: se ingresa al directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_9aad4.dir/testCXXCompiler.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++     -o CMakeFiles/cmTC_9aad4.dir/testCXXCompiler.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_9aad4
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9aad4.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++       -rdynamic CMakeFiles/cmTC_9aad4.dir/testCXXCompiler.cxx.o  -o cmTC_9aad4 
+Building CXX object CMakeFiles/cmTC_79ac4.dir/testCXXCompiler.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++     -o CMakeFiles/cmTC_79ac4.dir/testCXXCompiler.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_79ac4
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_79ac4.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++       -rdynamic CMakeFiles/cmTC_79ac4.dir/testCXXCompiler.cxx.o  -o cmTC_79ac4 
 gmake[1]: se sale del directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -243,18 +243,18 @@ gmake[1]: se sale del directorio `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/pro
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_20d1f/fast && /bin/gmake -f CMakeFiles/cmTC_20d1f.dir/build.make CMakeFiles/cmTC_20d1f.dir/build
+Run Build Command(s):/bin/gmake cmTC_f6098/fast && /bin/gmake -f CMakeFiles/cmTC_f6098.dir/build.make CMakeFiles/cmTC_f6098.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp
+Building CXX object CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp
 Using built-in specs.
 COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++
 Target: x86_64-pc-linux-gnu
 Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as
 Thread model: posix
 gcc version 8.2.0 (GCC) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/marherje/ccGBKKtx.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/marherje/ccJ43UVB.s
 GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
 	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP
 
@@ -283,15 +283,15 @@ GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)
 
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
 Compiler executable checksum: 070e67e9ba8aa43ec95f43bd9e04daca
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o /tmp/marherje/ccGBKKtx.s
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ as -v --64 -o CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o /tmp/marherje/ccJ43UVB.s
 GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30
 COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
 LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
-Linking CXX executable cmTC_20d1f
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20d1f.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_20d1f 
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+Linking CXX executable cmTC_f6098
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f6098.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_f6098 
 Using built-in specs.
 COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++
 COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper
@@ -301,9 +301,9 @@ Thread model: posix
 gcc version 8.2.0 (GCC) 
 COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/
 LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_20d1f' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccAa7wjB.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_20d1f /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_20d1f' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f6098' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccxkoCME.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_f6098 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f6098' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -335,18 +335,18 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/bin/gmake cmTC_20d1f/fast && /bin/gmake -f CMakeFiles/cmTC_20d1f.dir/build.make CMakeFiles/cmTC_20d1f.dir/build]
+  ignore line: [Run Build Command(s):/bin/gmake cmTC_f6098/fast && /bin/gmake -f CMakeFiles/cmTC_f6098.dir/build.make CMakeFiles/cmTC_f6098.dir/build]
   ignore line: [gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Building CXX object CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -v -o CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -c /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++]
   ignore line: [Target: x86_64-pc-linux-gnu]
   ignore line: [Configured with: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/build/contrib/gcc-8.2.0/src/gcc/8.2.0/configure --prefix=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/gcc/8.2.0/x86_64-centos7 -with-system-zlib --disable-multilib --enable-languages=all --with-gnu-ld --with-ld=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/ld --with-gnu-as --with-as=/afs/cern.ch/cms/CAF/CMSCOMM/COMM_ECAL/dkonst/GCC/lcgcmake-install/binutils/2.30/x86_64-centos7/bin/as]
   ignore line: [Thread model: posix]
   ignore line: [gcc version 8.2.0 (GCC) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/marherje/ccGBKKtx.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/cc1plus -quiet -v -iprefix /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/ -isystem /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/include -D_GNU_SOURCE /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/share/cmake-3.15/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/marherje/ccJ43UVB.s]
   ignore line: [GNU C++14 (GCC) version 8.2.0 (x86_64-pc-linux-gnu)]
   ignore line: [	compiled by GNU C version 8.2.0, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version isl-0.18-GMP]
   ignore line: []
@@ -375,15 +375,15 @@ Parsed CXX implicit link information from above output:
   ignore line: []
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
   ignore line: [Compiler executable checksum: 070e67e9ba8aa43ec95f43bd9e04daca]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o /tmp/marherje/ccGBKKtx.s]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [ as -v --64 -o CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o /tmp/marherje/ccJ43UVB.s]
   ignore line: [GNU assembler version 2.30 (x86_64-pc-linux-gnu) using BFD version (GNU Binutils) 2.30]
   ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
   ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking CXX executable cmTC_20d1f]
-  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20d1f.dir/link.txt --verbose=1]
-  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_20d1f ]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  ignore line: [Linking CXX executable cmTC_f6098]
+  ignore line: [/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f6098.dir/link.txt --verbose=1]
+  ignore line: [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++      -v -rdynamic CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_f6098 ]
   ignore line: [Using built-in specs.]
   ignore line: [COLLECT_GCC=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++]
   ignore line: [COLLECT_LTO_WRAPPER=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper]
@@ -393,13 +393,13 @@ Parsed CXX implicit link information from above output:
   ignore line: [gcc version 8.2.0 (GCC) ]
   ignore line: [COMPILER_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/]
   ignore line: [LIBRARY_PATH=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64/:/lib/../lib64/:/usr/lib/../lib64/:/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_20d1f' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccAa7wjB.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_20d1f /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-rdynamic' '-o' 'cmTC_f6098' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
+  link line: [ /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2 -plugin /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so -plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper -plugin-opt=-fresolution=/tmp/marherje/ccxkoCME.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --eh-frame-hdr -m elf_x86_64 -export-dynamic -dynamic-linker /lib64/ld-linux-x86-64.so.2 -o cmTC_f6098 /lib/../lib64/crt1.o /lib/../lib64/crti.o /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../../../lib64 -L/lib/../lib64 -L/usr/lib/../lib64 -L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../.. CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtend.o /lib/../lib64/crtn.o]
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/collect2] ==> ignore
     arg [-plugin] ==> ignore
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/liblto_plugin.so] ==> ignore
     arg [-plugin-opt=/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../libexec/gcc/x86_64-pc-linux-gnu/8.2.0/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/marherje/ccAa7wjB.res] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/marherje/ccxkoCME.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
@@ -412,7 +412,7 @@ Parsed CXX implicit link information from above output:
     arg [-dynamic-linker] ==> ignore
     arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_20d1f] ==> ignore
+    arg [cmTC_f6098] ==> ignore
     arg [/lib/../lib64/crt1.o] ==> ignore
     arg [/lib/../lib64/crti.o] ==> ignore
     arg [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/crtbegin.o] ==> ignore
@@ -422,7 +422,7 @@ Parsed CXX implicit link information from above output:
     arg [-L/lib/../lib64] ==> dir [/lib/../lib64]
     arg [-L/usr/lib/../lib64] ==> dir [/usr/lib/../lib64]
     arg [-L/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..] ==> dir [/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/../lib/gcc/x86_64-pc-linux-gnu/8.2.0/../../..]
-    arg [CMakeFiles/cmTC_20d1f.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_f6098.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
     arg [-lgcc_s] ==> lib [gcc_s]
@@ -446,13 +446,13 @@ Parsed CXX implicit link information from above output:
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wall succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_41f29/fast && /bin/gmake -f CMakeFiles/cmTC_41f29.dir/build.make CMakeFiles/cmTC_41f29.dir/build
+Run Build Command(s):/bin/gmake cmTC_d26c2/fast && /bin/gmake -f CMakeFiles/cmTC_d26c2.dir/build.make CMakeFiles/cmTC_d26c2.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_41f29.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -DCXX_FLAG_WORKS__Wall   -Wall -o CMakeFiles/cmTC_41f29.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_41f29
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_41f29.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++   -DCXX_FLAG_WORKS__Wall    -rdynamic CMakeFiles/cmTC_41f29.dir/src.cxx.o  -o cmTC_41f29 
+Building CXX object CMakeFiles/cmTC_d26c2.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -DCXX_FLAG_WORKS__Wall   -Wall -o CMakeFiles/cmTC_d26c2.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_d26c2
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d26c2.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++   -DCXX_FLAG_WORKS__Wall    -rdynamic CMakeFiles/cmTC_d26c2.dir/src.cxx.o  -o cmTC_d26c2 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -461,13 +461,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wextra succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_e302d/fast && /bin/gmake -f CMakeFiles/cmTC_e302d.dir/build.make CMakeFiles/cmTC_e302d.dir/build
+Run Build Command(s):/bin/gmake cmTC_d0686/fast && /bin/gmake -f CMakeFiles/cmTC_d0686.dir/build.make CMakeFiles/cmTC_d0686.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_e302d.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wall  -DCXX_FLAG_WORKS__Wextra   -Wextra -o CMakeFiles/cmTC_e302d.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_e302d
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e302d.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wall  -DCXX_FLAG_WORKS__Wextra    -rdynamic CMakeFiles/cmTC_e302d.dir/src.cxx.o  -o cmTC_e302d 
+Building CXX object CMakeFiles/cmTC_d0686.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wall  -DCXX_FLAG_WORKS__Wextra   -Wextra -o CMakeFiles/cmTC_d0686.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_d0686
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d0686.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wall  -DCXX_FLAG_WORKS__Wextra    -rdynamic CMakeFiles/cmTC_d0686.dir/src.cxx.o  -o cmTC_d0686 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -476,13 +476,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wshadow succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_ecf3d/fast && /bin/gmake -f CMakeFiles/cmTC_ecf3d.dir/build.make CMakeFiles/cmTC_ecf3d.dir/build
+Run Build Command(s):/bin/gmake cmTC_f5087/fast && /bin/gmake -f CMakeFiles/cmTC_f5087.dir/build.make CMakeFiles/cmTC_f5087.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_ecf3d.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow   -Wshadow -o CMakeFiles/cmTC_ecf3d.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_ecf3d
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ecf3d.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow    -rdynamic CMakeFiles/cmTC_ecf3d.dir/src.cxx.o  -o cmTC_ecf3d 
+Building CXX object CMakeFiles/cmTC_f5087.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow   -Wshadow -o CMakeFiles/cmTC_f5087.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_f5087
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f5087.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wextra -Wall  -DCXX_FLAG_WORKS__Wshadow    -rdynamic CMakeFiles/cmTC_f5087.dir/src.cxx.o  -o cmTC_f5087 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -491,13 +491,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__WeffcPP succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_48cc4/fast && /bin/gmake -f CMakeFiles/cmTC_48cc4.dir/build.make CMakeFiles/cmTC_48cc4.dir/build
+Run Build Command(s):/bin/gmake cmTC_80871/fast && /bin/gmake -f CMakeFiles/cmTC_80871.dir/build.make CMakeFiles/cmTC_80871.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_48cc4.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP   -Weffc++ -o CMakeFiles/cmTC_48cc4.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_48cc4
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_48cc4.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP    -rdynamic CMakeFiles/cmTC_48cc4.dir/src.cxx.o  -o cmTC_48cc4 
+Building CXX object CMakeFiles/cmTC_80871.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP   -Weffc++ -o CMakeFiles/cmTC_80871.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_80871
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_80871.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__WeffcPP    -rdynamic CMakeFiles/cmTC_80871.dir/src.cxx.o  -o cmTC_80871 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -506,13 +506,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__pedantic succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_ba10f/fast && /bin/gmake -f CMakeFiles/cmTC_ba10f.dir/build.make CMakeFiles/cmTC_ba10f.dir/build
+Run Build Command(s):/bin/gmake cmTC_1633e/fast && /bin/gmake -f CMakeFiles/cmTC_1633e.dir/build.make CMakeFiles/cmTC_1633e.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_ba10f.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic   -pedantic -o CMakeFiles/cmTC_ba10f.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_ba10f
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ba10f.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic    -rdynamic CMakeFiles/cmTC_ba10f.dir/src.cxx.o  -o cmTC_ba10f 
+Building CXX object CMakeFiles/cmTC_1633e.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic   -pedantic -o CMakeFiles/cmTC_1633e.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_1633e
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1633e.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__pedantic    -rdynamic CMakeFiles/cmTC_1633e.dir/src.cxx.o  -o cmTC_1633e 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -521,13 +521,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wno_long_long succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_a4549/fast && /bin/gmake -f CMakeFiles/cmTC_a4549.dir/build.make CMakeFiles/cmTC_a4549.dir/build
+Run Build Command(s):/bin/gmake cmTC_c3acf/fast && /bin/gmake -f CMakeFiles/cmTC_c3acf.dir/build.make CMakeFiles/cmTC_c3acf.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_a4549.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long   -Wno-long-long -o CMakeFiles/cmTC_a4549.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_a4549
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a4549.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long    -rdynamic CMakeFiles/cmTC_a4549.dir/src.cxx.o  -o cmTC_a4549 
+Building CXX object CMakeFiles/cmTC_c3acf.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long   -Wno-long-long -o CMakeFiles/cmTC_c3acf.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_c3acf
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c3acf.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wno_long_long    -rdynamic CMakeFiles/cmTC_c3acf.dir/src.cxx.o  -o cmTC_c3acf 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -536,13 +536,13 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wuninitialized succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_471bb/fast && /bin/gmake -f CMakeFiles/cmTC_471bb.dir/build.make CMakeFiles/cmTC_471bb.dir/build
+Run Build Command(s):/bin/gmake cmTC_b441b/fast && /bin/gmake -f CMakeFiles/cmTC_b441b.dir/build.make CMakeFiles/cmTC_b441b.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_471bb.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized   -Wuninitialized -o CMakeFiles/cmTC_471bb.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
-Linking CXX executable cmTC_471bb
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_471bb.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized    -rdynamic CMakeFiles/cmTC_471bb.dir/src.cxx.o  -o cmTC_471bb 
+Building CXX object CMakeFiles/cmTC_b441b.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized   -Wuninitialized -o CMakeFiles/cmTC_b441b.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTC_b441b
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b441b.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wuninitialized    -rdynamic CMakeFiles/cmTC_b441b.dir/src.cxx.o  -o cmTC_b441b 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 
@@ -551,14 +551,14 @@ int main() { return 0; }
 Performing C++ SOURCE FILE Test CXX_FLAG_WORKS__Wl,_no_undefined succeeded with the following output:
 Change Dir: /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/bin/gmake cmTC_cf7ff/fast && /bin/gmake -f CMakeFiles/cmTC_cf7ff.dir/build.make CMakeFiles/cmTC_cf7ff.dir/build
+Run Build Command(s):/bin/gmake cmTC_f854e/fast && /bin/gmake -f CMakeFiles/cmTC_f854e.dir/build.make CMakeFiles/cmTC_f854e.dir/build
 gmake[1]: Entering directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_cf7ff.dir/src.cxx.o
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined   -Wl,-no-undefined -o CMakeFiles/cmTC_cf7ff.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
+Building CXX object CMakeFiles/cmTC_f854e.dir/src.cxx.o
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++    -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined   -Wl,-no-undefined -o CMakeFiles/cmTC_f854e.dir/src.cxx.o -c /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp/src.cxx
 <command-line>: warning: ISO C++11 requires whitespace after the macro name
-Linking CXX executable cmTC_cf7ff
-/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_cf7ff.dir/link.txt --verbose=1
-/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined    -rdynamic CMakeFiles/cmTC_cf7ff.dir/src.cxx.o  -o cmTC_cf7ff 
+Linking CXX executable cmTC_f854e
+/cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/CMake/3.15.5/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f854e.dir/link.txt --verbose=1
+/cvmfs/sft.cern.ch/lcg/releases/gcc/8.2.0-3fa06/x86_64-centos7/bin/g++  -Wuninitialized -Wno-long-long -pedantic -Weffc++ -Wshadow -Wextra -Wall  -DCXX_FLAG_WORKS__Wl,_no_undefined    -rdynamic CMakeFiles/cmTC_f854e.dir/src.cxx.o  -o cmTC_f854e 
 gmake[1]: Leaving directory `/lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/processors/ECAL/LCIO2BuildProcessor/build/CMakeFiles/CMakeTmp'
 
 

@@ -285,21 +285,7 @@ namespace CALICE
 	    float hitZ=aHit->getPosition()[2];
 	    
 	    if( _FixedPosZ_float.size() == 0) streamlog_out(ERROR)<<"missing layer info"<<endl;
-	    
-	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
-	      hitZtoslab.push_back(abs(_FixedPosZ_float[islab]-hitZ));
-	    }
-	    for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
-	      streamlog_out(DEBUG)<<"layer "<<islab<<" distance: "<<hitZtoslab.at(islab)<<endl;
-              if(hitZtoslab.at(islab) < _SlabThickness) {
-		i_slab = islab;
-		hit_slab.push_back(i_slab);
-		break;
-              }
-            }
-	   
-            streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtoslab.at(i_slab)<<endl;
-	    
+	    	    
 	    if (_ConversionGeV2MIP) {
               float thisenergy = aHit->getEnergy() / _GeV2MIPFactor;
               hit_energy_og.push_back(thisenergy);
@@ -310,7 +296,20 @@ namespace CALICE
                 hit_x.push_back(aHit->getPosition()[0]);
                 hit_y.push_back(aHit->getPosition()[1]);
                 hit_z.push_back(aHit->getPosition()[2]);
-              }
+              
+		for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+		  hitZtoslab.push_back(abs(_FixedPosZ_float[islab]-hitZ));
+		}
+		for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+		  streamlog_out(DEBUG)<<"layer "<<islab<<" distance: "<<hitZtoslab.at(islab)<<endl;
+		  if(hitZtoslab.at(islab) < _SlabThickness) {
+		    i_slab = islab;
+		    hit_slab.push_back(i_slab);
+		    break;
+		  }
+		}
+		streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtoslab.at(i_slab)<<endl;
+	      }
             }
             else {
               float thisenergy = aHit->getEnergy();
@@ -321,7 +320,20 @@ namespace CALICE
               hit_x.push_back(aHit->getPosition()[0]);
               hit_y.push_back(aHit->getPosition()[1]);
               hit_z.push_back(aHit->getPosition()[2]);
-            }
+            
+	      for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+		hitZtoslab.push_back(abs(_FixedPosZ_float[islab]-hitZ));
+	      }
+	      for (int islab = 0; islab < _FixedPosZ_float.size(); islab++){
+		streamlog_out(DEBUG)<<"layer "<<islab<<" distance: "<<hitZtoslab.at(islab)<<endl;
+		if(hitZtoslab.at(islab) < _SlabThickness) {
+		  i_slab = islab;
+		  hit_slab.push_back(i_slab);
+		  break;
+		}
+	      }
+	      streamlog_out(DEBUG)<<"Closest slab: "<<i_slab<<". Distance: "<<hitZtoslab.at(i_slab)<<endl;
+	    }
 	    
 	    
 	  }//end loop over SimCalorimeterHits
