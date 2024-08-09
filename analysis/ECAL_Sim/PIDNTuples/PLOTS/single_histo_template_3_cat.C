@@ -41,8 +41,6 @@ void findTH1values(TH1 * hA, TH1 * hB, TH1 * hC, float &x_min, float &x_max, flo
   int b_min = min(b_min_A, min(b_min_B,b_min_C));
   int b_max = max(b_max_A, max(b_max_B,b_max_C));
 
-  if(b_max > N_ECAL_LAYERS + 1) rescalable = true;
-
   x_min = hA->GetBinCenter(b_min-1);
   x_max = hA->GetBinCenter(b_max+1);
 
@@ -63,6 +61,7 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, bool save = fa
   if(rescalable == true) hA->GetXaxis()->SetRangeUser(x_min,x_max);
 
   hA->SetXTitle("Value");
+  hA->GetYaxis()->SetTitleOffset(1.3);
   hA->SetYTitle("Entries");
 
   auto c = new TCanvas("c_XproductionX_"+varname, "c_XproductionX_"+varname, 800, 800);
@@ -81,9 +80,9 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, bool save = fa
   hC->SetLineWidth(3);
   
   hA->SetTitle(varname);
-  hA->Draw("histo");
-  hB->Draw("histosame");
-  hC->Draw("histosame");
+  hA->DrawNormalized("histo");
+  hB->DrawNormalized("histosame");
+  hC->DrawNormalized("histosame");
 
   float xleg=0.;
   if( hA->GetBinCenter(hA->GetMaximumBin()) < (x_max-x_min)/2) xleg = 0.5;
@@ -118,22 +117,72 @@ void single_histo_3_temp(TString varname, bool save = false){
   TFile *file_C = new TFile(filename_C, "read");
   cout<<varname<<endl;
 
-  gStyle->SetOptFit(0); 
+  gStyle->SetOptFit(0);
   gStyle->SetOptStat(0);
-  //gStyle->SetOptTitle(0);
   gStyle->SetTitleBorderSize(0);
   gStyle->SetTitleStyle(0);
-  //gStyle->SetTitleX(0.2);
   gStyle->SetMarkerSize(0.2);
 
-  TH1 *histo_A;
-  TH1 *histo_B;
-  TH1 *histo_C;
+  TTree *tree_A = (TTree*)file_A->Get("ntp");
+  TTree *tree_B = (TTree*)file_B->Get("ntp");
+  TTree *tree_C = (TTree*)file_C->Get("ntp");
 
-  file_A->GetObject(varname+"_XpartAX", histo_A);
-  file_B->GetObject(varname+"_XpartBX", histo_B);
-  file_C->GetObject(varname+"_XpartCX", histo_C);
+  TBranch *branch_A = 0;
+  TBranch *branch_B = 0;
+  TBranch *branch_C = 0;
 
-  drawHistosTH1(varname, histo_A, histo_B, histo_C, save);  
-  
+  float value_A = 0.;
+  float value_B = 0.;
+  float value_C = 0.;
+
+  tree_A->SetBranchAddress(varname, &value_A, &branch_A);
+  tree_B->SetBranchAddress(varname, &value_B, &branch_B);
+  tree_C->SetBranchAddress(varname, &value_C, &branch_C);
+
+  int entries_A = tree_A->GetEntries();
+  int entries_B = tree_B->GetEntries();
+  int entries_C = tree_C->GetEntries();
+  cout<<"entries: "<<entries_A<<" "<<entries_B<<" "<<entries_C<<endl;
+
+  vector<float> allvalues;
+  for (int i = 0; i < entries_A; i++) {
+    tree_A->GetEntry(i);
+    allvalues.push_back(value_A);
+  }
+  for (int i = 0; i < entries_B; i++) {
+    tree_B->GetEntry(i);
+    allvalues.push_back(value_B);
+  }
+  for (int i = 0; i < entries_C; i++) {
+    tree_C->GetEntry(i);
+    allvalues.push_back(value_C);
+  }
+  float xmin = *std::min_element(allvalues.begin(), allvalues.end());;
+  float xmax = *std::max_element(allvalues.begin(), allvalues.end());;
+  cout<<"min: "<<xmin<<", max: "<<xmax<<endl;
+
+  TH1F *histo_A = new TH1F("hA", "hA", 100, xmin, xmax);
+  TH1F *histo_B = new TH1F("hB", "hB", 100, xmin, xmax);
+  TH1F *histo_C = new TH1F("hC", "hC", 100, xmin, xmax);
+
+  for (int i = 0; i < entries_A; i++) {
+    tree_A->GetEntry(i);
+    //cout<<value_A<<endl;
+    histo_A->Fill(value_A);
+  }
+
+  for (Int_t i=0; i<entries_B; i++){
+    tree_B->GetEntry(i);
+    //cout<<value_B<<endl;
+    histo_B->Fill(value_B);
+  }
+
+  for (Int_t i=0; i<entries_C; i++){
+    tree_C->GetEntry(i);
+    //cout<<value_C<<endl;
+    histo_C->Fill(value_C);
+  }
+
+  drawHistosTH1(varname, histo_A, histo_B, histo_C, save);
+
 }

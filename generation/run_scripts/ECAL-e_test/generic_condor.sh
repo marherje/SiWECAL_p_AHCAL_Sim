@@ -99,7 +99,7 @@ EOF
     cat > ${local}/steer/$condorsh <<EOF
 #!/bin/bash
 cp -r ${local}/steer/runddsim_${label}.* .
-source /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/init_ilcsoft_v02-03-03.sh
+source /lhome/ific/m/marherje/SiWECAL_p_AHCAL_Sim/init_ilcsoft_v02-03-02_g103_flags17.sh
 ddsim --enableG4GPS --macroFile ${local}/macros/${macfile} --steeringFile ${local}/steer/$scriptname
 &> ${local}/log/${label}.log
 #tar czvf ${local}/TB2022-06_${label}.slcio.tar.gz TB2022-06_${label}.slcio 
@@ -117,7 +117,7 @@ output                  = outfile_$condorfile.txt
 error                   = errors_$condorfile.txt
 should_transfer_files   = Yes
 when_to_transfer_output = ON_EXIT
-request_memory          = 2 GB
+request_memory          = 1 MB
 +JobFlavour             = "largo"
 queue 1
 EOF
