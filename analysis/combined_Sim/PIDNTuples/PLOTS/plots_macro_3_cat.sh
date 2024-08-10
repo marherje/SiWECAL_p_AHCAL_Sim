@@ -14,7 +14,7 @@ fi
 
 for production in PID_6_GeV_e_pi_mu #PID_100_GeV_e_pi_mu PID_6_60_100_GeV_e_pi_mu
 do
-    for variable in total_nhit_layer_20 total_nhit_layer_50 nhit_ratio weighte_ratio total_interaction total_MIP_Likeness ecal_MIP_Likeness hcal_MIP_Likeness total_hits_max_distance
+    for variable in total_nhit_layer_20 total_nhit_layer_50 nhit_ratio weighte_ratio total_interaction total_MIP_Likeness ecal_MIP_Likeness hcal_MIP_Likeness total_hits_max_distance total_shower_nhit_max_layer total_shower_nhit_start_layer total_shower_nhit_end_layer
     do
 	cp single_histo_template_3_cat.C single_histo_3_temp.C
 
