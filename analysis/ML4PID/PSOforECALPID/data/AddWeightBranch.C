@@ -27,7 +27,7 @@
 void AddWeightBranch(TString filename) {
 
   std::cout<<"Loading file : "<<filename<<std::endl;
-  TFile *f = new TFile(filename,"update");
+  TFile *f = new TFile(filename+".root","update");
   TTree *T = (TTree*)f->Get("ntp"); 
   //float px,py; 
   //float pt;

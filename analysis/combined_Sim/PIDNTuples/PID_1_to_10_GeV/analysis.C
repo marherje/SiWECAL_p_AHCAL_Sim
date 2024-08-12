@@ -27,7 +27,7 @@ vector<size_t> sort_indexes(const vector<T> &v) {
   return idx;
 }
 
-#define N_ENERGIES 1 //18
+#define N_ENERGIES 10 //18
 #define N_ECAL_LAYERS 15
 #define N_HCAL_LAYERS 41 //pre+38+bad+tokyo
 
@@ -74,10 +74,8 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
   float hit_count[N_ECAL_LAYERS];
   float sume[N_ECAL_LAYERS];
   float sume_w[N_ECAL_LAYERS];
-  
   float sume_total = 1.;
   float sume_w_total = 1.;
-
   float weight = 1.;
 
   // Initial values
@@ -86,7 +84,6 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
     sume[ilayer] = 0. ;
     sume_w[ilayer] = 0. ;
   }
-  
   if(hit_energy->size() > 0){
     for (int j = 0; j < hit_energy->size(); j++) {
       if( masked && hit_isMasked->at(j) == 1 ) continue;
@@ -118,12 +115,10 @@ void hits_layer_ecal(float hlv[N_ECAL_LAYERS], vector<float> * hit_energy, vecto
       if(count_type == "weight") hlv[ilayer] = sume_w[ilayer]*weight;
     }
     else hlv[ilayer] = 0.;
-  
   }
   //cout<<"| DEBUG(hits_layer) | "<<"Mode: "<<count_type<<", normalized: "<<normalized<<endl;
   //cout<<"| DEBUG(hits_layer) | "<<"Hit energy size: "<<hit_energy->size()<<". Hit slab size: "<<hit_slab->size()<<endl;
   //cout<<"| DEBUG(hits_layer) | "<<"hlv: "<<hlv[0]<<" "<<hlv[1]<<" "<<hlv[2]<<" "<<hlv[3]<<" "<<hlv[4]<<" "<<hlv[5]<<" "<<hlv[6]<<" "<<hlv[7]<<" "<<hlv[8]<<" "<<hlv[9]<<" "<<hlv[10]<<" "<<hlv[11]<<" "<<hlv[12]<<" "<<hlv[13]<<" "<<hlv[14]<<endl;
-    
   
   return 0;
 }
@@ -328,54 +323,114 @@ void shower_variables_hcal(float entries, float array[N_HCAL_LAYERS], float arra
   return 0;
 }
 
+void shower_variables_total(float entries, float array[N_TOTAL_LAYERS], float array_n[N_TOTAL_LAYERS], float &shower_maxvalue, float &shower_maxvalue_n, int &ilayermax,
+                           int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
+
+  float percentage = 0.1;
+  float threshold = 3.;
+
+  if((entries > 0) and (is_shower == true)){
+    for(int ilayer=0; ilayer<N_HCAL_LAYERS; ilayer++){
+      float thislayer = array[ilayer];
+      float thislayer_n = array_n[ilayer];
+      if(thislayer > shower_maxvalue){
+        shower_maxvalue = thislayer;
+        shower_maxvalue_n = thislayer_n;
+        ilayermax = ilayer;
+      }
+    }
+    for(int ilayer=N_HCAL_LAYERS-1; ilayer>ilayermax; ilayer--){
+      float thislayer = array[ilayer];
+      if(thislayer > threshold){
+        ilayerend = ilayer;
+        break;
+      }
+    }
+    for(int ilayer=N_HCAL_LAYERS-1; ilayer>ilayermax; ilayer--){
+      float thislayer = array[ilayer];
+      if((thislayer > threshold) and (thislayer > percentage*shower_maxvalue)) {
+        ilayerend_10 = ilayer;
+        break;
+      }
+    }
+
+    for(int ilayer=0; ilayer<ilayermax; ilayer++){
+      float thislayer = array[ilayer];
+      if((thislayer > threshold)) {
+        ilayerstart = ilayer;
+        break;
+      }
+    }
+    for(int ilayer=0; ilayer<ilayermax; ilayer++){
+      float thislayer = array[ilayer];
+      if((thislayer > threshold) && (thislayer > percentage*shower_maxvalue)) {
+        ilayerstart_10 = ilayer;
+        break;
+      }
+    }
+
+  }
+  return 0;
+}
+
 float MIP_Likeness_ecal(float nhits_layer[N_ECAL_LAYERS]) {
   float score = 0.;
   for(int i=0; i<N_ECAL_LAYERS; i++) {
+    if(nhits_layer[i] == 0) score -= 1.;
     if(nhits_layer[i] > 0) score += 1./(nhits_layer[i]);
   }
-  score = score/N_ECAL_LAYERS;
+  score = (score/N_ECAL_LAYERS + 1.)/2.;
   return score;
 }
 
 float MIP_Likeness_hcal(float nhits_layer[N_HCAL_LAYERS]) {
   float score = 0.;
   for(int i=0; i<N_HCAL_LAYERS; i++) {
+    if(nhits_layer[i] == 0) score -= 1.;
     if(nhits_layer[i] > 0) score += 1./(nhits_layer[i]);
   }
-  score = score/N_HCAL_LAYERS;
+  score = (score/N_HCAL_LAYERS + 1.)/2.;
   return score;
 }
 
 float MIP_Likeness_total(float nhits_e_layer[N_ECAL_LAYERS], float nhits_h_layer[N_HCAL_LAYERS]) {
   float score = 0.;
+  float score_e = 0.;
+  float score_h = 0.;
   for(int i=0; i<N_ECAL_LAYERS; i++) {
-    if(nhits_e_layer[i] > 0) score += 1./(nhits_e_layer[i]);
+    if(nhits_e_layer[i] == 0) score_e -= 1.;
+    if(nhits_e_layer[i] > 0) score_e += 1./(nhits_e_layer[i]);
   }
   for(int i=0; i<N_HCAL_LAYERS; i++) {
-    if(nhits_h_layer[i] > 0) score += 1./(nhits_h_layer[i]);
+    if(nhits_h_layer[i] == 0) score_h -= 1.;
+    if(nhits_h_layer[i] > 0) score_h += 1./(nhits_h_layer[i]);
   }
-  score = score/(N_ECAL_LAYERS+N_HCAL_LAYERS);
+  score = (score_e/N_ECAL_LAYERS + score_h/N_HCAL_LAYERS + 2.)/4.;
   return score;
 }
 
 void hcal_ecal_ratio(float &nhit_ratio, float &sume_ratio, float &weight_ratio, int nhit_e, float sume_e, float weight_e, int nhit_h, float sume_h, float weight_h) {
-  if(nhit_e>0) nhit_ratio = nhit_h/nhit_e;
-  if(sume_e>0) sume_ratio = sume_h/sume_e;
-  if(weight_e>0) weight_ratio = weight_h/weight_e;
+  //I'll sum 1 hit in each detector to escape problems with 0, simple.
+  nhit_ratio = (nhit_h+1.)/(nhit_e+1.);
+  sume_ratio = (sume_h+1.)/(sume_e+1.);
+  weight_ratio = (weight_h+1.)/(weight_e+1.);
   
   // Cut down
-  if(nhit_ratio>100.) nhit_ratio = 100.;
-  if(sume_ratio>100.) sume_ratio = 100.;
-  if(weight_ratio>100.) weight_ratio = 100.;
+  //if(nhit_ratio>100.) nhit_ratio = 100.;
+  //if(sume_ratio>100.) sume_ratio = 100.;
+  //if(weight_ratio>100.) weight_ratio = 100.;
 
   return 0;
 }
 
 void is_interaction(float &ecal_int, float &hcal_int, float &total_int, int nhit_e, int nhit_h) {
+  ecal_int = 0.;
+  hcal_int = 0.;
+  total_int = 0.;
+  //cout<<"ecal, hcal: "<<nhit_e<<", "<<nhit_h<<endl;
   if(nhit_e > 0) ecal_int = 1.;
   if(nhit_h > 0) hcal_int = 1.;
   if((nhit_e > 0) or (nhit_h > 0)) total_int = 1.;
-
   return 0;
 }
 
@@ -486,6 +541,38 @@ float moliere_hcal(vector<float> * hit_energy, vector<int> *hit_slab, TVectorD S
   }
   return mol_rad;
 }
+
+float hits_max_distance(vector<int> *hit_slab, vector<float> * hit_x, vector<float> * hit_y,
+			     vector<int> * hit_isMasked, bool masked=false) {
+  float max_distance = 0.;
+  //cout<<"DEBUG1"<<endl;
+  //cout<<"hit_slab.size(): "<<hit_slab->size()<<endl;
+  if(hit_slab->size() > 1){
+    for (int i = 0; i < hit_slab->size(); i++){
+      if (masked && hit_isMasked->at(i) == 1) continue;
+      //  cout<<"DEBUG2"<<endl;
+      int layer1 = hit_slab->at(i);
+      float hit1_x = hit_x->at(i);
+      float hit1_y = hit_y->at(i);
+      //cout<<"DEBUG2.1"<<endl;
+      for (int j = i+1; j < hit_slab->size()-1; j++){
+	//cout<<"DEBUG3"<<endl;
+	//if(j==i) continue;
+	if (masked && hit_isMasked->at(j) == 1) continue;
+	int layer2 = hit_slab->at(j);
+	//cout<<"DEBUG3.1"<<endl;
+	if(layer2 != layer1) continue;
+	float hit2_x = hit_x->at(j);
+	float hit2_y = hit_y->at(j);
+	float distance = pow(pow(hit2_x-hit1_x,2)+pow(hit2_y-hit1_y,2),0.5);
+	if(distance>max_distance) max_distance = distance;
+      }
+    }
+  }
+  //  cout<<"DEBUG4"<<endl;
+  return max_distance;
+}
+
 
 float moliere_total(vector<float> * e_hit_energy, vector<int> *e_hit_slab, TVectorD W_thicknesses,
                    vector<float> * e_hit_x, vector<float> * e_hit_y, vector<float> * e_hit_z, vector<int> * e_hit_isMasked,
@@ -906,7 +993,7 @@ void graph_setup_add(TGraph *g, string title, Color_t color){
 
 void analysis (string particle, bool masked=false) {
     
-    double test_e[N_ENERGIES]={6.};
+    double test_e[N_ENERGIES]={1.,2.,3.,4.,5.,6.,7.,8.,9.,10.};
     TVectorD energies(N_ENERGIES, test_e);
     TVectorD energies_tr(N_ENERGIES);
     for (int j = 0; j < N_ENERGIES; j++) energies_tr[j] = 1/TMath::Sqrt(energies[j]);
@@ -945,11 +1032,11 @@ void analysis (string particle, bool masked=false) {
 
     // branches definitions
     // We will save both the branches and the histos
-    
     Float_t b_ecal_interaction;
     Float_t b_ecal_nhit, b_ecal_sume, b_ecal_weighte, b_ecal_bar_x, b_ecal_bar_y, b_ecal_bar_z, b_ecal_bar_r;
     Float_t b_ecal_mol;
     Float_t b_ecal_MIP_Likeness;
+    Float_t b_ecal_hits_max_distance;
     Float_t b_ecal_radius90_layer_0, b_ecal_radius90_layer_1, b_ecal_radius90_layer_2, b_ecal_radius90_layer_3, b_ecal_radius90_layer_4, b_ecal_radius90_layer_5, b_ecal_radius90_layer_6, b_ecal_radius90_layer_7, b_ecal_radius90_layer_8, b_ecal_radius90_layer_9, b_ecal_radius90_layer_10, b_ecal_radius90_layer_11, b_ecal_radius90_layer_12, b_ecal_radius90_layer_13, b_ecal_radius90_layer_14;
     Float_t b_ecal_bar_x_layer_0, b_ecal_bar_x_layer_1, b_ecal_bar_x_layer_2, b_ecal_bar_x_layer_3, b_ecal_bar_x_layer_4, b_ecal_bar_x_layer_5, b_ecal_bar_x_layer_6, b_ecal_bar_x_layer_7, b_ecal_bar_x_layer_8, b_ecal_bar_x_layer_9, b_ecal_bar_x_layer_10, b_ecal_bar_x_layer_11, b_ecal_bar_x_layer_12, b_ecal_bar_x_layer_13, b_ecal_bar_x_layer_14;
     Float_t b_ecal_bar_y_layer_0, b_ecal_bar_y_layer_1, b_ecal_bar_y_layer_2, b_ecal_bar_y_layer_3, b_ecal_bar_y_layer_4, b_ecal_bar_y_layer_5, b_ecal_bar_y_layer_6, b_ecal_bar_y_layer_7, b_ecal_bar_y_layer_8, b_ecal_bar_y_layer_9, b_ecal_bar_y_layer_10, b_ecal_bar_y_layer_11, b_ecal_bar_y_layer_12, b_ecal_bar_y_layer_13, b_ecal_bar_y_layer_14;
@@ -968,6 +1055,7 @@ void analysis (string particle, bool masked=false) {
     Float_t b_hcal_nhit, b_hcal_sume, b_hcal_weighte, b_hcal_bar_x, b_hcal_bar_y, b_hcal_bar_z, b_hcal_bar_r;
     Float_t b_hcal_mol;
     Float_t b_hcal_MIP_Likeness;
+    Float_t b_hcal_hits_max_distance;
     Float_t b_hcal_radius90_layer_0, b_hcal_radius90_layer_1, b_hcal_radius90_layer_2, b_hcal_radius90_layer_3, b_hcal_radius90_layer_4, b_hcal_radius90_layer_5, b_hcal_radius90_layer_6, b_hcal_radius90_layer_7, b_hcal_radius90_layer_8, b_hcal_radius90_layer_9, b_hcal_radius90_layer_10, b_hcal_radius90_layer_11, b_hcal_radius90_layer_12, b_hcal_radius90_layer_13, b_hcal_radius90_layer_14;
     Float_t b_hcal_bar_x_layer_0, b_hcal_bar_x_layer_1, b_hcal_bar_x_layer_2, b_hcal_bar_x_layer_3, b_hcal_bar_x_layer_4, b_hcal_bar_x_layer_5, b_hcal_bar_x_layer_6, b_hcal_bar_x_layer_7, b_hcal_bar_x_layer_8, b_hcal_bar_x_layer_9, b_hcal_bar_x_layer_10, b_hcal_bar_x_layer_11, b_hcal_bar_x_layer_12, b_hcal_bar_x_layer_13, b_hcal_bar_x_layer_14;
     Float_t b_hcal_bar_y_layer_0, b_hcal_bar_y_layer_1, b_hcal_bar_y_layer_2, b_hcal_bar_y_layer_3, b_hcal_bar_y_layer_4, b_hcal_bar_y_layer_5, b_hcal_bar_y_layer_6, b_hcal_bar_y_layer_7, b_hcal_bar_y_layer_8, b_hcal_bar_y_layer_9, b_hcal_bar_y_layer_10, b_hcal_bar_y_layer_11, b_hcal_bar_y_layer_12, b_hcal_bar_y_layer_13, b_hcal_bar_y_layer_14;
@@ -975,17 +1063,36 @@ void analysis (string particle, bool masked=false) {
     Float_t b_hcal_shower_nhit_max_layer, b_hcal_shower_nhit_start_layer, b_hcal_shower_nhit_end_layer, b_hcal_shower_nhit_start_10_layer, b_hcal_shower_nhit_end_10_layer, b_hcal_shower_nhit_average, b_hcal_shower_nhit_max;
     Float_t b_hcal_shower_sume_max_layer, b_hcal_shower_sume_start_layer, b_hcal_shower_sume_end_layer, b_hcal_shower_sume_start_10_layer, b_hcal_shower_sume_end_10_layer, b_hcal_shower_sume_average, b_hcal_shower_sume_max;
     Float_t b_hcal_shower_weighte_max_layer, b_hcal_shower_weighte_start_layer, b_hcal_shower_weighte_end_layer, b_hcal_shower_weighte_start_10_layer, b_hcal_shower_weighte_end_10_layer, b_hcal_shower_weighte_average, b_hcal_shower_weighte_max;
+
     Float_t b_hcal_nhit_layer_0, b_hcal_nhit_layer_1, b_hcal_nhit_layer_2, b_hcal_nhit_layer_3, b_hcal_nhit_layer_4, b_hcal_nhit_layer_5, b_hcal_nhit_layer_6, b_hcal_nhit_layer_7, b_hcal_nhit_layer_8, b_hcal_nhit_layer_9, b_hcal_nhit_layer_10, b_hcal_nhit_layer_11, b_hcal_nhit_layer_12, b_hcal_nhit_layer_13, b_hcal_nhit_layer_14;
+    Float_t b_hcal_nhit_layer_15, b_hcal_nhit_layer_16, b_hcal_nhit_layer_17, b_hcal_nhit_layer_18, b_hcal_nhit_layer_19, b_hcal_nhit_layer_20, b_hcal_nhit_layer_21, b_hcal_nhit_layer_22, b_hcal_nhit_layer_23, b_hcal_nhit_layer_24, b_hcal_nhit_layer_25, b_hcal_nhit_layer_26, b_hcal_nhit_layer_27, b_hcal_nhit_layer_28, b_hcal_nhit_layer_29;
+    Float_t b_hcal_nhit_layer_30, b_hcal_nhit_layer_31, b_hcal_nhit_layer_32, b_hcal_nhit_layer_33, b_hcal_nhit_layer_34, b_hcal_nhit_layer_35, b_hcal_nhit_layer_36, b_hcal_nhit_layer_37, b_hcal_nhit_layer_38, b_hcal_nhit_layer_39, b_hcal_nhit_layer_40;
+
     Float_t b_hcal_nhit_layer_n_0, b_hcal_nhit_layer_n_1, b_hcal_nhit_layer_n_2, b_hcal_nhit_layer_n_3, b_hcal_nhit_layer_n_4, b_hcal_nhit_layer_n_5, b_hcal_nhit_layer_n_6, b_hcal_nhit_layer_n_7, b_hcal_nhit_layer_n_8, b_hcal_nhit_layer_n_9, b_hcal_nhit_layer_n_10, b_hcal_nhit_layer_n_11, b_hcal_nhit_layer_n_12, b_hcal_nhit_layer_n_13, b_hcal_nhit_layer_n_14;
+    Float_t b_hcal_nhit_layer_n_15, b_hcal_nhit_layer_n_16, b_hcal_nhit_layer_n_17, b_hcal_nhit_layer_n_18, b_hcal_nhit_layer_n_19, b_hcal_nhit_layer_n_20, b_hcal_nhit_layer_n_21, b_hcal_nhit_layer_n_22, b_hcal_nhit_layer_n_23, b_hcal_nhit_layer_n_24, b_hcal_nhit_layer_n_25, b_hcal_nhit_layer_n_26, b_hcal_nhit_layer_n_27, b_hcal_nhit_layer_n_28, b_hcal_nhit_layer_n_29;
+    Float_t b_hcal_nhit_layer_n_30, b_hcal_nhit_layer_n_31, b_hcal_nhit_layer_n_32, b_hcal_nhit_layer_n_33, b_hcal_nhit_layer_n_34, b_hcal_nhit_layer_n_35, b_hcal_nhit_layer_n_36, b_hcal_nhit_layer_n_37, b_hcal_nhit_layer_n_38, b_hcal_nhit_layer_n_39, b_hcal_nhit_layer_n_40;
+
     Float_t b_hcal_weighte_layer_0, b_hcal_weighte_layer_1, b_hcal_weighte_layer_2, b_hcal_weighte_layer_3, b_hcal_weighte_layer_4, b_hcal_weighte_layer_5, b_hcal_weighte_layer_6, b_hcal_weighte_layer_7, b_hcal_weighte_layer_8, b_hcal_weighte_layer_9, b_hcal_weighte_layer_10, b_hcal_weighte_layer_11, b_hcal_weighte_layer_12, b_hcal_weighte_layer_13, b_hcal_weighte_layer_14;
+    Float_t b_hcal_weighte_layer_15, b_hcal_weighte_layer_16, b_hcal_weighte_layer_17, b_hcal_weighte_layer_18, b_hcal_weighte_layer_19, b_hcal_weighte_layer_20, b_hcal_weighte_layer_21, b_hcal_weighte_layer_22, b_hcal_weighte_layer_23, b_hcal_weighte_layer_24, b_hcal_weighte_layer_25, b_hcal_weighte_layer_26, b_hcal_weighte_layer_27, b_hcal_weighte_layer_28, b_hcal_weighte_layer_29;
+    Float_t b_hcal_weighte_layer_30, b_hcal_weighte_layer_31, b_hcal_weighte_layer_32, b_hcal_weighte_layer_33, b_hcal_weighte_layer_34, b_hcal_weighte_layer_35, b_hcal_weighte_layer_36, b_hcal_weighte_layer_37, b_hcal_weighte_layer_38, b_hcal_weighte_layer_39, b_hcal_weighte_layer_40;
+
     Float_t b_hcal_weighte_layer_n_0, b_hcal_weighte_layer_n_1, b_hcal_weighte_layer_n_2, b_hcal_weighte_layer_n_3, b_hcal_weighte_layer_n_4, b_hcal_weighte_layer_n_5, b_hcal_weighte_layer_n_6, b_hcal_weighte_layer_n_7, b_hcal_weighte_layer_n_8, b_hcal_weighte_layer_n_9, b_hcal_weighte_layer_n_10, b_hcal_weighte_layer_n_11, b_hcal_weighte_layer_n_12, b_hcal_weighte_layer_n_13, b_hcal_weighte_layer_n_14;
+    Float_t b_hcal_weighte_layer_n_15, b_hcal_weighte_layer_n_16, b_hcal_weighte_layer_n_17, b_hcal_weighte_layer_n_18, b_hcal_weighte_layer_n_19, b_hcal_weighte_layer_n_20, b_hcal_weighte_layer_n_21, b_hcal_weighte_layer_n_22, b_hcal_weighte_layer_n_23, b_hcal_weighte_layer_n_24, b_hcal_weighte_layer_n_25, b_hcal_weighte_layer_n_26, b_hcal_weighte_layer_n_27, b_hcal_weighte_layer_n_28, b_hcal_weighte_layer_n_29;
+    Float_t b_hcal_weighte_layer_n_30, b_hcal_weighte_layer_n_31, b_hcal_weighte_layer_n_32, b_hcal_weighte_layer_n_33, b_hcal_weighte_layer_n_34, b_hcal_weighte_layer_n_35, b_hcal_weighte_layer_n_36, b_hcal_weighte_layer_n_37, b_hcal_weighte_layer_n_38, b_hcal_weighte_layer_n_39, b_hcal_weighte_layer_n_40;
+
     Float_t b_hcal_sume_layer_0, b_hcal_sume_layer_1, b_hcal_sume_layer_2, b_hcal_sume_layer_3, b_hcal_sume_layer_4, b_hcal_sume_layer_5, b_hcal_sume_layer_6, b_hcal_sume_layer_7, b_hcal_sume_layer_8, b_hcal_sume_layer_9, b_hcal_sume_layer_10, b_hcal_sume_layer_11, b_hcal_sume_layer_12, b_hcal_sume_layer_13, b_hcal_sume_layer_14;
+    Float_t b_hcal_sume_layer_15, b_hcal_sume_layer_16, b_hcal_sume_layer_17, b_hcal_sume_layer_18, b_hcal_sume_layer_19, b_hcal_sume_layer_20, b_hcal_sume_layer_21, b_hcal_sume_layer_22, b_hcal_sume_layer_23, b_hcal_sume_layer_24, b_hcal_sume_layer_25, b_hcal_sume_layer_26, b_hcal_sume_layer_27, b_hcal_sume_layer_28, b_hcal_sume_layer_29;
+    Float_t b_hcal_sume_layer_30, b_hcal_sume_layer_31, b_hcal_sume_layer_32, b_hcal_sume_layer_33, b_hcal_sume_layer_34, b_hcal_sume_layer_35, b_hcal_sume_layer_36, b_hcal_sume_layer_37, b_hcal_sume_layer_38, b_hcal_sume_layer_39, b_hcal_sume_layer_40;
+
     Float_t b_hcal_sume_layer_n_0, b_hcal_sume_layer_n_1, b_hcal_sume_layer_n_2, b_hcal_sume_layer_n_3, b_hcal_sume_layer_n_4, b_hcal_sume_layer_n_5, b_hcal_sume_layer_n_6, b_hcal_sume_layer_n_7, b_hcal_sume_layer_n_8, b_hcal_sume_layer_n_9, b_hcal_sume_layer_n_10, b_hcal_sume_layer_n_11, b_hcal_sume_layer_n_12, b_hcal_sume_layer_n_13, b_hcal_sume_layer_n_14;
+    Float_t b_hcal_sume_layer_n_15, b_hcal_sume_layer_n_16, b_hcal_sume_layer_n_17, b_hcal_sume_layer_n_18, b_hcal_sume_layer_n_19, b_hcal_sume_layer_n_20, b_hcal_sume_layer_n_21, b_hcal_sume_layer_n_22, b_hcal_sume_layer_n_23, b_hcal_sume_layer_n_24, b_hcal_sume_layer_n_25, b_hcal_sume_layer_n_26, b_hcal_sume_layer_n_27, b_hcal_sume_layer_n_28, b_hcal_sume_layer_n_29;
+    Float_t b_hcal_sume_layer_n_30, b_hcal_sume_layer_n_31, b_hcal_sume_layer_n_32, b_hcal_sume_layer_n_33, b_hcal_sume_layer_n_34, b_hcal_sume_layer_n_35, b_hcal_sume_layer_n_36, b_hcal_sume_layer_n_37, b_hcal_sume_layer_n_38, b_hcal_sume_layer_n_39, b_hcal_sume_layer_n_40;
 
     Float_t b_total_interaction;
     Float_t b_total_nhit, b_total_sume, b_total_weighte, b_total_bar_x, b_total_bar_y, b_total_bar_z, b_total_bar_r;
     Float_t b_total_mol;
     Float_t b_total_MIP_Likeness;
+    Float_t b_total_hits_max_distance;
     Float_t b_total_radius90_layer_0, b_total_radius90_layer_1, b_total_radius90_layer_2, b_total_radius90_layer_3, b_total_radius90_layer_4, b_total_radius90_layer_5, b_total_radius90_layer_6, b_total_radius90_layer_7, b_total_radius90_layer_8, b_total_radius90_layer_9, b_total_radius90_layer_10, b_total_radius90_layer_11, b_total_radius90_layer_12, b_total_radius90_layer_13, b_total_radius90_layer_14;
     Float_t b_total_bar_x_layer_0, b_total_bar_x_layer_1, b_total_bar_x_layer_2, b_total_bar_x_layer_3, b_total_bar_x_layer_4, b_total_bar_x_layer_5, b_total_bar_x_layer_6, b_total_bar_x_layer_7, b_total_bar_x_layer_8, b_total_bar_x_layer_9, b_total_bar_x_layer_10, b_total_bar_x_layer_11, b_total_bar_x_layer_12, b_total_bar_x_layer_13, b_total_bar_x_layer_14;
     Float_t b_total_bar_y_layer_0, b_total_bar_y_layer_1, b_total_bar_y_layer_2, b_total_bar_y_layer_3, b_total_bar_y_layer_4, b_total_bar_y_layer_5, b_total_bar_y_layer_6, b_total_bar_y_layer_7, b_total_bar_y_layer_8, b_total_bar_y_layer_9, b_total_bar_y_layer_10, b_total_bar_y_layer_11, b_total_bar_y_layer_12, b_total_bar_y_layer_13, b_total_bar_y_layer_14;
@@ -994,15 +1101,37 @@ void analysis (string particle, bool masked=false) {
     Float_t b_total_shower_sume_max_layer, b_total_shower_sume_start_layer, b_total_shower_sume_end_layer, b_total_shower_sume_start_10_layer, b_total_shower_sume_end_10_layer, b_total_shower_sume_average, b_total_shower_sume_max;
     Float_t b_total_shower_weighte_max_layer, b_total_shower_weighte_start_layer, b_total_shower_weighte_end_layer, b_total_shower_weighte_start_10_layer, b_total_shower_weighte_end_10_layer, b_total_shower_weighte_average, b_total_shower_weighte_max;
     Float_t b_total_nhit_layer_0, b_total_nhit_layer_1, b_total_nhit_layer_2, b_total_nhit_layer_3, b_total_nhit_layer_4, b_total_nhit_layer_5, b_total_nhit_layer_6, b_total_nhit_layer_7, b_total_nhit_layer_8, b_total_nhit_layer_9, b_total_nhit_layer_10, b_total_nhit_layer_11, b_total_nhit_layer_12, b_total_nhit_layer_13, b_total_nhit_layer_14;
-    Float_t b_total_nhit_layer_n_0, b_total_nhit_layer_n_1, b_total_nhit_layer_n_2, b_total_nhit_layer_n_3, b_total_nhit_layer_n_4, b_total_nhit_layer_n_5, b_total_nhit_layer_n_6, b_total_nhit_layer_n_7, b_total_nhit_layer_n_8, b_total_nhit_layer_n_9, b_total_nhit_layer_n_10, b_total_nhit_layer_n_11, b_total_nhit_layer_n_12, b_total_nhit_layer_n_13, b_total_nhit_layer_n_14;
-    Float_t b_total_weighte_layer_0, b_total_weighte_layer_1, b_total_weighte_layer_2, b_total_weighte_layer_3, b_total_weighte_layer_4, b_total_weighte_layer_5, b_total_weighte_layer_6, b_total_weighte_layer_7, b_total_weighte_layer_8, b_total_weighte_layer_9, b_total_weighte_layer_10, b_total_weighte_layer_11, b_total_weighte_layer_12, b_total_weighte_layer_13, b_total_weighte_layer_14;
-    Float_t b_total_weighte_layer_n_0, b_total_weighte_layer_n_1, b_total_weighte_layer_n_2, b_total_weighte_layer_n_3, b_total_weighte_layer_n_4, b_total_weighte_layer_n_5, b_total_weighte_layer_n_6, b_total_weighte_layer_n_7, b_total_weighte_layer_n_8, b_total_weighte_layer_n_9, b_total_weighte_layer_n_10, b_total_weighte_layer_n_11, b_total_weighte_layer_n_12, b_total_weighte_layer_n_13, b_total_weighte_layer_n_14;
-    Float_t b_total_sume_layer_0, b_total_sume_layer_1, b_total_sume_layer_2, b_total_sume_layer_3, b_total_sume_layer_4, b_total_sume_layer_5, b_total_sume_layer_6, b_total_sume_layer_7, b_total_sume_layer_8, b_total_sume_layer_9, b_total_sume_layer_10, b_total_sume_layer_11, b_total_sume_layer_12, b_total_sume_layer_13, b_total_sume_layer_14;
-    Float_t b_total_sume_layer_n_0, b_total_sume_layer_n_1, b_total_sume_layer_n_2, b_total_sume_layer_n_3, b_total_sume_layer_n_4, b_total_sume_layer_n_5, b_total_sume_layer_n_6, b_total_sume_layer_n_7, b_total_sume_layer_n_8, b_total_sume_layer_n_9, b_total_sume_layer_n_10, b_total_sume_layer_n_11, b_total_sume_layer_n_12, b_total_sume_layer_n_13, b_total_sume_layer_n_14;
+    Float_t b_total_nhit_layer_15, b_total_nhit_layer_16, b_total_nhit_layer_17, b_total_nhit_layer_18, b_total_nhit_layer_19, b_total_nhit_layer_20, b_total_nhit_layer_21, b_total_nhit_layer_22, b_total_nhit_layer_23, b_total_nhit_layer_24, b_total_nhit_layer_25, b_total_nhit_layer_26, b_total_nhit_layer_27, b_total_nhit_layer_28, b_total_nhit_layer_29;
+    Float_t b_total_nhit_layer_30, b_total_nhit_layer_31, b_total_nhit_layer_32, b_total_nhit_layer_33, b_total_nhit_layer_34, b_total_nhit_layer_35, b_total_nhit_layer_36, b_total_nhit_layer_37, b_total_nhit_layer_38, b_total_nhit_layer_39, b_total_nhit_layer_40, b_total_nhit_layer_41, b_total_nhit_layer_42, b_total_nhit_layer_43, b_total_nhit_layer_44;
+    Float_t b_total_nhit_layer_45, b_total_nhit_layer_46, b_total_nhit_layer_47, b_total_nhit_layer_48, b_total_nhit_layer_49, b_total_nhit_layer_50, b_total_nhit_layer_51, b_total_nhit_layer_52, b_total_nhit_layer_53, b_total_nhit_layer_54, b_total_nhit_layer_55;
 
+    Float_t b_total_nhit_layer_n_0, b_total_nhit_layer_n_1, b_total_nhit_layer_n_2, b_total_nhit_layer_n_3, b_total_nhit_layer_n_4, b_total_nhit_layer_n_5, b_total_nhit_layer_n_6, b_total_nhit_layer_n_7, b_total_nhit_layer_n_8, b_total_nhit_layer_n_9, b_total_nhit_layer_n_10, b_total_nhit_layer_n_11, b_total_nhit_layer_n_12, b_total_nhit_layer_n_13, b_total_nhit_layer_n_14;
+    Float_t b_total_nhit_layer_n_15, b_total_nhit_layer_n_16, b_total_nhit_layer_n_17, b_total_nhit_layer_n_18, b_total_nhit_layer_n_19, b_total_nhit_layer_n_20, b_total_nhit_layer_n_21, b_total_nhit_layer_n_22, b_total_nhit_layer_n_23, b_total_nhit_layer_n_24, b_total_nhit_layer_n_25, b_total_nhit_layer_n_26, b_total_nhit_layer_n_27, b_total_nhit_layer_n_28, b_total_nhit_layer_n_29;
+    Float_t b_total_nhit_layer_n_30, b_total_nhit_layer_n_31, b_total_nhit_layer_n_32, b_total_nhit_layer_n_33, b_total_nhit_layer_n_34, b_total_nhit_layer_n_35, b_total_nhit_layer_n_36, b_total_nhit_layer_n_37, b_total_nhit_layer_n_38, b_total_nhit_layer_n_39, b_total_nhit_layer_n_40, b_total_nhit_layer_n_41, b_total_nhit_layer_n_42, b_total_nhit_layer_n_43, b_total_nhit_layer_n_44;
+    Float_t b_total_nhit_layer_n_45, b_total_nhit_layer_n_46, b_total_nhit_layer_n_47, b_total_nhit_layer_n_48, b_total_nhit_layer_n_49, b_total_nhit_layer_n_50, b_total_nhit_layer_n_51, b_total_nhit_layer_n_52, b_total_nhit_layer_n_53, b_total_nhit_layer_n_54, b_total_nhit_layer_n_55;
+
+    Float_t b_total_weighte_layer_0, b_total_weighte_layer_1, b_total_weighte_layer_2, b_total_weighte_layer_3, b_total_weighte_layer_4, b_total_weighte_layer_5, b_total_weighte_layer_6, b_total_weighte_layer_7, b_total_weighte_layer_8, b_total_weighte_layer_9, b_total_weighte_layer_10, b_total_weighte_layer_11, b_total_weighte_layer_12, b_total_weighte_layer_13, b_total_weighte_layer_14;
+    Float_t b_total_weighte_layer_15, b_total_weighte_layer_16, b_total_weighte_layer_17, b_total_weighte_layer_18, b_total_weighte_layer_19, b_total_weighte_layer_20, b_total_weighte_layer_21, b_total_weighte_layer_22, b_total_weighte_layer_23, b_total_weighte_layer_24, b_total_weighte_layer_25, b_total_weighte_layer_26, b_total_weighte_layer_27, b_total_weighte_layer_28, b_total_weighte_layer_29;
+    Float_t b_total_weighte_layer_30, b_total_weighte_layer_31, b_total_weighte_layer_32, b_total_weighte_layer_33, b_total_weighte_layer_34, b_total_weighte_layer_35, b_total_weighte_layer_36, b_total_weighte_layer_37, b_total_weighte_layer_38, b_total_weighte_layer_39, b_total_weighte_layer_40, b_total_weighte_layer_41, b_total_weighte_layer_42, b_total_weighte_layer_43, b_total_weighte_layer_44;
+    Float_t b_total_weighte_layer_45, b_total_weighte_layer_46, b_total_weighte_layer_47, b_total_weighte_layer_48, b_total_weighte_layer_49, b_total_weighte_layer_50, b_total_weighte_layer_51, b_total_weighte_layer_52, b_total_weighte_layer_53, b_total_weighte_layer_54, b_total_weighte_layer_55;
+
+    Float_t b_total_weighte_layer_n_0, b_total_weighte_layer_n_1, b_total_weighte_layer_n_2, b_total_weighte_layer_n_3, b_total_weighte_layer_n_4, b_total_weighte_layer_n_5, b_total_weighte_layer_n_6, b_total_weighte_layer_n_7, b_total_weighte_layer_n_8, b_total_weighte_layer_n_9, b_total_weighte_layer_n_10, b_total_weighte_layer_n_11, b_total_weighte_layer_n_12, b_total_weighte_layer_n_13, b_total_weighte_layer_n_14;
+    Float_t b_total_weighte_layer_n_15, b_total_weighte_layer_n_16, b_total_weighte_layer_n_17, b_total_weighte_layer_n_18, b_total_weighte_layer_n_19, b_total_weighte_layer_n_20, b_total_weighte_layer_n_21, b_total_weighte_layer_n_22, b_total_weighte_layer_n_23, b_total_weighte_layer_n_24, b_total_weighte_layer_n_25, b_total_weighte_layer_n_26, b_total_weighte_layer_n_27, b_total_weighte_layer_n_28, b_total_weighte_layer_n_29;
+    Float_t b_total_weighte_layer_n_30, b_total_weighte_layer_n_31, b_total_weighte_layer_n_32, b_total_weighte_layer_n_33, b_total_weighte_layer_n_34, b_total_weighte_layer_n_35, b_total_weighte_layer_n_36, b_total_weighte_layer_n_37, b_total_weighte_layer_n_38, b_total_weighte_layer_n_39, b_total_weighte_layer_n_40, b_total_weighte_layer_n_41, b_total_weighte_layer_n_42, b_total_weighte_layer_n_43, b_total_weighte_layer_n_44;
+    Float_t b_total_weighte_layer_n_45, b_total_weighte_layer_n_46, b_total_weighte_layer_n_47, b_total_weighte_layer_n_48, b_total_weighte_layer_n_49, b_total_weighte_layer_n_50, b_total_weighte_layer_n_51, b_total_weighte_layer_n_52, b_total_weighte_layer_n_53, b_total_weighte_layer_n_54, b_total_weighte_layer_n_55;
+
+    Float_t b_total_sume_layer_0, b_total_sume_layer_1, b_total_sume_layer_2, b_total_sume_layer_3, b_total_sume_layer_4, b_total_sume_layer_5, b_total_sume_layer_6, b_total_sume_layer_7, b_total_sume_layer_8, b_total_sume_layer_9, b_total_sume_layer_10, b_total_sume_layer_11, b_total_sume_layer_12, b_total_sume_layer_13, b_total_sume_layer_14;
+    Float_t b_total_sume_layer_15, b_total_sume_layer_16, b_total_sume_layer_17, b_total_sume_layer_18, b_total_sume_layer_19, b_total_sume_layer_20, b_total_sume_layer_21, b_total_sume_layer_22, b_total_sume_layer_23, b_total_sume_layer_24, b_total_sume_layer_25, b_total_sume_layer_26, b_total_sume_layer_27, b_total_sume_layer_28, b_total_sume_layer_29;
+    Float_t b_total_sume_layer_30, b_total_sume_layer_31, b_total_sume_layer_32, b_total_sume_layer_33, b_total_sume_layer_34, b_total_sume_layer_35, b_total_sume_layer_36, b_total_sume_layer_37, b_total_sume_layer_38, b_total_sume_layer_39, b_total_sume_layer_40, b_total_sume_layer_41, b_total_sume_layer_42, b_total_sume_layer_43, b_total_sume_layer_44;
+    Float_t b_total_sume_layer_45, b_total_sume_layer_46, b_total_sume_layer_47, b_total_sume_layer_48, b_total_sume_layer_49, b_total_sume_layer_50, b_total_sume_layer_51, b_total_sume_layer_52, b_total_sume_layer_53, b_total_sume_layer_54, b_total_sume_layer_55;
+
+    Float_t b_total_sume_layer_n_0, b_total_sume_layer_n_1, b_total_sume_layer_n_2, b_total_sume_layer_n_3, b_total_sume_layer_n_4, b_total_sume_layer_n_5, b_total_sume_layer_n_6, b_total_sume_layer_n_7, b_total_sume_layer_n_8, b_total_sume_layer_n_9, b_total_sume_layer_n_10, b_total_sume_layer_n_11, b_total_sume_layer_n_12, b_total_sume_layer_n_13, b_total_sume_layer_n_14;
+    Float_t b_total_sume_layer_n_15, b_total_sume_layer_n_16, b_total_sume_layer_n_17, b_total_sume_layer_n_18, b_total_sume_layer_n_19, b_total_sume_layer_n_20, b_total_sume_layer_n_21, b_total_sume_layer_n_22, b_total_sume_layer_n_23, b_total_sume_layer_n_24, b_total_sume_layer_n_25, b_total_sume_layer_n_26, b_total_sume_layer_n_27, b_total_sume_layer_n_28, b_total_sume_layer_n_29;
+    Float_t b_total_sume_layer_n_30, b_total_sume_layer_n_31, b_total_sume_layer_n_32, b_total_sume_layer_n_33, b_total_sume_layer_n_34, b_total_sume_layer_n_35, b_total_sume_layer_n_36, b_total_sume_layer_n_37, b_total_sume_layer_n_38, b_total_sume_layer_n_39, b_total_sume_layer_n_40, b_total_sume_layer_n_41, b_total_sume_layer_n_42, b_total_sume_layer_n_43, b_total_sume_layer_n_44;
+    Float_t b_total_sume_layer_n_45, b_total_sume_layer_n_46, b_total_sume_layer_n_47, b_total_sume_layer_n_48, b_total_sume_layer_n_49, b_total_sume_layer_n_50, b_total_sume_layer_n_51, b_total_sume_layer_n_52, b_total_sume_layer_n_53, b_total_sume_layer_n_54, b_total_sume_layer_n_55;
 
     Float_t b_nhit_ratio, b_sume_ratio, b_weighte_ratio;
-    
+        
     // Adding the branches
     outtree->Branch("ecal_interaction",&b_ecal_interaction,"b_ecal_interaction/F");
     outtree->Branch("ecal_nhit",&b_ecal_nhit,"b_ecal_nhit/F");
@@ -1010,6 +1139,7 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("ecal_weighte",&b_ecal_weighte,"b_ecal_weighte/F");
     outtree->Branch("ecal_mol",&b_ecal_mol,"b_ecal_mol/F");
     outtree->Branch("ecal_MIP_Likeness",&b_ecal_MIP_Likeness,"b_ecal_MIP_Likeness/F");
+    outtree->Branch("ecal_hits_max_distance",&b_ecal_hits_max_distance,"b_ecal_hits_max_distance/F");
     outtree->Branch("ecal_radius90_layer_0",&b_ecal_radius90_layer_0,"b_ecal_radius90_layer_0/F");
     outtree->Branch("ecal_radius90_layer_1",&b_ecal_radius90_layer_1,"b_ecal_radius90_layer_1/F");
     outtree->Branch("ecal_radius90_layer_2",&b_ecal_radius90_layer_2,"b_ecal_radius90_layer_2/F");
@@ -1216,14 +1346,13 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("ecal_sume_layer_n_13",&b_ecal_sume_layer_n_13,"b_ecal_sume_layer_n_13/F");
     outtree->Branch("ecal_sume_layer_n_14",&b_ecal_sume_layer_n_14,"b_ecal_sume_layer_n_14/F");
 
-
-
     outtree->Branch("hcal_interaction",&b_hcal_interaction,"b_hcal_interaction/F");
     outtree->Branch("hcal_nhit",&b_hcal_nhit,"b_hcal_nhit/F");
     outtree->Branch("hcal_sume",&b_hcal_sume,"b_hcal_sume/F");
     outtree->Branch("hcal_weighte",&b_hcal_weighte,"b_hcal_weighte/F");
     outtree->Branch("hcal_mol",&b_hcal_mol,"b_hcal_mol/F");
     outtree->Branch("hcal_MIP_Likeness",&b_hcal_MIP_Likeness,"b_hcal_MIP_Likeness/F");
+    outtree->Branch("hcal_hits_max_distance",&b_hcal_hits_max_distance,"b_hcal_hits_max_distance/F");
     outtree->Branch("hcal_radius90_layer_0",&b_hcal_radius90_layer_0,"b_hcal_radius90_layer_0/F");
     outtree->Branch("hcal_radius90_layer_1",&b_hcal_radius90_layer_1,"b_hcal_radius90_layer_1/F");
     outtree->Branch("hcal_radius90_layer_2",&b_hcal_radius90_layer_2,"b_hcal_radius90_layer_2/F");
@@ -1309,127 +1438,252 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("hcal_shower_weighte_end_10_layer",&b_hcal_shower_weighte_end_10_layer,"b_hcal_shower_weighte_end_10_layer/F");
     outtree->Branch("hcal_shower_weighte_average",&b_hcal_shower_weighte_average,"b_hcal_shower_weighte_average/F");
     outtree->Branch("hcal_shower_weighte_max",&b_hcal_shower_weighte_max,"b_hcal_shower_weighte_max/F");
-    outtree->Branch("hcal_nhit_layer_0",&b_hcal_nhit_layer_0,"b_hcal_nhit_layer_0/F");
-    outtree->Branch("hcal_nhit_layer_1",&b_hcal_nhit_layer_1,"b_hcal_nhit_layer_1/F");
-    outtree->Branch("hcal_nhit_layer_2",&b_hcal_nhit_layer_2,"b_hcal_nhit_layer_2/F");
-    outtree->Branch("hcal_nhit_layer_3",&b_hcal_nhit_layer_3,"b_hcal_nhit_layer_3/F");
-    outtree->Branch("hcal_nhit_layer_4",&b_hcal_nhit_layer_4,"b_hcal_nhit_layer_4/F");
-    outtree->Branch("hcal_nhit_layer_5",&b_hcal_nhit_layer_5,"b_hcal_nhit_layer_5/F");
-    outtree->Branch("hcal_nhit_layer_6",&b_hcal_nhit_layer_6,"b_hcal_nhit_layer_6/F");
-    outtree->Branch("hcal_nhit_layer_7",&b_hcal_nhit_layer_7,"b_hcal_nhit_layer_7/F");
-    outtree->Branch("hcal_nhit_layer_8",&b_hcal_nhit_layer_8,"b_hcal_nhit_layer_8/F");
-    outtree->Branch("hcal_nhit_layer_9",&b_hcal_nhit_layer_9,"b_hcal_nhit_layer_9/F");
-    outtree->Branch("hcal_nhit_layer_10",&b_hcal_nhit_layer_10,"b_hcal_nhit_layer_10/F");
-    outtree->Branch("hcal_nhit_layer_11",&b_hcal_nhit_layer_11,"b_hcal_nhit_layer_11/F");
-    outtree->Branch("hcal_nhit_layer_12",&b_hcal_nhit_layer_12,"b_hcal_nhit_layer_12/F");
-    outtree->Branch("hcal_nhit_layer_13",&b_hcal_nhit_layer_13,"b_hcal_nhit_layer_13/F");
-    outtree->Branch("hcal_nhit_layer_14",&b_hcal_nhit_layer_14,"b_hcal_nhit_layer_14/F");
-    outtree->Branch("hcal_nhit_layer_n_0",&b_hcal_nhit_layer_n_0,"b_hcal_nhit_layer_n_0/F");
-    outtree->Branch("hcal_nhit_layer_n_1",&b_hcal_nhit_layer_n_1,"b_hcal_nhit_layer_n_1/F");
-    outtree->Branch("hcal_nhit_layer_n_2",&b_hcal_nhit_layer_n_2,"b_hcal_nhit_layer_n_2/F");
-    outtree->Branch("hcal_nhit_layer_n_3",&b_hcal_nhit_layer_n_3,"b_hcal_nhit_layer_n_3/F");
-    outtree->Branch("hcal_nhit_layer_n_4",&b_hcal_nhit_layer_n_4,"b_hcal_nhit_layer_n_4/F");
-    outtree->Branch("hcal_nhit_layer_n_5",&b_hcal_nhit_layer_n_5,"b_hcal_nhit_layer_n_5/F");
-    outtree->Branch("hcal_nhit_layer_n_6",&b_hcal_nhit_layer_n_6,"b_hcal_nhit_layer_n_6/F");
-    outtree->Branch("hcal_nhit_layer_n_7",&b_hcal_nhit_layer_n_7,"b_hcal_nhit_layer_n_7/F");
-    outtree->Branch("hcal_nhit_layer_n_8",&b_hcal_nhit_layer_n_8,"b_hcal_nhit_layer_n_8/F");
-    outtree->Branch("hcal_nhit_layer_n_9",&b_hcal_nhit_layer_n_9,"b_hcal_nhit_layer_n_9/F");
-    outtree->Branch("hcal_nhit_layer_n_10",&b_hcal_nhit_layer_n_10,"b_hcal_nhit_layer_n_10/F");
-    outtree->Branch("hcal_nhit_layer_n_11",&b_hcal_nhit_layer_n_11,"b_hcal_nhit_layer_n_11/F");
-    outtree->Branch("hcal_nhit_layer_n_12",&b_hcal_nhit_layer_n_12,"b_hcal_nhit_layer_n_12/F");
-    outtree->Branch("hcal_nhit_layer_n_13",&b_hcal_nhit_layer_n_13,"b_hcal_nhit_layer_n_13/F");
-    outtree->Branch("hcal_nhit_layer_n_14",&b_hcal_nhit_layer_n_14,"b_hcal_nhit_layer_n_14/F");
-    outtree->Branch("hcal_sume_layer_0",&b_hcal_sume_layer_0,"b_hcal_sume_layer_0/F");
-    outtree->Branch("hcal_sume_layer_1",&b_hcal_sume_layer_1,"b_hcal_sume_layer_1/F");
-    outtree->Branch("hcal_sume_layer_2",&b_hcal_sume_layer_2,"b_hcal_sume_layer_2/F");
-    outtree->Branch("hcal_sume_layer_3",&b_hcal_sume_layer_3,"b_hcal_sume_layer_3/F");
-    outtree->Branch("hcal_sume_layer_4",&b_hcal_sume_layer_4,"b_hcal_sume_layer_4/F");
-    outtree->Branch("hcal_sume_layer_5",&b_hcal_sume_layer_5,"b_hcal_sume_layer_5/F");
-    outtree->Branch("hcal_sume_layer_6",&b_hcal_sume_layer_6,"b_hcal_sume_layer_6/F");
-    outtree->Branch("hcal_sume_layer_7",&b_hcal_sume_layer_7,"b_hcal_sume_layer_7/F");
-    outtree->Branch("hcal_sume_layer_8",&b_hcal_sume_layer_8,"b_hcal_sume_layer_8/F");
-    outtree->Branch("hcal_sume_layer_9",&b_hcal_sume_layer_9,"b_hcal_sume_layer_9/F");
-    outtree->Branch("hcal_sume_layer_10",&b_hcal_sume_layer_10,"b_hcal_sume_layer_10/F");
-    outtree->Branch("hcal_sume_layer_11",&b_hcal_sume_layer_11,"b_hcal_sume_layer_11/F");
-    outtree->Branch("hcal_sume_layer_12",&b_hcal_sume_layer_12,"b_hcal_sume_layer_12/F");
-    outtree->Branch("hcal_sume_layer_13",&b_hcal_sume_layer_13,"b_hcal_sume_layer_13/F");
-    outtree->Branch("hcal_sume_layer_14",&b_hcal_sume_layer_14,"b_hcal_sume_layer_14/F");
-    outtree->Branch("hcal_sume_layer_n_0",&b_hcal_sume_layer_n_0,"b_hcal_sume_layer_n_0/F");
-    outtree->Branch("hcal_sume_layer_n_1",&b_hcal_sume_layer_n_1,"b_hcal_sume_layer_n_1/F");
-    outtree->Branch("hcal_sume_layer_n_2",&b_hcal_sume_layer_n_2,"b_hcal_sume_layer_n_2/F");
-    outtree->Branch("hcal_sume_layer_n_3",&b_hcal_sume_layer_n_3,"b_hcal_sume_layer_n_3/F");
-    outtree->Branch("hcal_sume_layer_n_4",&b_hcal_sume_layer_n_4,"b_hcal_sume_layer_n_4/F");
-    outtree->Branch("hcal_sume_layer_n_5",&b_hcal_sume_layer_n_5,"b_hcal_sume_layer_n_5/F");
-    outtree->Branch("hcal_sume_layer_n_6",&b_hcal_sume_layer_n_6,"b_hcal_sume_layer_n_6/F");
-    outtree->Branch("hcal_sume_layer_n_7",&b_hcal_sume_layer_n_7,"b_hcal_sume_layer_n_7/F");
-    outtree->Branch("hcal_sume_layer_n_8",&b_hcal_sume_layer_n_8,"b_hcal_sume_layer_n_8/F");
-    outtree->Branch("hcal_sume_layer_n_9",&b_hcal_sume_layer_n_9,"b_hcal_sume_layer_n_9/F");
-    outtree->Branch("hcal_sume_layer_n_10",&b_hcal_sume_layer_n_10,"b_hcal_sume_layer_n_10/F");
-    outtree->Branch("hcal_sume_layer_n_11",&b_hcal_sume_layer_n_11,"b_hcal_sume_layer_n_11/F");
-    outtree->Branch("hcal_sume_layer_n_12",&b_hcal_sume_layer_n_12,"b_hcal_sume_layer_n_12/F");
-    outtree->Branch("hcal_sume_layer_n_13",&b_hcal_sume_layer_n_13,"b_hcal_sume_layer_n_13/F");
-    outtree->Branch("hcal_sume_layer_n_14",&b_hcal_sume_layer_n_14,"b_hcal_sume_layer_n_14/F");
-    outtree->Branch("hcal_weighte_layer_0",&b_hcal_weighte_layer_0,"b_hcal_weighte_layer_0/F");
-    outtree->Branch("hcal_weighte_layer_1",&b_hcal_weighte_layer_1,"b_hcal_weighte_layer_1/F");
-    outtree->Branch("hcal_weighte_layer_2",&b_hcal_weighte_layer_2,"b_hcal_weighte_layer_2/F");
-    outtree->Branch("hcal_weighte_layer_3",&b_hcal_weighte_layer_3,"b_hcal_weighte_layer_3/F");
-    outtree->Branch("hcal_weighte_layer_4",&b_hcal_weighte_layer_4,"b_hcal_weighte_layer_4/F");
-    outtree->Branch("hcal_weighte_layer_5",&b_hcal_weighte_layer_5,"b_hcal_weighte_layer_5/F");
-    outtree->Branch("hcal_weighte_layer_6",&b_hcal_weighte_layer_6,"b_hcal_weighte_layer_6/F");
-    outtree->Branch("hcal_weighte_layer_7",&b_hcal_weighte_layer_7,"b_hcal_weighte_layer_7/F");
-    outtree->Branch("hcal_weighte_layer_8",&b_hcal_weighte_layer_8,"b_hcal_weighte_layer_8/F");
-    outtree->Branch("hcal_weighte_layer_9",&b_hcal_weighte_layer_9,"b_hcal_weighte_layer_9/F");
-    outtree->Branch("hcal_weighte_layer_10",&b_hcal_weighte_layer_10,"b_hcal_weighte_layer_10/F");
-    outtree->Branch("hcal_weighte_layer_11",&b_hcal_weighte_layer_11,"b_hcal_weighte_layer_11/F");
-    outtree->Branch("hcal_weighte_layer_12",&b_hcal_weighte_layer_12,"b_hcal_weighte_layer_12/F");
-    outtree->Branch("hcal_weighte_layer_13",&b_hcal_weighte_layer_13,"b_hcal_weighte_layer_13/F");
-    outtree->Branch("hcal_weighte_layer_14",&b_hcal_weighte_layer_14,"b_hcal_weighte_layer_14/F");
-    outtree->Branch("hcal_weighte_layer_n_0",&b_hcal_weighte_layer_n_0,"b_hcal_weighte_layer_n_0/F");
-    outtree->Branch("hcal_weighte_layer_n_1",&b_hcal_weighte_layer_n_1,"b_hcal_weighte_layer_n_1/F");
-    outtree->Branch("hcal_weighte_layer_n_2",&b_hcal_weighte_layer_n_2,"b_hcal_weighte_layer_n_2/F");
-    outtree->Branch("hcal_weighte_layer_n_3",&b_hcal_weighte_layer_n_3,"b_hcal_weighte_layer_n_3/F");
-    outtree->Branch("hcal_weighte_layer_n_4",&b_hcal_weighte_layer_n_4,"b_hcal_weighte_layer_n_4/F");
-    outtree->Branch("hcal_weighte_layer_n_5",&b_hcal_weighte_layer_n_5,"b_hcal_weighte_layer_n_5/F");
-    outtree->Branch("hcal_weighte_layer_n_6",&b_hcal_weighte_layer_n_6,"b_hcal_weighte_layer_n_6/F");
-    outtree->Branch("hcal_weighte_layer_n_7",&b_hcal_weighte_layer_n_7,"b_hcal_weighte_layer_n_7/F");
-    outtree->Branch("hcal_weighte_layer_n_8",&b_hcal_weighte_layer_n_8,"b_hcal_weighte_layer_n_8/F");
-    outtree->Branch("hcal_weighte_layer_n_9",&b_hcal_weighte_layer_n_9,"b_hcal_weighte_layer_n_9/F");
-    outtree->Branch("hcal_weighte_layer_n_10",&b_hcal_weighte_layer_n_10,"b_hcal_weighte_layer_n_10/F");
-    outtree->Branch("hcal_weighte_layer_n_11",&b_hcal_weighte_layer_n_11,"b_hcal_weighte_layer_n_11/F");
-    outtree->Branch("hcal_weighte_layer_n_12",&b_hcal_weighte_layer_n_12,"b_hcal_weighte_layer_n_12/F");
-    outtree->Branch("hcal_weighte_layer_n_13",&b_hcal_weighte_layer_n_13,"b_hcal_weighte_layer_n_13/F");
-    outtree->Branch("hcal_weighte_layer_n_14",&b_hcal_weighte_layer_n_14,"b_hcal_weighte_layer_n_14/F");
-    outtree->Branch("hcal_sume_layer_0",&b_hcal_sume_layer_0,"b_hcal_sume_layer_0/F");
-    outtree->Branch("hcal_sume_layer_1",&b_hcal_sume_layer_1,"b_hcal_sume_layer_1/F");
-    outtree->Branch("hcal_sume_layer_2",&b_hcal_sume_layer_2,"b_hcal_sume_layer_2/F");
-    outtree->Branch("hcal_sume_layer_3",&b_hcal_sume_layer_3,"b_hcal_sume_layer_3/F");
-    outtree->Branch("hcal_sume_layer_4",&b_hcal_sume_layer_4,"b_hcal_sume_layer_4/F");
-    outtree->Branch("hcal_sume_layer_5",&b_hcal_sume_layer_5,"b_hcal_sume_layer_5/F");
-    outtree->Branch("hcal_sume_layer_6",&b_hcal_sume_layer_6,"b_hcal_sume_layer_6/F");
-    outtree->Branch("hcal_sume_layer_7",&b_hcal_sume_layer_7,"b_hcal_sume_layer_7/F");
-    outtree->Branch("hcal_sume_layer_8",&b_hcal_sume_layer_8,"b_hcal_sume_layer_8/F");
-    outtree->Branch("hcal_sume_layer_9",&b_hcal_sume_layer_9,"b_hcal_sume_layer_9/F");
-    outtree->Branch("hcal_sume_layer_10",&b_hcal_sume_layer_10,"b_hcal_sume_layer_10/F");
-    outtree->Branch("hcal_sume_layer_11",&b_hcal_sume_layer_11,"b_hcal_sume_layer_11/F");
-    outtree->Branch("hcal_sume_layer_12",&b_hcal_sume_layer_12,"b_hcal_sume_layer_12/F");
-    outtree->Branch("hcal_sume_layer_13",&b_hcal_sume_layer_13,"b_hcal_sume_layer_13/F");
-    outtree->Branch("hcal_sume_layer_14",&b_hcal_sume_layer_14,"b_hcal_sume_layer_14/F");
-    outtree->Branch("hcal_sume_layer_n_0",&b_hcal_sume_layer_n_0,"b_hcal_sume_layer_n_0/F");
-    outtree->Branch("hcal_sume_layer_n_1",&b_hcal_sume_layer_n_1,"b_hcal_sume_layer_n_1/F");
-    outtree->Branch("hcal_sume_layer_n_2",&b_hcal_sume_layer_n_2,"b_hcal_sume_layer_n_2/F");
-    outtree->Branch("hcal_sume_layer_n_3",&b_hcal_sume_layer_n_3,"b_hcal_sume_layer_n_3/F");
-    outtree->Branch("hcal_sume_layer_n_4",&b_hcal_sume_layer_n_4,"b_hcal_sume_layer_n_4/F");
-    outtree->Branch("hcal_sume_layer_n_5",&b_hcal_sume_layer_n_5,"b_hcal_sume_layer_n_5/F");
-    outtree->Branch("hcal_sume_layer_n_6",&b_hcal_sume_layer_n_6,"b_hcal_sume_layer_n_6/F");
-    outtree->Branch("hcal_sume_layer_n_7",&b_hcal_sume_layer_n_7,"b_hcal_sume_layer_n_7/F");
-    outtree->Branch("hcal_sume_layer_n_8",&b_hcal_sume_layer_n_8,"b_hcal_sume_layer_n_8/F");
-    outtree->Branch("hcal_sume_layer_n_9",&b_hcal_sume_layer_n_9,"b_hcal_sume_layer_n_9/F");
-    outtree->Branch("hcal_sume_layer_n_10",&b_hcal_sume_layer_n_10,"b_hcal_sume_layer_n_10/F");
-    outtree->Branch("hcal_sume_layer_n_11",&b_hcal_sume_layer_n_11,"b_hcal_sume_layer_n_11/F");
-    outtree->Branch("hcal_sume_layer_n_12",&b_hcal_sume_layer_n_12,"b_hcal_sume_layer_n_12/F");
-    outtree->Branch("hcal_sume_layer_n_13",&b_hcal_sume_layer_n_13,"b_hcal_sume_layer_n_13/F");
-    outtree->Branch("hcal_sume_layer_n_14",&b_hcal_sume_layer_n_14,"b_hcal_sume_layer_n_14/F");
-
+    outtree->Branch("hcal_nhit_layer_0", &b_hcal_nhit_layer_0, "b_hcal_nhit_layer_0/F");
+    outtree->Branch("hcal_nhit_layer_1", &b_hcal_nhit_layer_1, "b_hcal_nhit_layer_1/F");
+    outtree->Branch("hcal_nhit_layer_2", &b_hcal_nhit_layer_2, "b_hcal_nhit_layer_2/F");
+    outtree->Branch("hcal_nhit_layer_3", &b_hcal_nhit_layer_3, "b_hcal_nhit_layer_3/F");
+    outtree->Branch("hcal_nhit_layer_4", &b_hcal_nhit_layer_4, "b_hcal_nhit_layer_4/F");
+    outtree->Branch("hcal_nhit_layer_5", &b_hcal_nhit_layer_5, "b_hcal_nhit_layer_5/F");
+    outtree->Branch("hcal_nhit_layer_6", &b_hcal_nhit_layer_6, "b_hcal_nhit_layer_6/F");
+    outtree->Branch("hcal_nhit_layer_7", &b_hcal_nhit_layer_7, "b_hcal_nhit_layer_7/F");
+    outtree->Branch("hcal_nhit_layer_8", &b_hcal_nhit_layer_8, "b_hcal_nhit_layer_8/F");
+    outtree->Branch("hcal_nhit_layer_9", &b_hcal_nhit_layer_9, "b_hcal_nhit_layer_9/F");
+    outtree->Branch("hcal_nhit_layer_10", &b_hcal_nhit_layer_10, "b_hcal_nhit_layer_10/F");
+    outtree->Branch("hcal_nhit_layer_11", &b_hcal_nhit_layer_11, "b_hcal_nhit_layer_11/F");
+    outtree->Branch("hcal_nhit_layer_12", &b_hcal_nhit_layer_12, "b_hcal_nhit_layer_12/F");
+    outtree->Branch("hcal_nhit_layer_13", &b_hcal_nhit_layer_13, "b_hcal_nhit_layer_13/F");
+    outtree->Branch("hcal_nhit_layer_14", &b_hcal_nhit_layer_14, "b_hcal_nhit_layer_14/F");
+    outtree->Branch("hcal_nhit_layer_15", &b_hcal_nhit_layer_15, "b_hcal_nhit_layer_15/F");
+    outtree->Branch("hcal_nhit_layer_16", &b_hcal_nhit_layer_16, "b_hcal_nhit_layer_16/F");
+    outtree->Branch("hcal_nhit_layer_17", &b_hcal_nhit_layer_17, "b_hcal_nhit_layer_17/F");
+    outtree->Branch("hcal_nhit_layer_18", &b_hcal_nhit_layer_18, "b_hcal_nhit_layer_18/F");
+    outtree->Branch("hcal_nhit_layer_19", &b_hcal_nhit_layer_19, "b_hcal_nhit_layer_19/F");
+    outtree->Branch("hcal_nhit_layer_20", &b_hcal_nhit_layer_20, "b_hcal_nhit_layer_20/F");
+    outtree->Branch("hcal_nhit_layer_21", &b_hcal_nhit_layer_21, "b_hcal_nhit_layer_21/F");
+    outtree->Branch("hcal_nhit_layer_22", &b_hcal_nhit_layer_22, "b_hcal_nhit_layer_22/F");
+    outtree->Branch("hcal_nhit_layer_23", &b_hcal_nhit_layer_23, "b_hcal_nhit_layer_23/F");
+    outtree->Branch("hcal_nhit_layer_24", &b_hcal_nhit_layer_24, "b_hcal_nhit_layer_24/F");
+    outtree->Branch("hcal_nhit_layer_25", &b_hcal_nhit_layer_25, "b_hcal_nhit_layer_25/F");
+    outtree->Branch("hcal_nhit_layer_26", &b_hcal_nhit_layer_26, "b_hcal_nhit_layer_26/F");
+    outtree->Branch("hcal_nhit_layer_27", &b_hcal_nhit_layer_27, "b_hcal_nhit_layer_27/F");
+    outtree->Branch("hcal_nhit_layer_28", &b_hcal_nhit_layer_28, "b_hcal_nhit_layer_28/F");
+    outtree->Branch("hcal_nhit_layer_29", &b_hcal_nhit_layer_29, "b_hcal_nhit_layer_29/F");
+    outtree->Branch("hcal_nhit_layer_30", &b_hcal_nhit_layer_30, "b_hcal_nhit_layer_30/F");
+    outtree->Branch("hcal_nhit_layer_31", &b_hcal_nhit_layer_31, "b_hcal_nhit_layer_31/F");
+    outtree->Branch("hcal_nhit_layer_32", &b_hcal_nhit_layer_32, "b_hcal_nhit_layer_32/F");
+    outtree->Branch("hcal_nhit_layer_33", &b_hcal_nhit_layer_33, "b_hcal_nhit_layer_33/F");
+    outtree->Branch("hcal_nhit_layer_34", &b_hcal_nhit_layer_34, "b_hcal_nhit_layer_34/F");
+    outtree->Branch("hcal_nhit_layer_35", &b_hcal_nhit_layer_35, "b_hcal_nhit_layer_35/F");
+    outtree->Branch("hcal_nhit_layer_36", &b_hcal_nhit_layer_36, "b_hcal_nhit_layer_36/F");
+    outtree->Branch("hcal_nhit_layer_37", &b_hcal_nhit_layer_37, "b_hcal_nhit_layer_37/F");
+    outtree->Branch("hcal_nhit_layer_38", &b_hcal_nhit_layer_38, "b_hcal_nhit_layer_38/F");
+    outtree->Branch("hcal_nhit_layer_39", &b_hcal_nhit_layer_39, "b_hcal_nhit_layer_39/F");
+    outtree->Branch("hcal_nhit_layer_40", &b_hcal_nhit_layer_40, "b_hcal_nhit_layer_40/F");
+    outtree->Branch("hcal_nhit_layer_n_0", &b_hcal_nhit_layer_n_0, "b_hcal_nhit_layer_n_0/F");
+    outtree->Branch("hcal_nhit_layer_n_1", &b_hcal_nhit_layer_n_1, "b_hcal_nhit_layer_n_1/F");
+    outtree->Branch("hcal_nhit_layer_n_2", &b_hcal_nhit_layer_n_2, "b_hcal_nhit_layer_n_2/F");
+    outtree->Branch("hcal_nhit_layer_n_3", &b_hcal_nhit_layer_n_3, "b_hcal_nhit_layer_n_3/F");
+    outtree->Branch("hcal_nhit_layer_n_4", &b_hcal_nhit_layer_n_4, "b_hcal_nhit_layer_n_4/F");
+    outtree->Branch("hcal_nhit_layer_n_5", &b_hcal_nhit_layer_n_5, "b_hcal_nhit_layer_n_5/F");
+    outtree->Branch("hcal_nhit_layer_n_6", &b_hcal_nhit_layer_n_6, "b_hcal_nhit_layer_n_6/F");
+    outtree->Branch("hcal_nhit_layer_n_7", &b_hcal_nhit_layer_n_7, "b_hcal_nhit_layer_n_7/F");
+    outtree->Branch("hcal_nhit_layer_n_8", &b_hcal_nhit_layer_n_8, "b_hcal_nhit_layer_n_8/F");
+    outtree->Branch("hcal_nhit_layer_n_9", &b_hcal_nhit_layer_n_9, "b_hcal_nhit_layer_n_9/F");
+    outtree->Branch("hcal_nhit_layer_n_10", &b_hcal_nhit_layer_n_10, "b_hcal_nhit_layer_n_10/F");
+    outtree->Branch("hcal_nhit_layer_n_11", &b_hcal_nhit_layer_n_11, "b_hcal_nhit_layer_n_11/F");
+    outtree->Branch("hcal_nhit_layer_n_12", &b_hcal_nhit_layer_n_12, "b_hcal_nhit_layer_n_12/F");
+    outtree->Branch("hcal_nhit_layer_n_13", &b_hcal_nhit_layer_n_13, "b_hcal_nhit_layer_n_13/F");
+    outtree->Branch("hcal_nhit_layer_n_14", &b_hcal_nhit_layer_n_14, "b_hcal_nhit_layer_n_14/F");
+    outtree->Branch("hcal_nhit_layer_n_15", &b_hcal_nhit_layer_n_15, "b_hcal_nhit_layer_n_15/F");
+    outtree->Branch("hcal_nhit_layer_n_16", &b_hcal_nhit_layer_n_16, "b_hcal_nhit_layer_n_16/F");
+    outtree->Branch("hcal_nhit_layer_n_17", &b_hcal_nhit_layer_n_17, "b_hcal_nhit_layer_n_17/F");
+    outtree->Branch("hcal_nhit_layer_n_18", &b_hcal_nhit_layer_n_18, "b_hcal_nhit_layer_n_18/F");
+    outtree->Branch("hcal_nhit_layer_n_19", &b_hcal_nhit_layer_n_19, "b_hcal_nhit_layer_n_19/F");
+    outtree->Branch("hcal_nhit_layer_n_20", &b_hcal_nhit_layer_n_20, "b_hcal_nhit_layer_n_20/F");
+    outtree->Branch("hcal_nhit_layer_n_21", &b_hcal_nhit_layer_n_21, "b_hcal_nhit_layer_n_21/F");
+    outtree->Branch("hcal_nhit_layer_n_22", &b_hcal_nhit_layer_n_22, "b_hcal_nhit_layer_n_22/F");
+    outtree->Branch("hcal_nhit_layer_n_23", &b_hcal_nhit_layer_n_23, "b_hcal_nhit_layer_n_23/F");
+    outtree->Branch("hcal_nhit_layer_n_24", &b_hcal_nhit_layer_n_24, "b_hcal_nhit_layer_n_24/F");
+    outtree->Branch("hcal_nhit_layer_n_25", &b_hcal_nhit_layer_n_25, "b_hcal_nhit_layer_n_25/F");
+    outtree->Branch("hcal_nhit_layer_n_26", &b_hcal_nhit_layer_n_26, "b_hcal_nhit_layer_n_26/F");
+    outtree->Branch("hcal_nhit_layer_n_27", &b_hcal_nhit_layer_n_27, "b_hcal_nhit_layer_n_27/F");
+    outtree->Branch("hcal_nhit_layer_n_28", &b_hcal_nhit_layer_n_28, "b_hcal_nhit_layer_n_28/F");
+    outtree->Branch("hcal_nhit_layer_n_29", &b_hcal_nhit_layer_n_29, "b_hcal_nhit_layer_n_29/F");
+    outtree->Branch("hcal_nhit_layer_n_30", &b_hcal_nhit_layer_n_30, "b_hcal_nhit_layer_n_30/F");
+    outtree->Branch("hcal_nhit_layer_n_31", &b_hcal_nhit_layer_n_31, "b_hcal_nhit_layer_n_31/F");
+    outtree->Branch("hcal_nhit_layer_n_32", &b_hcal_nhit_layer_n_32, "b_hcal_nhit_layer_n_32/F");
+    outtree->Branch("hcal_nhit_layer_n_33", &b_hcal_nhit_layer_n_33, "b_hcal_nhit_layer_n_33/F");
+    outtree->Branch("hcal_nhit_layer_n_34", &b_hcal_nhit_layer_n_34, "b_hcal_nhit_layer_n_34/F");
+    outtree->Branch("hcal_nhit_layer_n_35", &b_hcal_nhit_layer_n_35, "b_hcal_nhit_layer_n_35/F");
+    outtree->Branch("hcal_nhit_layer_n_36", &b_hcal_nhit_layer_n_36, "b_hcal_nhit_layer_n_36/F");
+    outtree->Branch("hcal_nhit_layer_n_37", &b_hcal_nhit_layer_n_37, "b_hcal_nhit_layer_n_37/F");
+    outtree->Branch("hcal_nhit_layer_n_38", &b_hcal_nhit_layer_n_38, "b_hcal_nhit_layer_n_38/F");
+    outtree->Branch("hcal_nhit_layer_n_39", &b_hcal_nhit_layer_n_39, "b_hcal_nhit_layer_n_39/F");
+    outtree->Branch("hcal_nhit_layer_n_40", &b_hcal_nhit_layer_n_40, "b_hcal_nhit_layer_n_40/F");
+    outtree->Branch("hcal_sume_layer_0", &b_hcal_sume_layer_0, "b_hcal_sume_layer_0/F");
+    outtree->Branch("hcal_sume_layer_1", &b_hcal_sume_layer_1, "b_hcal_sume_layer_1/F");
+    outtree->Branch("hcal_sume_layer_2", &b_hcal_sume_layer_2, "b_hcal_sume_layer_2/F");
+    outtree->Branch("hcal_sume_layer_3", &b_hcal_sume_layer_3, "b_hcal_sume_layer_3/F");
+    outtree->Branch("hcal_sume_layer_4", &b_hcal_sume_layer_4, "b_hcal_sume_layer_4/F");
+    outtree->Branch("hcal_sume_layer_5", &b_hcal_sume_layer_5, "b_hcal_sume_layer_5/F");
+    outtree->Branch("hcal_sume_layer_6", &b_hcal_sume_layer_6, "b_hcal_sume_layer_6/F");
+    outtree->Branch("hcal_sume_layer_7", &b_hcal_sume_layer_7, "b_hcal_sume_layer_7/F");
+    outtree->Branch("hcal_sume_layer_8", &b_hcal_sume_layer_8, "b_hcal_sume_layer_8/F");
+    outtree->Branch("hcal_sume_layer_9", &b_hcal_sume_layer_9, "b_hcal_sume_layer_9/F");
+    outtree->Branch("hcal_sume_layer_10", &b_hcal_sume_layer_10, "b_hcal_sume_layer_10/F");
+    outtree->Branch("hcal_sume_layer_11", &b_hcal_sume_layer_11, "b_hcal_sume_layer_11/F");
+    outtree->Branch("hcal_sume_layer_12", &b_hcal_sume_layer_12, "b_hcal_sume_layer_12/F");
+    outtree->Branch("hcal_sume_layer_13", &b_hcal_sume_layer_13, "b_hcal_sume_layer_13/F");
+    outtree->Branch("hcal_sume_layer_14", &b_hcal_sume_layer_14, "b_hcal_sume_layer_14/F");
+    outtree->Branch("hcal_sume_layer_15", &b_hcal_sume_layer_15, "b_hcal_sume_layer_15/F");
+    outtree->Branch("hcal_sume_layer_16", &b_hcal_sume_layer_16, "b_hcal_sume_layer_16/F");
+    outtree->Branch("hcal_sume_layer_17", &b_hcal_sume_layer_17, "b_hcal_sume_layer_17/F");
+    outtree->Branch("hcal_sume_layer_18", &b_hcal_sume_layer_18, "b_hcal_sume_layer_18/F");
+    outtree->Branch("hcal_sume_layer_19", &b_hcal_sume_layer_19, "b_hcal_sume_layer_19/F");
+    outtree->Branch("hcal_sume_layer_20", &b_hcal_sume_layer_20, "b_hcal_sume_layer_20/F");
+    outtree->Branch("hcal_sume_layer_21", &b_hcal_sume_layer_21, "b_hcal_sume_layer_21/F");
+    outtree->Branch("hcal_sume_layer_22", &b_hcal_sume_layer_22, "b_hcal_sume_layer_22/F");
+    outtree->Branch("hcal_sume_layer_23", &b_hcal_sume_layer_23, "b_hcal_sume_layer_23/F");
+    outtree->Branch("hcal_sume_layer_24", &b_hcal_sume_layer_24, "b_hcal_sume_layer_24/F");
+    outtree->Branch("hcal_sume_layer_25", &b_hcal_sume_layer_25, "b_hcal_sume_layer_25/F");
+    outtree->Branch("hcal_sume_layer_26", &b_hcal_sume_layer_26, "b_hcal_sume_layer_26/F");
+    outtree->Branch("hcal_sume_layer_27", &b_hcal_sume_layer_27, "b_hcal_sume_layer_27/F");
+    outtree->Branch("hcal_sume_layer_28", &b_hcal_sume_layer_28, "b_hcal_sume_layer_28/F");
+    outtree->Branch("hcal_sume_layer_29", &b_hcal_sume_layer_29, "b_hcal_sume_layer_29/F");
+    outtree->Branch("hcal_sume_layer_30", &b_hcal_sume_layer_30, "b_hcal_sume_layer_30/F");
+    outtree->Branch("hcal_sume_layer_31", &b_hcal_sume_layer_31, "b_hcal_sume_layer_31/F");
+    outtree->Branch("hcal_sume_layer_32", &b_hcal_sume_layer_32, "b_hcal_sume_layer_32/F");
+    outtree->Branch("hcal_sume_layer_33", &b_hcal_sume_layer_33, "b_hcal_sume_layer_33/F");
+    outtree->Branch("hcal_sume_layer_34", &b_hcal_sume_layer_34, "b_hcal_sume_layer_34/F");
+    outtree->Branch("hcal_sume_layer_35", &b_hcal_sume_layer_35, "b_hcal_sume_layer_35/F");
+    outtree->Branch("hcal_sume_layer_36", &b_hcal_sume_layer_36, "b_hcal_sume_layer_36/F");
+    outtree->Branch("hcal_sume_layer_37", &b_hcal_sume_layer_37, "b_hcal_sume_layer_37/F");
+    outtree->Branch("hcal_sume_layer_38", &b_hcal_sume_layer_38, "b_hcal_sume_layer_38/F");
+    outtree->Branch("hcal_sume_layer_39", &b_hcal_sume_layer_39, "b_hcal_sume_layer_39/F");
+    outtree->Branch("hcal_sume_layer_40", &b_hcal_sume_layer_40, "b_hcal_sume_layer_40/F");
+    outtree->Branch("hcal_sume_layer_n_0", &b_hcal_sume_layer_n_0, "b_hcal_sume_layer_n_0/F");
+    outtree->Branch("hcal_sume_layer_n_1", &b_hcal_sume_layer_n_1, "b_hcal_sume_layer_n_1/F");
+    outtree->Branch("hcal_sume_layer_n_2", &b_hcal_sume_layer_n_2, "b_hcal_sume_layer_n_2/F");
+    outtree->Branch("hcal_sume_layer_n_3", &b_hcal_sume_layer_n_3, "b_hcal_sume_layer_n_3/F");
+    outtree->Branch("hcal_sume_layer_n_4", &b_hcal_sume_layer_n_4, "b_hcal_sume_layer_n_4/F");
+    outtree->Branch("hcal_sume_layer_n_5", &b_hcal_sume_layer_n_5, "b_hcal_sume_layer_n_5/F");
+    outtree->Branch("hcal_sume_layer_n_6", &b_hcal_sume_layer_n_6, "b_hcal_sume_layer_n_6/F");
+    outtree->Branch("hcal_sume_layer_n_7", &b_hcal_sume_layer_n_7, "b_hcal_sume_layer_n_7/F");
+    outtree->Branch("hcal_sume_layer_n_8", &b_hcal_sume_layer_n_8, "b_hcal_sume_layer_n_8/F");
+    outtree->Branch("hcal_sume_layer_n_9", &b_hcal_sume_layer_n_9, "b_hcal_sume_layer_n_9/F");
+    outtree->Branch("hcal_sume_layer_n_10", &b_hcal_sume_layer_n_10, "b_hcal_sume_layer_n_10/F");
+    outtree->Branch("hcal_sume_layer_n_11", &b_hcal_sume_layer_n_11, "b_hcal_sume_layer_n_11/F");
+    outtree->Branch("hcal_sume_layer_n_12", &b_hcal_sume_layer_n_12, "b_hcal_sume_layer_n_12/F");
+    outtree->Branch("hcal_sume_layer_n_13", &b_hcal_sume_layer_n_13, "b_hcal_sume_layer_n_13/F");
+    outtree->Branch("hcal_sume_layer_n_14", &b_hcal_sume_layer_n_14, "b_hcal_sume_layer_n_14/F");
+    outtree->Branch("hcal_sume_layer_n_15", &b_hcal_sume_layer_n_15, "b_hcal_sume_layer_n_15/F");
+    outtree->Branch("hcal_sume_layer_n_16", &b_hcal_sume_layer_n_16, "b_hcal_sume_layer_n_16/F");
+    outtree->Branch("hcal_sume_layer_n_17", &b_hcal_sume_layer_n_17, "b_hcal_sume_layer_n_17/F");
+    outtree->Branch("hcal_sume_layer_n_18", &b_hcal_sume_layer_n_18, "b_hcal_sume_layer_n_18/F");
+    outtree->Branch("hcal_sume_layer_n_19", &b_hcal_sume_layer_n_19, "b_hcal_sume_layer_n_19/F");
+    outtree->Branch("hcal_sume_layer_n_20", &b_hcal_sume_layer_n_20, "b_hcal_sume_layer_n_20/F");
+    outtree->Branch("hcal_sume_layer_n_21", &b_hcal_sume_layer_n_21, "b_hcal_sume_layer_n_21/F");
+    outtree->Branch("hcal_sume_layer_n_22", &b_hcal_sume_layer_n_22, "b_hcal_sume_layer_n_22/F");
+    outtree->Branch("hcal_sume_layer_n_23", &b_hcal_sume_layer_n_23, "b_hcal_sume_layer_n_23/F");
+    outtree->Branch("hcal_sume_layer_n_24", &b_hcal_sume_layer_n_24, "b_hcal_sume_layer_n_24/F");
+    outtree->Branch("hcal_sume_layer_n_25", &b_hcal_sume_layer_n_25, "b_hcal_sume_layer_n_25/F");
+    outtree->Branch("hcal_sume_layer_n_26", &b_hcal_sume_layer_n_26, "b_hcal_sume_layer_n_26/F");
+    outtree->Branch("hcal_sume_layer_n_27", &b_hcal_sume_layer_n_27, "b_hcal_sume_layer_n_27/F");
+    outtree->Branch("hcal_sume_layer_n_28", &b_hcal_sume_layer_n_28, "b_hcal_sume_layer_n_28/F");
+    outtree->Branch("hcal_sume_layer_n_29", &b_hcal_sume_layer_n_29, "b_hcal_sume_layer_n_29/F");
+    outtree->Branch("hcal_sume_layer_n_30", &b_hcal_sume_layer_n_30, "b_hcal_sume_layer_n_30/F");
+    outtree->Branch("hcal_sume_layer_n_31", &b_hcal_sume_layer_n_31, "b_hcal_sume_layer_n_31/F");
+    outtree->Branch("hcal_sume_layer_n_32", &b_hcal_sume_layer_n_32, "b_hcal_sume_layer_n_32/F");
+    outtree->Branch("hcal_sume_layer_n_33", &b_hcal_sume_layer_n_33, "b_hcal_sume_layer_n_33/F");
+    outtree->Branch("hcal_sume_layer_n_34", &b_hcal_sume_layer_n_34, "b_hcal_sume_layer_n_34/F");
+    outtree->Branch("hcal_sume_layer_n_35", &b_hcal_sume_layer_n_35, "b_hcal_sume_layer_n_35/F");
+    outtree->Branch("hcal_sume_layer_n_36", &b_hcal_sume_layer_n_36, "b_hcal_sume_layer_n_36/F");
+    outtree->Branch("hcal_sume_layer_n_37", &b_hcal_sume_layer_n_37, "b_hcal_sume_layer_n_37/F");
+    outtree->Branch("hcal_sume_layer_n_38", &b_hcal_sume_layer_n_38, "b_hcal_sume_layer_n_38/F");
+    outtree->Branch("hcal_sume_layer_n_39", &b_hcal_sume_layer_n_39, "b_hcal_sume_layer_n_39/F");
+    outtree->Branch("hcal_sume_layer_n_40", &b_hcal_sume_layer_n_40, "b_hcal_sume_layer_n_40/F");
+    outtree->Branch("hcal_weighte_layer_0", &b_hcal_weighte_layer_0, "b_hcal_weighte_layer_0/F");
+    outtree->Branch("hcal_weighte_layer_1", &b_hcal_weighte_layer_1, "b_hcal_weighte_layer_1/F");
+    outtree->Branch("hcal_weighte_layer_2", &b_hcal_weighte_layer_2, "b_hcal_weighte_layer_2/F");
+    outtree->Branch("hcal_weighte_layer_3", &b_hcal_weighte_layer_3, "b_hcal_weighte_layer_3/F");
+    outtree->Branch("hcal_weighte_layer_4", &b_hcal_weighte_layer_4, "b_hcal_weighte_layer_4/F");
+    outtree->Branch("hcal_weighte_layer_5", &b_hcal_weighte_layer_5, "b_hcal_weighte_layer_5/F");
+    outtree->Branch("hcal_weighte_layer_6", &b_hcal_weighte_layer_6, "b_hcal_weighte_layer_6/F");
+    outtree->Branch("hcal_weighte_layer_7", &b_hcal_weighte_layer_7, "b_hcal_weighte_layer_7/F");
+    outtree->Branch("hcal_weighte_layer_8", &b_hcal_weighte_layer_8, "b_hcal_weighte_layer_8/F");
+    outtree->Branch("hcal_weighte_layer_9", &b_hcal_weighte_layer_9, "b_hcal_weighte_layer_9/F");
+    outtree->Branch("hcal_weighte_layer_10", &b_hcal_weighte_layer_10, "b_hcal_weighte_layer_10/F");
+    outtree->Branch("hcal_weighte_layer_11", &b_hcal_weighte_layer_11, "b_hcal_weighte_layer_11/F");
+    outtree->Branch("hcal_weighte_layer_12", &b_hcal_weighte_layer_12, "b_hcal_weighte_layer_12/F");
+    outtree->Branch("hcal_weighte_layer_13", &b_hcal_weighte_layer_13, "b_hcal_weighte_layer_13/F");
+    outtree->Branch("hcal_weighte_layer_14", &b_hcal_weighte_layer_14, "b_hcal_weighte_layer_14/F");
+    outtree->Branch("hcal_weighte_layer_15", &b_hcal_weighte_layer_15, "b_hcal_weighte_layer_15/F");
+    outtree->Branch("hcal_weighte_layer_16", &b_hcal_weighte_layer_16, "b_hcal_weighte_layer_16/F");
+    outtree->Branch("hcal_weighte_layer_17", &b_hcal_weighte_layer_17, "b_hcal_weighte_layer_17/F");
+    outtree->Branch("hcal_weighte_layer_18", &b_hcal_weighte_layer_18, "b_hcal_weighte_layer_18/F");
+    outtree->Branch("hcal_weighte_layer_19", &b_hcal_weighte_layer_19, "b_hcal_weighte_layer_19/F");
+    outtree->Branch("hcal_weighte_layer_20", &b_hcal_weighte_layer_20, "b_hcal_weighte_layer_20/F");
+    outtree->Branch("hcal_weighte_layer_21", &b_hcal_weighte_layer_21, "b_hcal_weighte_layer_21/F");
+    outtree->Branch("hcal_weighte_layer_22", &b_hcal_weighte_layer_22, "b_hcal_weighte_layer_22/F");
+    outtree->Branch("hcal_weighte_layer_23", &b_hcal_weighte_layer_23, "b_hcal_weighte_layer_23/F");
+    outtree->Branch("hcal_weighte_layer_24", &b_hcal_weighte_layer_24, "b_hcal_weighte_layer_24/F");
+    outtree->Branch("hcal_weighte_layer_25", &b_hcal_weighte_layer_25, "b_hcal_weighte_layer_25/F");
+    outtree->Branch("hcal_weighte_layer_26", &b_hcal_weighte_layer_26, "b_hcal_weighte_layer_26/F");
+    outtree->Branch("hcal_weighte_layer_27", &b_hcal_weighte_layer_27, "b_hcal_weighte_layer_27/F");
+    outtree->Branch("hcal_weighte_layer_28", &b_hcal_weighte_layer_28, "b_hcal_weighte_layer_28/F");
+    outtree->Branch("hcal_weighte_layer_29", &b_hcal_weighte_layer_29, "b_hcal_weighte_layer_29/F");
+    outtree->Branch("hcal_weighte_layer_30", &b_hcal_weighte_layer_30, "b_hcal_weighte_layer_30/F");
+    outtree->Branch("hcal_weighte_layer_31", &b_hcal_weighte_layer_31, "b_hcal_weighte_layer_31/F");
+    outtree->Branch("hcal_weighte_layer_32", &b_hcal_weighte_layer_32, "b_hcal_weighte_layer_32/F");
+    outtree->Branch("hcal_weighte_layer_33", &b_hcal_weighte_layer_33, "b_hcal_weighte_layer_33/F");
+    outtree->Branch("hcal_weighte_layer_34", &b_hcal_weighte_layer_34, "b_hcal_weighte_layer_34/F");
+    outtree->Branch("hcal_weighte_layer_35", &b_hcal_weighte_layer_35, "b_hcal_weighte_layer_35/F");
+    outtree->Branch("hcal_weighte_layer_36", &b_hcal_weighte_layer_36, "b_hcal_weighte_layer_36/F");
+    outtree->Branch("hcal_weighte_layer_37", &b_hcal_weighte_layer_37, "b_hcal_weighte_layer_37/F");
+    outtree->Branch("hcal_weighte_layer_38", &b_hcal_weighte_layer_38, "b_hcal_weighte_layer_38/F");
+    outtree->Branch("hcal_weighte_layer_39", &b_hcal_weighte_layer_39, "b_hcal_weighte_layer_39/F");
+    outtree->Branch("hcal_weighte_layer_40", &b_hcal_weighte_layer_40, "b_hcal_weighte_layer_40/F");
+    outtree->Branch("hcal_weighte_layer_n_0", &b_hcal_weighte_layer_n_0, "b_hcal_weighte_layer_n_0/F");
+    outtree->Branch("hcal_weighte_layer_n_1", &b_hcal_weighte_layer_n_1, "b_hcal_weighte_layer_n_1/F");
+    outtree->Branch("hcal_weighte_layer_n_2", &b_hcal_weighte_layer_n_2, "b_hcal_weighte_layer_n_2/F");
+    outtree->Branch("hcal_weighte_layer_n_3", &b_hcal_weighte_layer_n_3, "b_hcal_weighte_layer_n_3/F");
+    outtree->Branch("hcal_weighte_layer_n_4", &b_hcal_weighte_layer_n_4, "b_hcal_weighte_layer_n_4/F");
+    outtree->Branch("hcal_weighte_layer_n_5", &b_hcal_weighte_layer_n_5, "b_hcal_weighte_layer_n_5/F");
+    outtree->Branch("hcal_weighte_layer_n_6", &b_hcal_weighte_layer_n_6, "b_hcal_weighte_layer_n_6/F");
+    outtree->Branch("hcal_weighte_layer_n_7", &b_hcal_weighte_layer_n_7, "b_hcal_weighte_layer_n_7/F");
+    outtree->Branch("hcal_weighte_layer_n_8", &b_hcal_weighte_layer_n_8, "b_hcal_weighte_layer_n_8/F");
+    outtree->Branch("hcal_weighte_layer_n_9", &b_hcal_weighte_layer_n_9, "b_hcal_weighte_layer_n_9/F");
+    outtree->Branch("hcal_weighte_layer_n_10", &b_hcal_weighte_layer_n_10, "b_hcal_weighte_layer_n_10/F");
+    outtree->Branch("hcal_weighte_layer_n_11", &b_hcal_weighte_layer_n_11, "b_hcal_weighte_layer_n_11/F");
+    outtree->Branch("hcal_weighte_layer_n_12", &b_hcal_weighte_layer_n_12, "b_hcal_weighte_layer_n_12/F");
+    outtree->Branch("hcal_weighte_layer_n_13", &b_hcal_weighte_layer_n_13, "b_hcal_weighte_layer_n_13/F");
+    outtree->Branch("hcal_weighte_layer_n_14", &b_hcal_weighte_layer_n_14, "b_hcal_weighte_layer_n_14/F");
+    outtree->Branch("hcal_weighte_layer_n_15", &b_hcal_weighte_layer_n_15, "b_hcal_weighte_layer_n_15/F");
+    outtree->Branch("hcal_weighte_layer_n_16", &b_hcal_weighte_layer_n_16, "b_hcal_weighte_layer_n_16/F");
+    outtree->Branch("hcal_weighte_layer_n_17", &b_hcal_weighte_layer_n_17, "b_hcal_weighte_layer_n_17/F");
+    outtree->Branch("hcal_weighte_layer_n_18", &b_hcal_weighte_layer_n_18, "b_hcal_weighte_layer_n_18/F");
+    outtree->Branch("hcal_weighte_layer_n_19", &b_hcal_weighte_layer_n_19, "b_hcal_weighte_layer_n_19/F");
+    outtree->Branch("hcal_weighte_layer_n_20", &b_hcal_weighte_layer_n_20, "b_hcal_weighte_layer_n_20/F");
+    outtree->Branch("hcal_weighte_layer_n_21", &b_hcal_weighte_layer_n_21, "b_hcal_weighte_layer_n_21/F");
+    outtree->Branch("hcal_weighte_layer_n_22", &b_hcal_weighte_layer_n_22, "b_hcal_weighte_layer_n_22/F");
+    outtree->Branch("hcal_weighte_layer_n_23", &b_hcal_weighte_layer_n_23, "b_hcal_weighte_layer_n_23/F");
+    outtree->Branch("hcal_weighte_layer_n_24", &b_hcal_weighte_layer_n_24, "b_hcal_weighte_layer_n_24/F");
+    outtree->Branch("hcal_weighte_layer_n_25", &b_hcal_weighte_layer_n_25, "b_hcal_weighte_layer_n_25/F");
+    outtree->Branch("hcal_weighte_layer_n_26", &b_hcal_weighte_layer_n_26, "b_hcal_weighte_layer_n_26/F");
+    outtree->Branch("hcal_weighte_layer_n_27", &b_hcal_weighte_layer_n_27, "b_hcal_weighte_layer_n_27/F");
+    outtree->Branch("hcal_weighte_layer_n_28", &b_hcal_weighte_layer_n_28, "b_hcal_weighte_layer_n_28/F");
+    outtree->Branch("hcal_weighte_layer_n_29", &b_hcal_weighte_layer_n_29, "b_hcal_weighte_layer_n_29/F");
+    outtree->Branch("hcal_weighte_layer_n_30", &b_hcal_weighte_layer_n_30, "b_hcal_weighte_layer_n_30/F");
+    outtree->Branch("hcal_weighte_layer_n_31", &b_hcal_weighte_layer_n_31, "b_hcal_weighte_layer_n_31/F");
+    outtree->Branch("hcal_weighte_layer_n_32", &b_hcal_weighte_layer_n_32, "b_hcal_weighte_layer_n_32/F");
+    outtree->Branch("hcal_weighte_layer_n_33", &b_hcal_weighte_layer_n_33, "b_hcal_weighte_layer_n_33/F");
+    outtree->Branch("hcal_weighte_layer_n_34", &b_hcal_weighte_layer_n_34, "b_hcal_weighte_layer_n_34/F");
+    outtree->Branch("hcal_weighte_layer_n_35", &b_hcal_weighte_layer_n_35, "b_hcal_weighte_layer_n_35/F");
+    outtree->Branch("hcal_weighte_layer_n_36", &b_hcal_weighte_layer_n_36, "b_hcal_weighte_layer_n_36/F");
+    outtree->Branch("hcal_weighte_layer_n_37", &b_hcal_weighte_layer_n_37, "b_hcal_weighte_layer_n_37/F");
+    outtree->Branch("hcal_weighte_layer_n_38", &b_hcal_weighte_layer_n_38, "b_hcal_weighte_layer_n_38/F");
+    outtree->Branch("hcal_weighte_layer_n_39", &b_hcal_weighte_layer_n_39, "b_hcal_weighte_layer_n_39/F");
+    outtree->Branch("hcal_weighte_layer_n_40", &b_hcal_weighte_layer_n_40, "b_hcal_weighte_layer_n_40/F");
 
     outtree->Branch("total_interaction",&b_total_interaction,"b_total_interaction/F");
     outtree->Branch("total_nhit",&b_total_nhit,"b_total_nhit/F");
@@ -1437,6 +1691,7 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_weighte",&b_total_weighte,"b_total_weighte/F");
     outtree->Branch("total_mol",&b_total_mol,"b_total_mol/F");
     outtree->Branch("total_MIP_Likeness",&b_total_MIP_Likeness,"b_total_MIP_Likeness/F");
+    outtree->Branch("total_hits_max_distance",&b_total_hits_max_distance,"b_total_hits_max_distance/F");
     outtree->Branch("total_radius90_layer_0",&b_total_radius90_layer_0,"b_total_radius90_layer_0/F");
     outtree->Branch("total_radius90_layer_1",&b_total_radius90_layer_1,"b_total_radius90_layer_1/F");
     outtree->Branch("total_radius90_layer_2",&b_total_radius90_layer_2,"b_total_radius90_layer_2/F");
@@ -1501,7 +1756,6 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_bar_r_layer_12",&b_total_bar_r_layer_12,"b_total_bar_r_layer_12/F");
     outtree->Branch("total_bar_r_layer_13",&b_total_bar_r_layer_13,"b_total_bar_r_layer_13/F");
     outtree->Branch("total_bar_r_layer_14",&b_total_bar_r_layer_14,"b_total_bar_r_layer_14/F");
-    /*
     outtree->Branch("total_shower_nhit_max_layer",&b_total_shower_nhit_max_layer,"b_total_shower_nhit_max_layer/F");
     outtree->Branch("total_shower_nhit_start_layer",&b_total_shower_nhit_start_layer,"b_total_shower_nhit_start_layer/F");
     outtree->Branch("total_shower_nhit_end_layer",&b_total_shower_nhit_end_layer,"b_total_shower_nhit_end_layer/F");
@@ -1523,126 +1777,342 @@ void analysis (string particle, bool masked=false) {
     outtree->Branch("total_shower_weighte_end_10_layer",&b_total_shower_weighte_end_10_layer,"b_total_shower_weighte_end_10_layer/F");
     outtree->Branch("total_shower_weighte_average",&b_total_shower_weighte_average,"b_total_shower_weighte_average/F");
     outtree->Branch("total_shower_weighte_max",&b_total_shower_weighte_max,"b_total_shower_weighte_max/F");
-    */
-    outtree->Branch("total_nhit_layer_0",&b_total_nhit_layer_0,"b_total_nhit_layer_0/F");
-    outtree->Branch("total_nhit_layer_1",&b_total_nhit_layer_1,"b_total_nhit_layer_1/F");
-    outtree->Branch("total_nhit_layer_2",&b_total_nhit_layer_2,"b_total_nhit_layer_2/F");
-    outtree->Branch("total_nhit_layer_3",&b_total_nhit_layer_3,"b_total_nhit_layer_3/F");
-    outtree->Branch("total_nhit_layer_4",&b_total_nhit_layer_4,"b_total_nhit_layer_4/F");
-    outtree->Branch("total_nhit_layer_5",&b_total_nhit_layer_5,"b_total_nhit_layer_5/F");
-    outtree->Branch("total_nhit_layer_6",&b_total_nhit_layer_6,"b_total_nhit_layer_6/F");
-    outtree->Branch("total_nhit_layer_7",&b_total_nhit_layer_7,"b_total_nhit_layer_7/F");
-    outtree->Branch("total_nhit_layer_8",&b_total_nhit_layer_8,"b_total_nhit_layer_8/F");
-    outtree->Branch("total_nhit_layer_9",&b_total_nhit_layer_9,"b_total_nhit_layer_9/F");
-    outtree->Branch("total_nhit_layer_10",&b_total_nhit_layer_10,"b_total_nhit_layer_10/F");
-    outtree->Branch("total_nhit_layer_11",&b_total_nhit_layer_11,"b_total_nhit_layer_11/F");
-    outtree->Branch("total_nhit_layer_12",&b_total_nhit_layer_12,"b_total_nhit_layer_12/F");
-    outtree->Branch("total_nhit_layer_13",&b_total_nhit_layer_13,"b_total_nhit_layer_13/F");
-    outtree->Branch("total_nhit_layer_14",&b_total_nhit_layer_14,"b_total_nhit_layer_14/F");
-    outtree->Branch("total_nhit_layer_n_0",&b_total_nhit_layer_n_0,"b_total_nhit_layer_n_0/F");
-    outtree->Branch("total_nhit_layer_n_1",&b_total_nhit_layer_n_1,"b_total_nhit_layer_n_1/F");
-    outtree->Branch("total_nhit_layer_n_2",&b_total_nhit_layer_n_2,"b_total_nhit_layer_n_2/F");
-    outtree->Branch("total_nhit_layer_n_3",&b_total_nhit_layer_n_3,"b_total_nhit_layer_n_3/F");
-    outtree->Branch("total_nhit_layer_n_4",&b_total_nhit_layer_n_4,"b_total_nhit_layer_n_4/F");
-    outtree->Branch("total_nhit_layer_n_5",&b_total_nhit_layer_n_5,"b_total_nhit_layer_n_5/F");
-    outtree->Branch("total_nhit_layer_n_6",&b_total_nhit_layer_n_6,"b_total_nhit_layer_n_6/F");
-    outtree->Branch("total_nhit_layer_n_7",&b_total_nhit_layer_n_7,"b_total_nhit_layer_n_7/F");
-    outtree->Branch("total_nhit_layer_n_8",&b_total_nhit_layer_n_8,"b_total_nhit_layer_n_8/F");
-    outtree->Branch("total_nhit_layer_n_9",&b_total_nhit_layer_n_9,"b_total_nhit_layer_n_9/F");
-    outtree->Branch("total_nhit_layer_n_10",&b_total_nhit_layer_n_10,"b_total_nhit_layer_n_10/F");
-    outtree->Branch("total_nhit_layer_n_11",&b_total_nhit_layer_n_11,"b_total_nhit_layer_n_11/F");
-    outtree->Branch("total_nhit_layer_n_12",&b_total_nhit_layer_n_12,"b_total_nhit_layer_n_12/F");
-    outtree->Branch("total_nhit_layer_n_13",&b_total_nhit_layer_n_13,"b_total_nhit_layer_n_13/F");
-    outtree->Branch("total_nhit_layer_n_14",&b_total_nhit_layer_n_14,"b_total_nhit_layer_n_14/F");
-    outtree->Branch("total_sume_layer_0",&b_total_sume_layer_0,"b_total_sume_layer_0/F");
-    outtree->Branch("total_sume_layer_1",&b_total_sume_layer_1,"b_total_sume_layer_1/F");
-    outtree->Branch("total_sume_layer_2",&b_total_sume_layer_2,"b_total_sume_layer_2/F");
-    outtree->Branch("total_sume_layer_3",&b_total_sume_layer_3,"b_total_sume_layer_3/F");
-    outtree->Branch("total_sume_layer_4",&b_total_sume_layer_4,"b_total_sume_layer_4/F");
-    outtree->Branch("total_sume_layer_5",&b_total_sume_layer_5,"b_total_sume_layer_5/F");
-    outtree->Branch("total_sume_layer_6",&b_total_sume_layer_6,"b_total_sume_layer_6/F");
-    outtree->Branch("total_sume_layer_7",&b_total_sume_layer_7,"b_total_sume_layer_7/F");
-    outtree->Branch("total_sume_layer_8",&b_total_sume_layer_8,"b_total_sume_layer_8/F");
-    outtree->Branch("total_sume_layer_9",&b_total_sume_layer_9,"b_total_sume_layer_9/F");
-    outtree->Branch("total_sume_layer_10",&b_total_sume_layer_10,"b_total_sume_layer_10/F");
-    outtree->Branch("total_sume_layer_11",&b_total_sume_layer_11,"b_total_sume_layer_11/F");
-    outtree->Branch("total_sume_layer_12",&b_total_sume_layer_12,"b_total_sume_layer_12/F");
-    outtree->Branch("total_sume_layer_13",&b_total_sume_layer_13,"b_total_sume_layer_13/F");
-    outtree->Branch("total_sume_layer_14",&b_total_sume_layer_14,"b_total_sume_layer_14/F");
-    outtree->Branch("total_sume_layer_n_0",&b_total_sume_layer_n_0,"b_total_sume_layer_n_0/F");
-    outtree->Branch("total_sume_layer_n_1",&b_total_sume_layer_n_1,"b_total_sume_layer_n_1/F");
-    outtree->Branch("total_sume_layer_n_2",&b_total_sume_layer_n_2,"b_total_sume_layer_n_2/F");
-    outtree->Branch("total_sume_layer_n_3",&b_total_sume_layer_n_3,"b_total_sume_layer_n_3/F");
-    outtree->Branch("total_sume_layer_n_4",&b_total_sume_layer_n_4,"b_total_sume_layer_n_4/F");
-    outtree->Branch("total_sume_layer_n_5",&b_total_sume_layer_n_5,"b_total_sume_layer_n_5/F");
-    outtree->Branch("total_sume_layer_n_6",&b_total_sume_layer_n_6,"b_total_sume_layer_n_6/F");
-    outtree->Branch("total_sume_layer_n_7",&b_total_sume_layer_n_7,"b_total_sume_layer_n_7/F");
-    outtree->Branch("total_sume_layer_n_8",&b_total_sume_layer_n_8,"b_total_sume_layer_n_8/F");
-    outtree->Branch("total_sume_layer_n_9",&b_total_sume_layer_n_9,"b_total_sume_layer_n_9/F");
-    outtree->Branch("total_sume_layer_n_10",&b_total_sume_layer_n_10,"b_total_sume_layer_n_10/F");
-    outtree->Branch("total_sume_layer_n_11",&b_total_sume_layer_n_11,"b_total_sume_layer_n_11/F");
-    outtree->Branch("total_sume_layer_n_12",&b_total_sume_layer_n_12,"b_total_sume_layer_n_12/F");
-    outtree->Branch("total_sume_layer_n_13",&b_total_sume_layer_n_13,"b_total_sume_layer_n_13/F");
-    outtree->Branch("total_sume_layer_n_14",&b_total_sume_layer_n_14,"b_total_sume_layer_n_14/F");
-    outtree->Branch("total_weighte_layer_0",&b_total_weighte_layer_0,"b_total_weighte_layer_0/F");
-    outtree->Branch("total_weighte_layer_1",&b_total_weighte_layer_1,"b_total_weighte_layer_1/F");
-    outtree->Branch("total_weighte_layer_2",&b_total_weighte_layer_2,"b_total_weighte_layer_2/F");
-    outtree->Branch("total_weighte_layer_3",&b_total_weighte_layer_3,"b_total_weighte_layer_3/F");
-    outtree->Branch("total_weighte_layer_4",&b_total_weighte_layer_4,"b_total_weighte_layer_4/F");
-    outtree->Branch("total_weighte_layer_5",&b_total_weighte_layer_5,"b_total_weighte_layer_5/F");
-    outtree->Branch("total_weighte_layer_6",&b_total_weighte_layer_6,"b_total_weighte_layer_6/F");
-    outtree->Branch("total_weighte_layer_7",&b_total_weighte_layer_7,"b_total_weighte_layer_7/F");
-    outtree->Branch("total_weighte_layer_8",&b_total_weighte_layer_8,"b_total_weighte_layer_8/F");
-    outtree->Branch("total_weighte_layer_9",&b_total_weighte_layer_9,"b_total_weighte_layer_9/F");
-    outtree->Branch("total_weighte_layer_10",&b_total_weighte_layer_10,"b_total_weighte_layer_10/F");
-    outtree->Branch("total_weighte_layer_11",&b_total_weighte_layer_11,"b_total_weighte_layer_11/F");
-    outtree->Branch("total_weighte_layer_12",&b_total_weighte_layer_12,"b_total_weighte_layer_12/F");
-    outtree->Branch("total_weighte_layer_13",&b_total_weighte_layer_13,"b_total_weighte_layer_13/F");
-    outtree->Branch("total_weighte_layer_14",&b_total_weighte_layer_14,"b_total_weighte_layer_14/F");
-    outtree->Branch("total_weighte_layer_n_0",&b_total_weighte_layer_n_0,"b_total_weighte_layer_n_0/F");
-    outtree->Branch("total_weighte_layer_n_1",&b_total_weighte_layer_n_1,"b_total_weighte_layer_n_1/F");
-    outtree->Branch("total_weighte_layer_n_2",&b_total_weighte_layer_n_2,"b_total_weighte_layer_n_2/F");
-    outtree->Branch("total_weighte_layer_n_3",&b_total_weighte_layer_n_3,"b_total_weighte_layer_n_3/F");
-    outtree->Branch("total_weighte_layer_n_4",&b_total_weighte_layer_n_4,"b_total_weighte_layer_n_4/F");
-    outtree->Branch("total_weighte_layer_n_5",&b_total_weighte_layer_n_5,"b_total_weighte_layer_n_5/F");
-    outtree->Branch("total_weighte_layer_n_6",&b_total_weighte_layer_n_6,"b_total_weighte_layer_n_6/F");
-    outtree->Branch("total_weighte_layer_n_7",&b_total_weighte_layer_n_7,"b_total_weighte_layer_n_7/F");
-    outtree->Branch("total_weighte_layer_n_8",&b_total_weighte_layer_n_8,"b_total_weighte_layer_n_8/F");
-    outtree->Branch("total_weighte_layer_n_9",&b_total_weighte_layer_n_9,"b_total_weighte_layer_n_9/F");
-    outtree->Branch("total_weighte_layer_n_10",&b_total_weighte_layer_n_10,"b_total_weighte_layer_n_10/F");
-    outtree->Branch("total_weighte_layer_n_11",&b_total_weighte_layer_n_11,"b_total_weighte_layer_n_11/F");
-    outtree->Branch("total_weighte_layer_n_12",&b_total_weighte_layer_n_12,"b_total_weighte_layer_n_12/F");
-    outtree->Branch("total_weighte_layer_n_13",&b_total_weighte_layer_n_13,"b_total_weighte_layer_n_13/F");
-    outtree->Branch("total_weighte_layer_n_14",&b_total_weighte_layer_n_14,"b_total_weighte_layer_n_14/F");
-    outtree->Branch("total_sume_layer_0",&b_total_sume_layer_0,"b_total_sume_layer_0/F");
-    outtree->Branch("total_sume_layer_1",&b_total_sume_layer_1,"b_total_sume_layer_1/F");
-    outtree->Branch("total_sume_layer_2",&b_total_sume_layer_2,"b_total_sume_layer_2/F");
-    outtree->Branch("total_sume_layer_3",&b_total_sume_layer_3,"b_total_sume_layer_3/F");
-    outtree->Branch("total_sume_layer_4",&b_total_sume_layer_4,"b_total_sume_layer_4/F");
-    outtree->Branch("total_sume_layer_5",&b_total_sume_layer_5,"b_total_sume_layer_5/F");
-    outtree->Branch("total_sume_layer_6",&b_total_sume_layer_6,"b_total_sume_layer_6/F");
-    outtree->Branch("total_sume_layer_7",&b_total_sume_layer_7,"b_total_sume_layer_7/F");
-    outtree->Branch("total_sume_layer_8",&b_total_sume_layer_8,"b_total_sume_layer_8/F");
-    outtree->Branch("total_sume_layer_9",&b_total_sume_layer_9,"b_total_sume_layer_9/F");
-    outtree->Branch("total_sume_layer_10",&b_total_sume_layer_10,"b_total_sume_layer_10/F");
-    outtree->Branch("total_sume_layer_11",&b_total_sume_layer_11,"b_total_sume_layer_11/F");
-    outtree->Branch("total_sume_layer_12",&b_total_sume_layer_12,"b_total_sume_layer_12/F");
-    outtree->Branch("total_sume_layer_13",&b_total_sume_layer_13,"b_total_sume_layer_13/F");
-    outtree->Branch("total_sume_layer_14",&b_total_sume_layer_14,"b_total_sume_layer_14/F");
-    outtree->Branch("total_sume_layer_n_0",&b_total_sume_layer_n_0,"b_total_sume_layer_n_0/F");
-    outtree->Branch("total_sume_layer_n_1",&b_total_sume_layer_n_1,"b_total_sume_layer_n_1/F");
-    outtree->Branch("total_sume_layer_n_2",&b_total_sume_layer_n_2,"b_total_sume_layer_n_2/F");
-    outtree->Branch("total_sume_layer_n_3",&b_total_sume_layer_n_3,"b_total_sume_layer_n_3/F");
-    outtree->Branch("total_sume_layer_n_4",&b_total_sume_layer_n_4,"b_total_sume_layer_n_4/F");
-    outtree->Branch("total_sume_layer_n_5",&b_total_sume_layer_n_5,"b_total_sume_layer_n_5/F");
-    outtree->Branch("total_sume_layer_n_6",&b_total_sume_layer_n_6,"b_total_sume_layer_n_6/F");
-    outtree->Branch("total_sume_layer_n_7",&b_total_sume_layer_n_7,"b_total_sume_layer_n_7/F");
-    outtree->Branch("total_sume_layer_n_8",&b_total_sume_layer_n_8,"b_total_sume_layer_n_8/F");
-    outtree->Branch("total_sume_layer_n_9",&b_total_sume_layer_n_9,"b_total_sume_layer_n_9/F");
-    outtree->Branch("total_sume_layer_n_10",&b_total_sume_layer_n_10,"b_total_sume_layer_n_10/F");
-    outtree->Branch("total_sume_layer_n_11",&b_total_sume_layer_n_11,"b_total_sume_layer_n_11/F");
-    outtree->Branch("total_sume_layer_n_12",&b_total_sume_layer_n_12,"b_total_sume_layer_n_12/F");
-    outtree->Branch("total_sume_layer_n_13",&b_total_sume_layer_n_13,"b_total_sume_layer_n_13/F");
+    outtree->Branch("total_nhit_layer_0", &b_total_nhit_layer_0, "b_total_nhit_layer_0/F");
+    outtree->Branch("total_nhit_layer_1", &b_total_nhit_layer_1, "b_total_nhit_layer_1/F");
+    outtree->Branch("total_nhit_layer_2", &b_total_nhit_layer_2, "b_total_nhit_layer_2/F");
+    outtree->Branch("total_nhit_layer_3", &b_total_nhit_layer_3, "b_total_nhit_layer_3/F");
+    outtree->Branch("total_nhit_layer_4", &b_total_nhit_layer_4, "b_total_nhit_layer_4/F");
+    outtree->Branch("total_nhit_layer_5", &b_total_nhit_layer_5, "b_total_nhit_layer_5/F");
+    outtree->Branch("total_nhit_layer_6", &b_total_nhit_layer_6, "b_total_nhit_layer_6/F");
+    outtree->Branch("total_nhit_layer_7", &b_total_nhit_layer_7, "b_total_nhit_layer_7/F");
+    outtree->Branch("total_nhit_layer_8", &b_total_nhit_layer_8, "b_total_nhit_layer_8/F");
+    outtree->Branch("total_nhit_layer_9", &b_total_nhit_layer_9, "b_total_nhit_layer_9/F");
+    outtree->Branch("total_nhit_layer_10", &b_total_nhit_layer_10, "b_total_nhit_layer_10/F");
+    outtree->Branch("total_nhit_layer_11", &b_total_nhit_layer_11, "b_total_nhit_layer_11/F");
+    outtree->Branch("total_nhit_layer_12", &b_total_nhit_layer_12, "b_total_nhit_layer_12/F");
+    outtree->Branch("total_nhit_layer_13", &b_total_nhit_layer_13, "b_total_nhit_layer_13/F");
+    outtree->Branch("total_nhit_layer_14", &b_total_nhit_layer_14, "b_total_nhit_layer_14/F");
+    outtree->Branch("total_nhit_layer_15", &b_total_nhit_layer_15, "b_total_nhit_layer_15/F");
+    outtree->Branch("total_nhit_layer_16", &b_total_nhit_layer_16, "b_total_nhit_layer_16/F");
+    outtree->Branch("total_nhit_layer_17", &b_total_nhit_layer_17, "b_total_nhit_layer_17/F");
+    outtree->Branch("total_nhit_layer_18", &b_total_nhit_layer_18, "b_total_nhit_layer_18/F");
+    outtree->Branch("total_nhit_layer_19", &b_total_nhit_layer_19, "b_total_nhit_layer_19/F");
+    outtree->Branch("total_nhit_layer_20", &b_total_nhit_layer_20, "b_total_nhit_layer_20/F");
+    outtree->Branch("total_nhit_layer_21", &b_total_nhit_layer_21, "b_total_nhit_layer_21/F");
+    outtree->Branch("total_nhit_layer_22", &b_total_nhit_layer_22, "b_total_nhit_layer_22/F");
+    outtree->Branch("total_nhit_layer_23", &b_total_nhit_layer_23, "b_total_nhit_layer_23/F");
+    outtree->Branch("total_nhit_layer_24", &b_total_nhit_layer_24, "b_total_nhit_layer_24/F");
+    outtree->Branch("total_nhit_layer_25", &b_total_nhit_layer_25, "b_total_nhit_layer_25/F");
+    outtree->Branch("total_nhit_layer_26", &b_total_nhit_layer_26, "b_total_nhit_layer_26/F");
+    outtree->Branch("total_nhit_layer_27", &b_total_nhit_layer_27, "b_total_nhit_layer_27/F");
+    outtree->Branch("total_nhit_layer_28", &b_total_nhit_layer_28, "b_total_nhit_layer_28/F");
+    outtree->Branch("total_nhit_layer_29", &b_total_nhit_layer_29, "b_total_nhit_layer_29/F");
+    outtree->Branch("total_nhit_layer_30", &b_total_nhit_layer_30, "b_total_nhit_layer_30/F");
+    outtree->Branch("total_nhit_layer_31", &b_total_nhit_layer_31, "b_total_nhit_layer_31/F");
+    outtree->Branch("total_nhit_layer_32", &b_total_nhit_layer_32, "b_total_nhit_layer_32/F");
+    outtree->Branch("total_nhit_layer_33", &b_total_nhit_layer_33, "b_total_nhit_layer_33/F");
+    outtree->Branch("total_nhit_layer_34", &b_total_nhit_layer_34, "b_total_nhit_layer_34/F");
+    outtree->Branch("total_nhit_layer_35", &b_total_nhit_layer_35, "b_total_nhit_layer_35/F");
+    outtree->Branch("total_nhit_layer_36", &b_total_nhit_layer_36, "b_total_nhit_layer_36/F");
+    outtree->Branch("total_nhit_layer_37", &b_total_nhit_layer_37, "b_total_nhit_layer_37/F");
+    outtree->Branch("total_nhit_layer_38", &b_total_nhit_layer_38, "b_total_nhit_layer_38/F");
+    outtree->Branch("total_nhit_layer_39", &b_total_nhit_layer_39, "b_total_nhit_layer_39/F");
+    outtree->Branch("total_nhit_layer_40", &b_total_nhit_layer_40, "b_total_nhit_layer_40/F");
+    outtree->Branch("total_nhit_layer_41", &b_total_nhit_layer_41, "b_total_nhit_layer_41/F");
+    outtree->Branch("total_nhit_layer_42", &b_total_nhit_layer_42, "b_total_nhit_layer_42/F");
+    outtree->Branch("total_nhit_layer_43", &b_total_nhit_layer_43, "b_total_nhit_layer_43F");
+    outtree->Branch("total_nhit_layer_44", &b_total_nhit_layer_44, "b_total_nhit_layer_44F");
+    outtree->Branch("total_nhit_layer_45", &b_total_nhit_layer_45, "b_total_nhit_layer_45F");
+    outtree->Branch("total_nhit_layer_46", &b_total_nhit_layer_46, "b_total_nhit_layer_46F");
+    outtree->Branch("total_nhit_layer_47", &b_total_nhit_layer_47, "b_total_nhit_layer_47F");
+    outtree->Branch("total_nhit_layer_48", &b_total_nhit_layer_48, "b_total_nhit_layer_48F");
+    outtree->Branch("total_nhit_layer_49", &b_total_nhit_layer_49, "b_total_nhit_layer_49F");
+    outtree->Branch("total_nhit_layer_50", &b_total_nhit_layer_50, "b_total_nhit_layer_50/F");
+    outtree->Branch("total_nhit_layer_51", &b_total_nhit_layer_51, "b_total_nhit_layer_51/F");
+    outtree->Branch("total_nhit_layer_52", &b_total_nhit_layer_52, "b_total_nhit_layer_52/F");
+    outtree->Branch("total_nhit_layer_53", &b_total_nhit_layer_53, "b_total_nhit_layer_53/F");
+    outtree->Branch("total_nhit_layer_54", &b_total_nhit_layer_54, "b_total_nhit_layer_54/F");
+    outtree->Branch("total_nhit_layer_55", &b_total_nhit_layer_55, "b_total_nhit_layer_55/F");
+    outtree->Branch("total_nhit_layer_n_0", &b_total_nhit_layer_n_0, "b_total_nhit_layer_n_0/F");
+    outtree->Branch("total_nhit_layer_n_1", &b_total_nhit_layer_n_1, "b_total_nhit_layer_n_1/F");
+    outtree->Branch("total_nhit_layer_n_2", &b_total_nhit_layer_n_2, "b_total_nhit_layer_n_2/F");
+    outtree->Branch("total_nhit_layer_n_3", &b_total_nhit_layer_n_3, "b_total_nhit_layer_n_3/F");
+    outtree->Branch("total_nhit_layer_n_4", &b_total_nhit_layer_n_4, "b_total_nhit_layer_n_4/F");
+    outtree->Branch("total_nhit_layer_n_5", &b_total_nhit_layer_n_5, "b_total_nhit_layer_n_5/F");
+    outtree->Branch("total_nhit_layer_n_6", &b_total_nhit_layer_n_6, "b_total_nhit_layer_n_6/F");
+    outtree->Branch("total_nhit_layer_n_7", &b_total_nhit_layer_n_7, "b_total_nhit_layer_n_7/F");
+    outtree->Branch("total_nhit_layer_n_8", &b_total_nhit_layer_n_8, "b_total_nhit_layer_n_8/F");
+    outtree->Branch("total_nhit_layer_n_9", &b_total_nhit_layer_n_9, "b_total_nhit_layer_n_9/F");
+    outtree->Branch("total_nhit_layer_n_10", &b_total_nhit_layer_n_10, "b_total_nhit_layer_n_10/F");
+    outtree->Branch("total_nhit_layer_n_11", &b_total_nhit_layer_n_11, "b_total_nhit_layer_n_11/F");
+    outtree->Branch("total_nhit_layer_n_12", &b_total_nhit_layer_n_12, "b_total_nhit_layer_n_12/F");
+    outtree->Branch("total_nhit_layer_n_13", &b_total_nhit_layer_n_13, "b_total_nhit_layer_n_13/F");
+    outtree->Branch("total_nhit_layer_n_14", &b_total_nhit_layer_n_14, "b_total_nhit_layer_n_14/F");
+    outtree->Branch("total_nhit_layer_n_15", &b_total_nhit_layer_n_15, "b_total_nhit_layer_n_15/F");
+    outtree->Branch("total_nhit_layer_n_16", &b_total_nhit_layer_n_16, "b_total_nhit_layer_n_16/F");
+    outtree->Branch("total_nhit_layer_n_17", &b_total_nhit_layer_n_17, "b_total_nhit_layer_n_17/F");
+    outtree->Branch("total_nhit_layer_n_18", &b_total_nhit_layer_n_18, "b_total_nhit_layer_n_18/F");
+    outtree->Branch("total_nhit_layer_n_19", &b_total_nhit_layer_n_19, "b_total_nhit_layer_n_19/F");
+    outtree->Branch("total_nhit_layer_n_20", &b_total_nhit_layer_n_20, "b_total_nhit_layer_n_20/F");
+    outtree->Branch("total_nhit_layer_n_21", &b_total_nhit_layer_n_21, "b_total_nhit_layer_n_21/F");
+    outtree->Branch("total_nhit_layer_n_22", &b_total_nhit_layer_n_22, "b_total_nhit_layer_n_22/F");
+    outtree->Branch("total_nhit_layer_n_23", &b_total_nhit_layer_n_23, "b_total_nhit_layer_n_23/F");
+    outtree->Branch("total_nhit_layer_n_24", &b_total_nhit_layer_n_24, "b_total_nhit_layer_n_24/F");
+    outtree->Branch("total_nhit_layer_n_25", &b_total_nhit_layer_n_25, "b_total_nhit_layer_n_25/F");
+    outtree->Branch("total_nhit_layer_n_26", &b_total_nhit_layer_n_26, "b_total_nhit_layer_n_26/F");
+    outtree->Branch("total_nhit_layer_n_27", &b_total_nhit_layer_n_27, "b_total_nhit_layer_n_27/F");
+    outtree->Branch("total_nhit_layer_n_28", &b_total_nhit_layer_n_28, "b_total_nhit_layer_n_28/F");
+    outtree->Branch("total_nhit_layer_n_29", &b_total_nhit_layer_n_29, "b_total_nhit_layer_n_29/F");
+    outtree->Branch("total_nhit_layer_n_30", &b_total_nhit_layer_n_30, "b_total_nhit_layer_n_30/F");
+    outtree->Branch("total_nhit_layer_n_31", &b_total_nhit_layer_n_31, "b_total_nhit_layer_n_31/F");
+    outtree->Branch("total_nhit_layer_n_32", &b_total_nhit_layer_n_32, "b_total_nhit_layer_n_32/F");
+    outtree->Branch("total_nhit_layer_n_33", &b_total_nhit_layer_n_33, "b_total_nhit_layer_n_33/F");
+    outtree->Branch("total_nhit_layer_n_34", &b_total_nhit_layer_n_34, "b_total_nhit_layer_n_34/F");
+    outtree->Branch("total_nhit_layer_n_35", &b_total_nhit_layer_n_35, "b_total_nhit_layer_n_35/F");
+    outtree->Branch("total_nhit_layer_n_36", &b_total_nhit_layer_n_36, "b_total_nhit_layer_n_36/F");
+    outtree->Branch("total_nhit_layer_n_37", &b_total_nhit_layer_n_37, "b_total_nhit_layer_n_37/F");
+    outtree->Branch("total_nhit_layer_n_38", &b_total_nhit_layer_n_38, "b_total_nhit_layer_n_38/F");
+    outtree->Branch("total_nhit_layer_n_39", &b_total_nhit_layer_n_39, "b_total_nhit_layer_n_39/F");
+    outtree->Branch("total_nhit_layer_n_40", &b_total_nhit_layer_n_40, "b_total_nhit_layer_n_40/F");
+    outtree->Branch("total_nhit_layer_n_41", &b_total_nhit_layer_n_41, "b_total_nhit_layer_n_41/F");
+    outtree->Branch("total_nhit_layer_n_42", &b_total_nhit_layer_n_42, "b_total_nhit_layer_n_42/F");
+    outtree->Branch("total_nhit_layer_n_43", &b_total_nhit_layer_n_43, "b_total_nhit_layer_n_43F");
+    outtree->Branch("total_nhit_layer_n_44", &b_total_nhit_layer_n_44, "b_total_nhit_layer_n_44F");
+    outtree->Branch("total_nhit_layer_n_45", &b_total_nhit_layer_n_45, "b_total_nhit_layer_n_45F");
+    outtree->Branch("total_nhit_layer_n_46", &b_total_nhit_layer_n_46, "b_total_nhit_layer_n_46F");
+    outtree->Branch("total_nhit_layer_n_47", &b_total_nhit_layer_n_47, "b_total_nhit_layer_n_47F");
+    outtree->Branch("total_nhit_layer_n_48", &b_total_nhit_layer_n_48, "b_total_nhit_layer_n_48F");
+    outtree->Branch("total_nhit_layer_n_49", &b_total_nhit_layer_n_49, "b_total_nhit_layer_n_49F");
+    outtree->Branch("total_nhit_layer_n_50", &b_total_nhit_layer_n_50, "b_total_nhit_layer_n_50/F");
+    outtree->Branch("total_nhit_layer_n_51", &b_total_nhit_layer_n_51, "b_total_nhit_layer_n_51/F");
+    outtree->Branch("total_nhit_layer_n_52", &b_total_nhit_layer_n_52, "b_total_nhit_layer_n_52/F");
+    outtree->Branch("total_nhit_layer_n_53", &b_total_nhit_layer_n_53, "b_total_nhit_layer_n_53/F");
+    outtree->Branch("total_nhit_layer_n_54", &b_total_nhit_layer_n_54, "b_total_nhit_layer_n_54/F");
+    outtree->Branch("total_nhit_layer_n_55", &b_total_nhit_layer_n_55, "b_total_nhit_layer_n_55/F");
+    outtree->Branch("total_sume_layer_0", &b_total_sume_layer_0, "b_total_sume_layer_0/F");
+    outtree->Branch("total_sume_layer_1", &b_total_sume_layer_1, "b_total_sume_layer_1/F");
+    outtree->Branch("total_sume_layer_2", &b_total_sume_layer_2, "b_total_sume_layer_2/F");
+    outtree->Branch("total_sume_layer_3", &b_total_sume_layer_3, "b_total_sume_layer_3/F");
+    outtree->Branch("total_sume_layer_4", &b_total_sume_layer_4, "b_total_sume_layer_4/F");
+    outtree->Branch("total_sume_layer_5", &b_total_sume_layer_5, "b_total_sume_layer_5/F");
+    outtree->Branch("total_sume_layer_6", &b_total_sume_layer_6, "b_total_sume_layer_6/F");
+    outtree->Branch("total_sume_layer_7", &b_total_sume_layer_7, "b_total_sume_layer_7/F");
+    outtree->Branch("total_sume_layer_8", &b_total_sume_layer_8, "b_total_sume_layer_8/F");
+    outtree->Branch("total_sume_layer_9", &b_total_sume_layer_9, "b_total_sume_layer_9/F");
+    outtree->Branch("total_sume_layer_10", &b_total_sume_layer_10, "b_total_sume_layer_10/F");
+    outtree->Branch("total_sume_layer_11", &b_total_sume_layer_11, "b_total_sume_layer_11/F");
+    outtree->Branch("total_sume_layer_12", &b_total_sume_layer_12, "b_total_sume_layer_12/F");
+    outtree->Branch("total_sume_layer_13", &b_total_sume_layer_13, "b_total_sume_layer_13/F");
+    outtree->Branch("total_sume_layer_14", &b_total_sume_layer_14, "b_total_sume_layer_14/F");
+    outtree->Branch("total_sume_layer_15", &b_total_sume_layer_15, "b_total_sume_layer_15/F");
+    outtree->Branch("total_sume_layer_16", &b_total_sume_layer_16, "b_total_sume_layer_16/F");
+    outtree->Branch("total_sume_layer_17", &b_total_sume_layer_17, "b_total_sume_layer_17/F");
+    outtree->Branch("total_sume_layer_18", &b_total_sume_layer_18, "b_total_sume_layer_18/F");
+    outtree->Branch("total_sume_layer_19", &b_total_sume_layer_19, "b_total_sume_layer_19/F");
+    outtree->Branch("total_sume_layer_20", &b_total_sume_layer_20, "b_total_sume_layer_20/F");
+    outtree->Branch("total_sume_layer_21", &b_total_sume_layer_21, "b_total_sume_layer_21/F");
+    outtree->Branch("total_sume_layer_22", &b_total_sume_layer_22, "b_total_sume_layer_22/F");
+    outtree->Branch("total_sume_layer_23", &b_total_sume_layer_23, "b_total_sume_layer_23/F");
+    outtree->Branch("total_sume_layer_24", &b_total_sume_layer_24, "b_total_sume_layer_24/F");
+    outtree->Branch("total_sume_layer_25", &b_total_sume_layer_25, "b_total_sume_layer_25/F");
+    outtree->Branch("total_sume_layer_26", &b_total_sume_layer_26, "b_total_sume_layer_26/F");
+    outtree->Branch("total_sume_layer_27", &b_total_sume_layer_27, "b_total_sume_layer_27/F");
+    outtree->Branch("total_sume_layer_28", &b_total_sume_layer_28, "b_total_sume_layer_28/F");
+    outtree->Branch("total_sume_layer_29", &b_total_sume_layer_29, "b_total_sume_layer_29/F");
+    outtree->Branch("total_sume_layer_30", &b_total_sume_layer_30, "b_total_sume_layer_30/F");
+    outtree->Branch("total_sume_layer_31", &b_total_sume_layer_31, "b_total_sume_layer_31/F");
+    outtree->Branch("total_sume_layer_32", &b_total_sume_layer_32, "b_total_sume_layer_32/F");
+    outtree->Branch("total_sume_layer_33", &b_total_sume_layer_33, "b_total_sume_layer_33/F");
+    outtree->Branch("total_sume_layer_34", &b_total_sume_layer_34, "b_total_sume_layer_34/F");
+    outtree->Branch("total_sume_layer_35", &b_total_sume_layer_35, "b_total_sume_layer_35/F");
+    outtree->Branch("total_sume_layer_36", &b_total_sume_layer_36, "b_total_sume_layer_36/F");
+    outtree->Branch("total_sume_layer_37", &b_total_sume_layer_37, "b_total_sume_layer_37/F");
+    outtree->Branch("total_sume_layer_38", &b_total_sume_layer_38, "b_total_sume_layer_38/F");
+    outtree->Branch("total_sume_layer_39", &b_total_sume_layer_39, "b_total_sume_layer_39/F");
+    outtree->Branch("total_sume_layer_40", &b_total_sume_layer_40, "b_total_sume_layer_40/F");
+    outtree->Branch("total_sume_layer_41", &b_total_sume_layer_41, "b_total_sume_layer_41/F");
+    outtree->Branch("total_sume_layer_42", &b_total_sume_layer_42, "b_total_sume_layer_42/F");
+    outtree->Branch("total_sume_layer_43", &b_total_sume_layer_43, "b_total_sume_layer_43F");
+    outtree->Branch("total_sume_layer_44", &b_total_sume_layer_44, "b_total_sume_layer_44F");
+    outtree->Branch("total_sume_layer_45", &b_total_sume_layer_45, "b_total_sume_layer_45F");
+    outtree->Branch("total_sume_layer_46", &b_total_sume_layer_46, "b_total_sume_layer_46F");
+    outtree->Branch("total_sume_layer_47", &b_total_sume_layer_47, "b_total_sume_layer_47F");
+    outtree->Branch("total_sume_layer_48", &b_total_sume_layer_48, "b_total_sume_layer_48F");
+    outtree->Branch("total_sume_layer_49", &b_total_sume_layer_49, "b_total_sume_layer_49F");
+    outtree->Branch("total_sume_layer_50", &b_total_sume_layer_50, "b_total_sume_layer_50/F");
+    outtree->Branch("total_sume_layer_51", &b_total_sume_layer_51, "b_total_sume_layer_51/F");
+    outtree->Branch("total_sume_layer_52", &b_total_sume_layer_52, "b_total_sume_layer_52/F");
+    outtree->Branch("total_sume_layer_53", &b_total_sume_layer_53, "b_total_sume_layer_53/F");
+    outtree->Branch("total_sume_layer_54", &b_total_sume_layer_54, "b_total_sume_layer_54/F");
+    outtree->Branch("total_sume_layer_55", &b_total_sume_layer_55, "b_total_sume_layer_55/F");
+    outtree->Branch("total_sume_layer_n_0", &b_total_sume_layer_n_0, "b_total_sume_layer_n_0/F");
+    outtree->Branch("total_sume_layer_n_1", &b_total_sume_layer_n_1, "b_total_sume_layer_n_1/F");
+    outtree->Branch("total_sume_layer_n_2", &b_total_sume_layer_n_2, "b_total_sume_layer_n_2/F");
+    outtree->Branch("total_sume_layer_n_3", &b_total_sume_layer_n_3, "b_total_sume_layer_n_3/F");
+    outtree->Branch("total_sume_layer_n_4", &b_total_sume_layer_n_4, "b_total_sume_layer_n_4/F");
+    outtree->Branch("total_sume_layer_n_5", &b_total_sume_layer_n_5, "b_total_sume_layer_n_5/F");
+    outtree->Branch("total_sume_layer_n_6", &b_total_sume_layer_n_6, "b_total_sume_layer_n_6/F");
+    outtree->Branch("total_sume_layer_n_7", &b_total_sume_layer_n_7, "b_total_sume_layer_n_7/F");
+    outtree->Branch("total_sume_layer_n_8", &b_total_sume_layer_n_8, "b_total_sume_layer_n_8/F");
+    outtree->Branch("total_sume_layer_n_9", &b_total_sume_layer_n_9, "b_total_sume_layer_n_9/F");
+    outtree->Branch("total_sume_layer_n_10", &b_total_sume_layer_n_10, "b_total_sume_layer_n_10/F");
+    outtree->Branch("total_sume_layer_n_11", &b_total_sume_layer_n_11, "b_total_sume_layer_n_11/F");
+    outtree->Branch("total_sume_layer_n_12", &b_total_sume_layer_n_12, "b_total_sume_layer_n_12/F");
+    outtree->Branch("total_sume_layer_n_13", &b_total_sume_layer_n_13, "b_total_sume_layer_n_13/F");
+    outtree->Branch("total_sume_layer_n_14", &b_total_sume_layer_n_14, "b_total_sume_layer_n_14/F");
+    outtree->Branch("total_sume_layer_n_15", &b_total_sume_layer_n_15, "b_total_sume_layer_n_15/F");
+    outtree->Branch("total_sume_layer_n_16", &b_total_sume_layer_n_16, "b_total_sume_layer_n_16/F");
+    outtree->Branch("total_sume_layer_n_17", &b_total_sume_layer_n_17, "b_total_sume_layer_n_17/F");
+    outtree->Branch("total_sume_layer_n_18", &b_total_sume_layer_n_18, "b_total_sume_layer_n_18/F");
+    outtree->Branch("total_sume_layer_n_19", &b_total_sume_layer_n_19, "b_total_sume_layer_n_19/F");
+    outtree->Branch("total_sume_layer_n_20", &b_total_sume_layer_n_20, "b_total_sume_layer_n_20/F");
+    outtree->Branch("total_sume_layer_n_21", &b_total_sume_layer_n_21, "b_total_sume_layer_n_21/F");
+    outtree->Branch("total_sume_layer_n_22", &b_total_sume_layer_n_22, "b_total_sume_layer_n_22/F");
+    outtree->Branch("total_sume_layer_n_23", &b_total_sume_layer_n_23, "b_total_sume_layer_n_23/F");
+    outtree->Branch("total_sume_layer_n_24", &b_total_sume_layer_n_24, "b_total_sume_layer_n_24/F");
+    outtree->Branch("total_sume_layer_n_25", &b_total_sume_layer_n_25, "b_total_sume_layer_n_25/F");
+    outtree->Branch("total_sume_layer_n_26", &b_total_sume_layer_n_26, "b_total_sume_layer_n_26/F");
+    outtree->Branch("total_sume_layer_n_27", &b_total_sume_layer_n_27, "b_total_sume_layer_n_27/F");
+    outtree->Branch("total_sume_layer_n_28", &b_total_sume_layer_n_28, "b_total_sume_layer_n_28/F");
+    outtree->Branch("total_sume_layer_n_29", &b_total_sume_layer_n_29, "b_total_sume_layer_n_29/F");
+    outtree->Branch("total_sume_layer_n_30", &b_total_sume_layer_n_30, "b_total_sume_layer_n_30/F");
+    outtree->Branch("total_sume_layer_n_31", &b_total_sume_layer_n_31, "b_total_sume_layer_n_31/F");
+    outtree->Branch("total_sume_layer_n_32", &b_total_sume_layer_n_32, "b_total_sume_layer_n_32/F");
+    outtree->Branch("total_sume_layer_n_33", &b_total_sume_layer_n_33, "b_total_sume_layer_n_33/F");
+    outtree->Branch("total_sume_layer_n_34", &b_total_sume_layer_n_34, "b_total_sume_layer_n_34/F");
+    outtree->Branch("total_sume_layer_n_35", &b_total_sume_layer_n_35, "b_total_sume_layer_n_35/F");
+    outtree->Branch("total_sume_layer_n_36", &b_total_sume_layer_n_36, "b_total_sume_layer_n_36/F");
+    outtree->Branch("total_sume_layer_n_37", &b_total_sume_layer_n_37, "b_total_sume_layer_n_37/F");
+    outtree->Branch("total_sume_layer_n_38", &b_total_sume_layer_n_38, "b_total_sume_layer_n_38/F");
+    outtree->Branch("total_sume_layer_n_39", &b_total_sume_layer_n_39, "b_total_sume_layer_n_39/F");
+    outtree->Branch("total_sume_layer_n_40", &b_total_sume_layer_n_40, "b_total_sume_layer_n_40/F");
+    outtree->Branch("total_sume_layer_n_41", &b_total_sume_layer_n_41, "b_total_sume_layer_n_41/F");
+    outtree->Branch("total_sume_layer_n_42", &b_total_sume_layer_n_42, "b_total_sume_layer_n_42/F");
+    outtree->Branch("total_sume_layer_n_43", &b_total_sume_layer_n_43, "b_total_sume_layer_n_43F");
+    outtree->Branch("total_sume_layer_n_44", &b_total_sume_layer_n_44, "b_total_sume_layer_n_44F");
+    outtree->Branch("total_sume_layer_n_45", &b_total_sume_layer_n_45, "b_total_sume_layer_n_45F");
+    outtree->Branch("total_sume_layer_n_46", &b_total_sume_layer_n_46, "b_total_sume_layer_n_46F");
+    outtree->Branch("total_sume_layer_n_47", &b_total_sume_layer_n_47, "b_total_sume_layer_n_47F");
+    outtree->Branch("total_sume_layer_n_48", &b_total_sume_layer_n_48, "b_total_sume_layer_n_48F");
+    outtree->Branch("total_sume_layer_n_49", &b_total_sume_layer_n_49, "b_total_sume_layer_n_49F");
+    outtree->Branch("total_sume_layer_n_50", &b_total_sume_layer_n_50, "b_total_sume_layer_n_50/F");
+    outtree->Branch("total_sume_layer_n_51", &b_total_sume_layer_n_51, "b_total_sume_layer_n_51/F");
+    outtree->Branch("total_sume_layer_n_52", &b_total_sume_layer_n_52, "b_total_sume_layer_n_52/F");
+    outtree->Branch("total_sume_layer_n_53", &b_total_sume_layer_n_53, "b_total_sume_layer_n_53/F");
+    outtree->Branch("total_sume_layer_n_54", &b_total_sume_layer_n_54, "b_total_sume_layer_n_54/F");
+    outtree->Branch("total_sume_layer_n_55", &b_total_sume_layer_n_55, "b_total_sume_layer_n_55/F");
+    outtree->Branch("total_weighte_layer_0", &b_total_weighte_layer_0, "b_total_weighte_layer_0/F");
+    outtree->Branch("total_weighte_layer_1", &b_total_weighte_layer_1, "b_total_weighte_layer_1/F");
+    outtree->Branch("total_weighte_layer_2", &b_total_weighte_layer_2, "b_total_weighte_layer_2/F");
+    outtree->Branch("total_weighte_layer_3", &b_total_weighte_layer_3, "b_total_weighte_layer_3/F");
+    outtree->Branch("total_weighte_layer_4", &b_total_weighte_layer_4, "b_total_weighte_layer_4/F");
+    outtree->Branch("total_weighte_layer_5", &b_total_weighte_layer_5, "b_total_weighte_layer_5/F");
+    outtree->Branch("total_weighte_layer_6", &b_total_weighte_layer_6, "b_total_weighte_layer_6/F");
+    outtree->Branch("total_weighte_layer_7", &b_total_weighte_layer_7, "b_total_weighte_layer_7/F");
+    outtree->Branch("total_weighte_layer_8", &b_total_weighte_layer_8, "b_total_weighte_layer_8/F");
+    outtree->Branch("total_weighte_layer_9", &b_total_weighte_layer_9, "b_total_weighte_layer_9/F");
+    outtree->Branch("total_weighte_layer_10", &b_total_weighte_layer_10, "b_total_weighte_layer_10/F");
+    outtree->Branch("total_weighte_layer_11", &b_total_weighte_layer_11, "b_total_weighte_layer_11/F");
+    outtree->Branch("total_weighte_layer_12", &b_total_weighte_layer_12, "b_total_weighte_layer_12/F");
+    outtree->Branch("total_weighte_layer_13", &b_total_weighte_layer_13, "b_total_weighte_layer_13/F");
+    outtree->Branch("total_weighte_layer_14", &b_total_weighte_layer_14, "b_total_weighte_layer_14/F");
+    outtree->Branch("total_weighte_layer_15", &b_total_weighte_layer_15, "b_total_weighte_layer_15/F");
+    outtree->Branch("total_weighte_layer_16", &b_total_weighte_layer_16, "b_total_weighte_layer_16/F");
+    outtree->Branch("total_weighte_layer_17", &b_total_weighte_layer_17, "b_total_weighte_layer_17/F");
+    outtree->Branch("total_weighte_layer_18", &b_total_weighte_layer_18, "b_total_weighte_layer_18/F");
+    outtree->Branch("total_weighte_layer_19", &b_total_weighte_layer_19, "b_total_weighte_layer_19/F");
+    outtree->Branch("total_weighte_layer_20", &b_total_weighte_layer_20, "b_total_weighte_layer_20/F");
+    outtree->Branch("total_weighte_layer_21", &b_total_weighte_layer_21, "b_total_weighte_layer_21/F");
+    outtree->Branch("total_weighte_layer_22", &b_total_weighte_layer_22, "b_total_weighte_layer_22/F");
+    outtree->Branch("total_weighte_layer_23", &b_total_weighte_layer_23, "b_total_weighte_layer_23/F");
+    outtree->Branch("total_weighte_layer_24", &b_total_weighte_layer_24, "b_total_weighte_layer_24/F");
+    outtree->Branch("total_weighte_layer_25", &b_total_weighte_layer_25, "b_total_weighte_layer_25/F");
+    outtree->Branch("total_weighte_layer_26", &b_total_weighte_layer_26, "b_total_weighte_layer_26/F");
+    outtree->Branch("total_weighte_layer_27", &b_total_weighte_layer_27, "b_total_weighte_layer_27/F");
+    outtree->Branch("total_weighte_layer_28", &b_total_weighte_layer_28, "b_total_weighte_layer_28/F");
+    outtree->Branch("total_weighte_layer_29", &b_total_weighte_layer_29, "b_total_weighte_layer_29/F");
+    outtree->Branch("total_weighte_layer_30", &b_total_weighte_layer_30, "b_total_weighte_layer_30/F");
+    outtree->Branch("total_weighte_layer_31", &b_total_weighte_layer_31, "b_total_weighte_layer_31/F");
+    outtree->Branch("total_weighte_layer_32", &b_total_weighte_layer_32, "b_total_weighte_layer_32/F");
+    outtree->Branch("total_weighte_layer_33", &b_total_weighte_layer_33, "b_total_weighte_layer_33/F");
+    outtree->Branch("total_weighte_layer_34", &b_total_weighte_layer_34, "b_total_weighte_layer_34/F");
+    outtree->Branch("total_weighte_layer_35", &b_total_weighte_layer_35, "b_total_weighte_layer_35/F");
+    outtree->Branch("total_weighte_layer_36", &b_total_weighte_layer_36, "b_total_weighte_layer_36/F");
+    outtree->Branch("total_weighte_layer_37", &b_total_weighte_layer_37, "b_total_weighte_layer_37/F");
+    outtree->Branch("total_weighte_layer_38", &b_total_weighte_layer_38, "b_total_weighte_layer_38/F");
+    outtree->Branch("total_weighte_layer_39", &b_total_weighte_layer_39, "b_total_weighte_layer_39/F");
+    outtree->Branch("total_weighte_layer_40", &b_total_weighte_layer_40, "b_total_weighte_layer_40/F");
+    outtree->Branch("total_weighte_layer_41", &b_total_weighte_layer_41, "b_total_weighte_layer_41/F");
+    outtree->Branch("total_weighte_layer_42", &b_total_weighte_layer_42, "b_total_weighte_layer_42/F");
+    outtree->Branch("total_weighte_layer_43", &b_total_weighte_layer_43, "b_total_weighte_layer_43F");
+    outtree->Branch("total_weighte_layer_44", &b_total_weighte_layer_44, "b_total_weighte_layer_44F");
+    outtree->Branch("total_weighte_layer_45", &b_total_weighte_layer_45, "b_total_weighte_layer_45F");
+    outtree->Branch("total_weighte_layer_46", &b_total_weighte_layer_46, "b_total_weighte_layer_46F");
+    outtree->Branch("total_weighte_layer_47", &b_total_weighte_layer_47, "b_total_weighte_layer_47F");
+    outtree->Branch("total_weighte_layer_48", &b_total_weighte_layer_48, "b_total_weighte_layer_48F");
+    outtree->Branch("total_weighte_layer_49", &b_total_weighte_layer_49, "b_total_weighte_layer_49F");
+    outtree->Branch("total_weighte_layer_50", &b_total_weighte_layer_50, "b_total_weighte_layer_50/F");
+    outtree->Branch("total_weighte_layer_51", &b_total_weighte_layer_51, "b_total_weighte_layer_51/F");
+    outtree->Branch("total_weighte_layer_52", &b_total_weighte_layer_52, "b_total_weighte_layer_52/F");
+    outtree->Branch("total_weighte_layer_53", &b_total_weighte_layer_53, "b_total_weighte_layer_53/F");
+    outtree->Branch("total_weighte_layer_54", &b_total_weighte_layer_54, "b_total_weighte_layer_54/F");
+    outtree->Branch("total_weighte_layer_55", &b_total_weighte_layer_55, "b_total_weighte_layer_55/F");
+    outtree->Branch("total_weighte_layer_n_0", &b_total_weighte_layer_n_0, "b_total_weighte_layer_n_0/F");
+    outtree->Branch("total_weighte_layer_n_1", &b_total_weighte_layer_n_1, "b_total_weighte_layer_n_1/F");
+    outtree->Branch("total_weighte_layer_n_2", &b_total_weighte_layer_n_2, "b_total_weighte_layer_n_2/F");
+    outtree->Branch("total_weighte_layer_n_3", &b_total_weighte_layer_n_3, "b_total_weighte_layer_n_3/F");
+    outtree->Branch("total_weighte_layer_n_4", &b_total_weighte_layer_n_4, "b_total_weighte_layer_n_4/F");
+    outtree->Branch("total_weighte_layer_n_5", &b_total_weighte_layer_n_5, "b_total_weighte_layer_n_5/F");
+    outtree->Branch("total_weighte_layer_n_6", &b_total_weighte_layer_n_6, "b_total_weighte_layer_n_6/F");
+    outtree->Branch("total_weighte_layer_n_7", &b_total_weighte_layer_n_7, "b_total_weighte_layer_n_7/F");
+    outtree->Branch("total_weighte_layer_n_8", &b_total_weighte_layer_n_8, "b_total_weighte_layer_n_8/F");
+    outtree->Branch("total_weighte_layer_n_9", &b_total_weighte_layer_n_9, "b_total_weighte_layer_n_9/F");
+    outtree->Branch("total_weighte_layer_n_10", &b_total_weighte_layer_n_10, "b_total_weighte_layer_n_10/F");
+    outtree->Branch("total_weighte_layer_n_11", &b_total_weighte_layer_n_11, "b_total_weighte_layer_n_11/F");
+    outtree->Branch("total_weighte_layer_n_12", &b_total_weighte_layer_n_12, "b_total_weighte_layer_n_12/F");
+    outtree->Branch("total_weighte_layer_n_13", &b_total_weighte_layer_n_13, "b_total_weighte_layer_n_13/F");
+    outtree->Branch("total_weighte_layer_n_14", &b_total_weighte_layer_n_14, "b_total_weighte_layer_n_14/F");
+    outtree->Branch("total_weighte_layer_n_15", &b_total_weighte_layer_n_15, "b_total_weighte_layer_n_15/F");
+    outtree->Branch("total_weighte_layer_n_16", &b_total_weighte_layer_n_16, "b_total_weighte_layer_n_16/F");
+    outtree->Branch("total_weighte_layer_n_17", &b_total_weighte_layer_n_17, "b_total_weighte_layer_n_17/F");
+    outtree->Branch("total_weighte_layer_n_18", &b_total_weighte_layer_n_18, "b_total_weighte_layer_n_18/F");
+    outtree->Branch("total_weighte_layer_n_19", &b_total_weighte_layer_n_19, "b_total_weighte_layer_n_19/F");
+    outtree->Branch("total_weighte_layer_n_20", &b_total_weighte_layer_n_20, "b_total_weighte_layer_n_20/F");
+    outtree->Branch("total_weighte_layer_n_21", &b_total_weighte_layer_n_21, "b_total_weighte_layer_n_21/F");
+    outtree->Branch("total_weighte_layer_n_22", &b_total_weighte_layer_n_22, "b_total_weighte_layer_n_22/F");
+    outtree->Branch("total_weighte_layer_n_23", &b_total_weighte_layer_n_23, "b_total_weighte_layer_n_23/F");
+    outtree->Branch("total_weighte_layer_n_24", &b_total_weighte_layer_n_24, "b_total_weighte_layer_n_24/F");
+    outtree->Branch("total_weighte_layer_n_25", &b_total_weighte_layer_n_25, "b_total_weighte_layer_n_25/F");
+    outtree->Branch("total_weighte_layer_n_26", &b_total_weighte_layer_n_26, "b_total_weighte_layer_n_26/F");
+    outtree->Branch("total_weighte_layer_n_27", &b_total_weighte_layer_n_27, "b_total_weighte_layer_n_27/F");
+    outtree->Branch("total_weighte_layer_n_28", &b_total_weighte_layer_n_28, "b_total_weighte_layer_n_28/F");
+    outtree->Branch("total_weighte_layer_n_29", &b_total_weighte_layer_n_29, "b_total_weighte_layer_n_29/F");
+    outtree->Branch("total_weighte_layer_n_30", &b_total_weighte_layer_n_30, "b_total_weighte_layer_n_30/F");
+    outtree->Branch("total_weighte_layer_n_31", &b_total_weighte_layer_n_31, "b_total_weighte_layer_n_31/F");
+    outtree->Branch("total_weighte_layer_n_32", &b_total_weighte_layer_n_32, "b_total_weighte_layer_n_32/F");
+    outtree->Branch("total_weighte_layer_n_33", &b_total_weighte_layer_n_33, "b_total_weighte_layer_n_33/F");
+    outtree->Branch("total_weighte_layer_n_34", &b_total_weighte_layer_n_34, "b_total_weighte_layer_n_34/F");
+    outtree->Branch("total_weighte_layer_n_35", &b_total_weighte_layer_n_35, "b_total_weighte_layer_n_35/F");
+    outtree->Branch("total_weighte_layer_n_36", &b_total_weighte_layer_n_36, "b_total_weighte_layer_n_36/F");
+    outtree->Branch("total_weighte_layer_n_37", &b_total_weighte_layer_n_37, "b_total_weighte_layer_n_37/F");
+    outtree->Branch("total_weighte_layer_n_38", &b_total_weighte_layer_n_38, "b_total_weighte_layer_n_38/F");
+    outtree->Branch("total_weighte_layer_n_39", &b_total_weighte_layer_n_39, "b_total_weighte_layer_n_39/F");
+    outtree->Branch("total_weighte_layer_n_40", &b_total_weighte_layer_n_40, "b_total_weighte_layer_n_40/F");
+    outtree->Branch("total_weighte_layer_n_41", &b_total_weighte_layer_n_41, "b_total_weighte_layer_n_41/F");
+    outtree->Branch("total_weighte_layer_n_42", &b_total_weighte_layer_n_42, "b_total_weighte_layer_n_42/F");
+    outtree->Branch("total_weighte_layer_n_43", &b_total_weighte_layer_n_43, "b_total_weighte_layer_n_43F");
+    outtree->Branch("total_weighte_layer_n_44", &b_total_weighte_layer_n_44, "b_total_weighte_layer_n_44F");
+    outtree->Branch("total_weighte_layer_n_45", &b_total_weighte_layer_n_45, "b_total_weighte_layer_n_45F");
+    outtree->Branch("total_weighte_layer_n_46", &b_total_weighte_layer_n_46, "b_total_weighte_layer_n_46F");
+    outtree->Branch("total_weighte_layer_n_47", &b_total_weighte_layer_n_47, "b_total_weighte_layer_n_47F");
+    outtree->Branch("total_weighte_layer_n_48", &b_total_weighte_layer_n_48, "b_total_weighte_layer_n_48F");
+    outtree->Branch("total_weighte_layer_n_49", &b_total_weighte_layer_n_49, "b_total_weighte_layer_n_49F");
+    outtree->Branch("total_weighte_layer_n_50", &b_total_weighte_layer_n_50, "b_total_weighte_layer_n_50/F");
+    outtree->Branch("total_weighte_layer_n_51", &b_total_weighte_layer_n_51, "b_total_weighte_layer_n_51/F");
+    outtree->Branch("total_weighte_layer_n_52", &b_total_weighte_layer_n_52, "b_total_weighte_layer_n_52/F");
+    outtree->Branch("total_weighte_layer_n_53", &b_total_weighte_layer_n_53, "b_total_weighte_layer_n_53/F");
+    outtree->Branch("total_weighte_layer_n_54", &b_total_weighte_layer_n_54, "b_total_weighte_layer_n_54/F");
+    outtree->Branch("total_weighte_layer_n_55", &b_total_weighte_layer_n_55, "b_total_weighte_layer_n_55/F");
 
     outtree->Branch("nhit_ratio", &b_nhit_ratio , "b_nhit_ratio/F");
     outtree->Branch("sume_ratio", &b_sume_ratio , "b_sume_ratio/F");
@@ -1797,14 +2267,14 @@ void analysis (string particle, bool masked=false) {
 	  
 	  get_energy_ecal(ecal_nhit, ecal_sume, ecal_weighte, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked);
 	  barycenter_ecal(ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_bar_xyzr, ecal_hit_isMasked, masked);
-
 	  hits_layer_ecal(ecal_nhit_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "nhit");
 	  hits_layer_ecal(ecal_nhit_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "nhit");
           hits_layer_ecal(ecal_sume_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "sume");
           hits_layer_ecal(ecal_sume_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "sume");
 	  hits_layer_ecal(ecal_weighte_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "weight");
           hits_layer_ecal(ecal_weighte_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "weight");
-
+	  
+	  float ecal_hits_max_distance_value = hits_max_distance(ecal_hit_slab, ecal_hit_x, ecal_hit_x, ecal_hit_isMasked, masked);
 	  float ecal_MIP_Likeness_value = MIP_Likeness_ecal(ecal_nhit_layer_array);
 	  bool ecal_shower_bool = is_Shower_ecal(ecal_sume, ecal_sume_layer_array);
 
@@ -1845,9 +2315,10 @@ void analysis (string particle, bool masked=false) {
           radius_layer_ecal(ecal_radius90_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked, masked, 0.9, ecal_shower_bool);
 	  bary_layer_ecal(ecal_bar_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked, masked);
 
+
+
 	  get_energy_hcal(hcal_nhit, hcal_sume, hcal_weighte, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked);
           barycenter_hcal(hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_x, hcal_hit_y, hcal_hit_z, hcal_bar_xyzr, hcal_hit_isMasked, masked);
-
           hits_layer_hcal(hcal_nhit_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "nhit");
           hits_layer_hcal(hcal_nhit_layer_n_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, true, "nhit");
           hits_layer_hcal(hcal_sume_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "sume");
@@ -1855,6 +2326,8 @@ void analysis (string particle, bool masked=false) {
           hits_layer_hcal(hcal_weighte_layer_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, false, "weight");
           hits_layer_hcal(hcal_weighte_layer_n_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, true, "weight");
 
+	  //float hcal_hits_max_distance_value = 0.;
+	  float hcal_hits_max_distance_value = hits_max_distance(hcal_hit_slab, hcal_hit_x, hcal_hit_x, hcal_hit_isMasked, masked);
           float hcal_MIP_Likeness_value = MIP_Likeness_hcal(hcal_nhit_layer_array);
           bool hcal_shower_bool = is_Shower_hcal(hcal_sume, hcal_sume_layer_array);
 
@@ -1879,7 +2352,6 @@ void analysis (string particle, bool masked=false) {
           float hcal_sume_shower_averagevalue = hcal_sume/N_HCAL_LAYERS;
           shower_variables_hcal(hcal_sume, hcal_sume_layer_array, hcal_sume_layer_n_array, hcal_sume_shower_maxvalue, hcal_sume_shower_maxvalue_n, hcal_sume_ilayermax,
 				hcal_sume_ilayerstart, hcal_sume_ilayerstart_10, hcal_sume_ilayerend, hcal_sume_ilayerend_10, "sume", hcal_shower_bool);
-
           float hcal_weighte_shower_maxvalue = 0.;
           float hcal_weighte_shower_maxvalue_n = 0.;
           int hcal_weighte_ilayermax = -1;
@@ -1908,8 +2380,43 @@ void analysis (string particle, bool masked=false) {
           barycenter_total(ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_x, ecal_hit_y, ecal_hit_z, ecal_hit_isMasked,
 			   hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_x, hcal_hit_y, hcal_hit_z, hcal_hit_isMasked,
 			   total_bar_xyzr, masked);
+	  
+	  total_nhit = ecal_nhit + hcal_nhit;
+	  total_sume = ecal_sume + hcal_sume;
+	  total_weighte = ecal_weighte + hcal_weighte;
+	  
+	  for(int i = 0; i<N_TOTAL_LAYERS;i++) {
+            if(i<N_ECAL_LAYERS) {
+              total_nhit_layer_array[i] = ecal_nhit_layer_array[i];
+              total_nhit_layer_n_array[i] = ecal_nhit_layer_n_array[i];
+              total_sume_layer_array[i] = ecal_sume_layer_array[i];
+              total_sume_layer_n_array[i] = ecal_sume_layer_n_array[i];
+              total_weighte_layer_array[i] = ecal_weighte_layer_array[i];
+              total_weighte_layer_n_array[i] = ecal_weighte_layer_n_array[i];
+              total_bar_layer_array[i][0] = ecal_bar_layer_array[i][0];
+              total_bar_layer_array[i][1] = ecal_bar_layer_array[i][1];
+              total_bar_layer_array[i][2] = ecal_bar_layer_array[i][2];
+              total_radius90_layer_array[i] = ecal_radius90_layer_array[i];
+            }
+            else{
+              total_nhit_layer_array[i] = hcal_nhit_layer_array[i-N_ECAL_LAYERS];
+              total_nhit_layer_n_array[i] = hcal_nhit_layer_n_array[i-N_ECAL_LAYERS];
+              total_sume_layer_array[i] = hcal_sume_layer_array[i-N_ECAL_LAYERS];
+              total_sume_layer_n_array[i] = hcal_sume_layer_n_array[i-N_ECAL_LAYERS];
+              total_weighte_layer_array[i] = hcal_weighte_layer_array[i-N_ECAL_LAYERS];
+              total_weighte_layer_n_array[i] = hcal_weighte_layer_n_array[i-N_ECAL_LAYERS];
+              total_bar_layer_array[i][0] = hcal_bar_layer_array[i-N_ECAL_LAYERS][0];
+              total_bar_layer_array[i][1] = hcal_bar_layer_array[i-N_ECAL_LAYERS][1];
+              total_bar_layer_array[i][2] = hcal_bar_layer_array[i-N_ECAL_LAYERS][2];
+              total_radius90_layer_array[i] = hcal_radius90_layer_array[i-N_ECAL_LAYERS];
+            }
+          }
+	  
+	  
+	  float total_hits_max_distance_value = 0.;
+	  if(ecal_hits_max_distance_value > hcal_hits_max_distance_value ) total_hits_max_distance_value = ecal_hits_max_distance_value;
+	  if(ecal_hits_max_distance_value < hcal_hits_max_distance_value ) total_hits_max_distance_value = hcal_hits_max_distance_value;
 	  float total_MIP_Likeness_value = MIP_Likeness_total(ecal_nhit_layer_array, hcal_nhit_layer_array);
-
 	  float total_nhit_shower_maxvalue = 0.;
           float total_nhit_shower_maxvalue_n = 0.;
           int total_nhit_ilayermax = -1;
@@ -1918,6 +2425,8 @@ void analysis (string particle, bool masked=false) {
           int total_nhit_ilayerstart_10 = -1;
           int total_nhit_ilayerend_10 = -1;
           float total_nhit_shower_averagevalue = (ecal_nhit+hcal_nhit)/N_TOTAL_LAYERS;
+	  shower_variables_total(total_nhit, total_nhit_layer_array, total_nhit_layer_n_array, total_nhit_shower_maxvalue, total_nhit_shower_maxvalue_n, total_nhit_ilayermax,
+                                total_nhit_ilayerstart, total_nhit_ilayerstart_10, total_nhit_ilayerend, total_nhit_ilayerend_10, "nhit", total_shower_bool);
 
 	  float total_sume_shower_maxvalue = 0.;
           float total_sume_shower_maxvalue_n = 0.;
@@ -1927,6 +2436,8 @@ void analysis (string particle, bool masked=false) {
           int total_sume_ilayerstart_10 = -1;
           int total_sume_ilayerend_10 = -1;
           float total_sume_shower_averagevalue = (ecal_sume+hcal_sume)/N_TOTAL_LAYERS;
+	  shower_variables_total(total_sume, total_sume_layer_array, total_sume_layer_n_array, total_sume_shower_maxvalue, total_sume_shower_maxvalue_n, total_sume_ilayermax,
+				 total_sume_ilayerstart, total_sume_ilayerstart_10, total_sume_ilayerend, total_sume_ilayerend_10, "sume", total_shower_bool);
 
 	  float total_weighte_shower_maxvalue = 0.;
           float total_weighte_shower_maxvalue_n = 0.;
@@ -1936,6 +2447,8 @@ void analysis (string particle, bool masked=false) {
           int total_weighte_ilayerstart_10 = -1;
           int total_weighte_ilayerend_10 = -1;
           float total_weighte_shower_averagevalue = (ecal_weighte+hcal_weighte)/N_TOTAL_LAYERS;
+	  shower_variables_total(total_weighte, total_weighte_layer_array, total_weighte_layer_n_array, total_weighte_shower_maxvalue, total_weighte_shower_maxvalue_n, total_weighte_ilayermax,
+				 total_weighte_ilayerstart, total_weighte_ilayerstart_10, total_weighte_ilayerend, total_weighte_ilayerend_10, "weighte", total_shower_bool);
 
 	  float ratio_nhit = 0.;
 	  float ratio_sume = 0.;
@@ -1943,7 +2456,7 @@ void analysis (string particle, bool masked=false) {
 	  
 	  hcal_ecal_ratio(ratio_nhit, ratio_sume, ratio_weighte, ecal_nhit, ecal_sume, ecal_weighte, hcal_nhit, hcal_sume, hcal_weighte);
 
-	  is_interaction(b_ecal_interaction, b_hcal_interaction,b_total_interaction, ecal_nhit, hcal_nhit);
+	  is_interaction(b_ecal_interaction, b_hcal_interaction, b_total_interaction, ecal_nhit, hcal_nhit);
 
 	  // Filling the tree
 	  //cout<<"ecal nhit: "<<ecal_nhit<<endl;
@@ -1955,6 +2468,7 @@ void analysis (string particle, bool masked=false) {
 	  b_ecal_bar_z = ecal_bar_xyzr[2];
 	  b_ecal_bar_r = ecal_bar_xyzr[3];
 	  b_ecal_mol = ecal_mol_value;
+	  b_ecal_hits_max_distance = ecal_hits_max_distance_value;
 	  b_ecal_MIP_Likeness = ecal_MIP_Likeness_value;
 
 	  b_ecal_radius90_layer_0 = ecal_radius90_layer_array[0];
@@ -2150,6 +2664,7 @@ void analysis (string particle, bool masked=false) {
           b_hcal_bar_z = hcal_bar_xyzr[2];
           b_hcal_bar_r = hcal_bar_xyzr[3];
           b_hcal_mol = hcal_mol_value;
+	  b_hcal_hits_max_distance = hcal_hits_max_distance_value;
           b_hcal_MIP_Likeness = hcal_MIP_Likeness_value;
 
           b_hcal_radius90_layer_0 = hcal_radius90_layer_array[0];
@@ -2168,37 +2683,88 @@ void analysis (string particle, bool masked=false) {
           b_hcal_radius90_layer_13 = hcal_radius90_layer_array[13];
           b_hcal_radius90_layer_14 = hcal_radius90_layer_array[14];
 
-          b_hcal_nhit_layer_0 = hcal_nhit_layer_array[0];
-          b_hcal_nhit_layer_1 = hcal_nhit_layer_array[1];
-          b_hcal_nhit_layer_2 = hcal_nhit_layer_array[2];
-          b_hcal_nhit_layer_3 = hcal_nhit_layer_array[3];
-          b_hcal_nhit_layer_4 = hcal_nhit_layer_array[4];
-          b_hcal_nhit_layer_5 = hcal_nhit_layer_array[5];
-          b_hcal_nhit_layer_6 = hcal_nhit_layer_array[6];
-          b_hcal_nhit_layer_7 = hcal_nhit_layer_array[7];
-          b_hcal_nhit_layer_8 = hcal_nhit_layer_array[8];
-          b_hcal_nhit_layer_9 = hcal_nhit_layer_array[9];
-          b_hcal_nhit_layer_10 = hcal_nhit_layer_array[10];
-          b_hcal_nhit_layer_11 = hcal_nhit_layer_array[11];
-          b_hcal_nhit_layer_12 = hcal_nhit_layer_array[12];
-          b_hcal_nhit_layer_13 = hcal_nhit_layer_array[13];
-          b_hcal_nhit_layer_14 = hcal_nhit_layer_array[14];
-
-          b_hcal_nhit_layer_n_0 = hcal_nhit_layer_n_array[0];
-          b_hcal_nhit_layer_n_1 = hcal_nhit_layer_n_array[1];
-          b_hcal_nhit_layer_n_2 = hcal_nhit_layer_n_array[2];
-          b_hcal_nhit_layer_n_3 = hcal_nhit_layer_n_array[3];
-          b_hcal_nhit_layer_n_4 = hcal_nhit_layer_n_array[4];
-          b_hcal_nhit_layer_n_5 = hcal_nhit_layer_n_array[5];
-          b_hcal_nhit_layer_n_6 = hcal_nhit_layer_n_array[6];
-          b_hcal_nhit_layer_n_7 = hcal_nhit_layer_n_array[7];
-          b_hcal_nhit_layer_n_8 = hcal_nhit_layer_n_array[8];
-          b_hcal_nhit_layer_n_9 = hcal_nhit_layer_n_array[9];
-          b_hcal_nhit_layer_n_10 = hcal_nhit_layer_n_array[10];
-          b_hcal_nhit_layer_n_11 = hcal_nhit_layer_n_array[11];
-          b_hcal_nhit_layer_n_12 = hcal_nhit_layer_n_array[12];
-          b_hcal_nhit_layer_n_13 = hcal_nhit_layer_n_array[13];
-          b_hcal_nhit_layer_n_14 = hcal_nhit_layer_n_array[14];
+	  b_hcal_nhit_layer_0 = hcal_nhit_layer_array[0];
+	  b_hcal_nhit_layer_1 = hcal_nhit_layer_array[1];
+	  b_hcal_nhit_layer_2 = hcal_nhit_layer_array[2];
+	  b_hcal_nhit_layer_3 = hcal_nhit_layer_array[3];
+	  b_hcal_nhit_layer_4 = hcal_nhit_layer_array[4];
+	  b_hcal_nhit_layer_5 = hcal_nhit_layer_array[5];
+	  b_hcal_nhit_layer_6 = hcal_nhit_layer_array[6];
+	  b_hcal_nhit_layer_7 = hcal_nhit_layer_array[7];
+	  b_hcal_nhit_layer_8 = hcal_nhit_layer_array[8];
+	  b_hcal_nhit_layer_9 = hcal_nhit_layer_array[9];
+	  b_hcal_nhit_layer_10 = hcal_nhit_layer_array[10];
+	  b_hcal_nhit_layer_11 = hcal_nhit_layer_array[11];
+	  b_hcal_nhit_layer_12 = hcal_nhit_layer_array[12];
+	  b_hcal_nhit_layer_13 = hcal_nhit_layer_array[13];
+	  b_hcal_nhit_layer_14 = hcal_nhit_layer_array[14];
+	  b_hcal_nhit_layer_15 = hcal_nhit_layer_array[15];
+	  b_hcal_nhit_layer_16 = hcal_nhit_layer_array[16];
+	  b_hcal_nhit_layer_17 = hcal_nhit_layer_array[17];
+	  b_hcal_nhit_layer_18 = hcal_nhit_layer_array[18];
+	  b_hcal_nhit_layer_19 = hcal_nhit_layer_array[19];
+	  b_hcal_nhit_layer_20 = hcal_nhit_layer_array[20];
+	  b_hcal_nhit_layer_21 = hcal_nhit_layer_array[21];
+	  b_hcal_nhit_layer_22 = hcal_nhit_layer_array[22];
+	  b_hcal_nhit_layer_23 = hcal_nhit_layer_array[23];
+	  b_hcal_nhit_layer_24 = hcal_nhit_layer_array[24];
+	  b_hcal_nhit_layer_25 = hcal_nhit_layer_array[25];
+	  b_hcal_nhit_layer_26 = hcal_nhit_layer_array[26];
+	  b_hcal_nhit_layer_27 = hcal_nhit_layer_array[27];
+	  b_hcal_nhit_layer_28 = hcal_nhit_layer_array[28];
+	  b_hcal_nhit_layer_29 = hcal_nhit_layer_array[29];
+	  b_hcal_nhit_layer_30 = hcal_nhit_layer_array[30];
+	  b_hcal_nhit_layer_31 = hcal_nhit_layer_array[31];
+	  b_hcal_nhit_layer_32 = hcal_nhit_layer_array[32];
+	  b_hcal_nhit_layer_33 = hcal_nhit_layer_array[33];
+	  b_hcal_nhit_layer_34 = hcal_nhit_layer_array[34];
+	  b_hcal_nhit_layer_35 = hcal_nhit_layer_array[35];
+	  b_hcal_nhit_layer_36 = hcal_nhit_layer_array[36];
+	  b_hcal_nhit_layer_37 = hcal_nhit_layer_array[37];
+	  b_hcal_nhit_layer_38 = hcal_nhit_layer_array[38];
+	  b_hcal_nhit_layer_39 = hcal_nhit_layer_array[39];
+	  b_hcal_nhit_layer_40 = hcal_nhit_layer_array[40];
+	  b_hcal_nhit_layer_n_0 = hcal_nhit_layer_n_array[0];
+	  b_hcal_nhit_layer_n_1 = hcal_nhit_layer_n_array[1];
+	  b_hcal_nhit_layer_n_2 = hcal_nhit_layer_n_array[2];
+	  b_hcal_nhit_layer_n_3 = hcal_nhit_layer_n_array[3];
+	  b_hcal_nhit_layer_n_4 = hcal_nhit_layer_n_array[4];
+	  b_hcal_nhit_layer_n_5 = hcal_nhit_layer_n_array[5];
+	  b_hcal_nhit_layer_n_6 = hcal_nhit_layer_n_array[6];
+	  b_hcal_nhit_layer_n_7 = hcal_nhit_layer_n_array[7];
+	  b_hcal_nhit_layer_n_8 = hcal_nhit_layer_n_array[8];
+	  b_hcal_nhit_layer_n_9 = hcal_nhit_layer_n_array[9];
+	  b_hcal_nhit_layer_n_10 = hcal_nhit_layer_n_array[10];
+	  b_hcal_nhit_layer_n_11 = hcal_nhit_layer_n_array[11];
+	  b_hcal_nhit_layer_n_12 = hcal_nhit_layer_n_array[12];
+	  b_hcal_nhit_layer_n_13 = hcal_nhit_layer_n_array[13];
+	  b_hcal_nhit_layer_n_14 = hcal_nhit_layer_n_array[14];
+	  b_hcal_nhit_layer_n_15 = hcal_nhit_layer_n_array[15];
+	  b_hcal_nhit_layer_n_16 = hcal_nhit_layer_n_array[16];
+	  b_hcal_nhit_layer_n_17 = hcal_nhit_layer_n_array[17];
+	  b_hcal_nhit_layer_n_18 = hcal_nhit_layer_n_array[18];
+	  b_hcal_nhit_layer_n_19 = hcal_nhit_layer_n_array[19];
+	  b_hcal_nhit_layer_n_20 = hcal_nhit_layer_n_array[20];
+	  b_hcal_nhit_layer_n_21 = hcal_nhit_layer_n_array[21];
+	  b_hcal_nhit_layer_n_22 = hcal_nhit_layer_n_array[22];
+	  b_hcal_nhit_layer_n_23 = hcal_nhit_layer_n_array[23];
+	  b_hcal_nhit_layer_n_24 = hcal_nhit_layer_n_array[24];
+	  b_hcal_nhit_layer_n_25 = hcal_nhit_layer_n_array[25];
+	  b_hcal_nhit_layer_n_26 = hcal_nhit_layer_n_array[26];
+	  b_hcal_nhit_layer_n_27 = hcal_nhit_layer_n_array[27];
+	  b_hcal_nhit_layer_n_28 = hcal_nhit_layer_n_array[28];
+	  b_hcal_nhit_layer_n_29 = hcal_nhit_layer_n_array[29];
+	  b_hcal_nhit_layer_n_30 = hcal_nhit_layer_n_array[30];
+	  b_hcal_nhit_layer_n_31 = hcal_nhit_layer_n_array[31];
+	  b_hcal_nhit_layer_n_32 = hcal_nhit_layer_n_array[32];
+	  b_hcal_nhit_layer_n_33 = hcal_nhit_layer_n_array[33];
+	  b_hcal_nhit_layer_n_34 = hcal_nhit_layer_n_array[34];
+	  b_hcal_nhit_layer_n_35 = hcal_nhit_layer_n_array[35];
+	  b_hcal_nhit_layer_n_36 = hcal_nhit_layer_n_array[36];
+	  b_hcal_nhit_layer_n_37 = hcal_nhit_layer_n_array[37];
+	  b_hcal_nhit_layer_n_38 = hcal_nhit_layer_n_array[38];
+	  b_hcal_nhit_layer_n_39 = hcal_nhit_layer_n_array[39];
+	  b_hcal_nhit_layer_n_40 = hcal_nhit_layer_n_array[40];
 
           b_hcal_shower_nhit_max_layer = hcal_nhit_ilayermax;
           b_hcal_shower_nhit_start_layer = hcal_nhit_ilayerstart;
@@ -2208,7 +2774,7 @@ void analysis (string particle, bool masked=false) {
           b_hcal_shower_nhit_average = hcal_nhit_shower_averagevalue;
           b_hcal_shower_nhit_max = hcal_nhit_shower_maxvalue;
 
-          b_hcal_sume_layer_0 = hcal_sume_layer_array[0];
+	  b_hcal_sume_layer_0 = hcal_sume_layer_array[0];
           b_hcal_sume_layer_1 = hcal_sume_layer_array[1];
           b_hcal_sume_layer_2 = hcal_sume_layer_array[2];
           b_hcal_sume_layer_3 = hcal_sume_layer_array[3];
@@ -2223,7 +2789,32 @@ void analysis (string particle, bool masked=false) {
           b_hcal_sume_layer_12 = hcal_sume_layer_array[12];
           b_hcal_sume_layer_13 = hcal_sume_layer_array[13];
           b_hcal_sume_layer_14 = hcal_sume_layer_array[14];
-
+          b_hcal_sume_layer_15 = hcal_sume_layer_array[15];
+          b_hcal_sume_layer_16 = hcal_sume_layer_array[16];
+          b_hcal_sume_layer_17 = hcal_sume_layer_array[17];
+          b_hcal_sume_layer_18 = hcal_sume_layer_array[18];
+          b_hcal_sume_layer_19 = hcal_sume_layer_array[19];
+          b_hcal_sume_layer_20 = hcal_sume_layer_array[20];
+          b_hcal_sume_layer_21 = hcal_sume_layer_array[21];
+          b_hcal_sume_layer_22 = hcal_sume_layer_array[22];
+          b_hcal_sume_layer_23 = hcal_sume_layer_array[23];
+          b_hcal_sume_layer_24 = hcal_sume_layer_array[24];
+          b_hcal_sume_layer_25 = hcal_sume_layer_array[25];
+          b_hcal_sume_layer_26 = hcal_sume_layer_array[26];
+          b_hcal_sume_layer_27 = hcal_sume_layer_array[27];
+          b_hcal_sume_layer_28 = hcal_sume_layer_array[28];
+          b_hcal_sume_layer_29 = hcal_sume_layer_array[29];
+          b_hcal_sume_layer_30 = hcal_sume_layer_array[30];
+          b_hcal_sume_layer_31 = hcal_sume_layer_array[31];
+          b_hcal_sume_layer_32 = hcal_sume_layer_array[32];
+          b_hcal_sume_layer_33 = hcal_sume_layer_array[33];
+          b_hcal_sume_layer_34 = hcal_sume_layer_array[34];
+          b_hcal_sume_layer_35 = hcal_sume_layer_array[35];
+          b_hcal_sume_layer_36 = hcal_sume_layer_array[36];
+          b_hcal_sume_layer_37 = hcal_sume_layer_array[37];
+          b_hcal_sume_layer_38 = hcal_sume_layer_array[38];
+          b_hcal_sume_layer_39 = hcal_sume_layer_array[39];
+          b_hcal_sume_layer_40 = hcal_sume_layer_array[40];
           b_hcal_sume_layer_n_0 = hcal_sume_layer_n_array[0];
           b_hcal_sume_layer_n_1 = hcal_sume_layer_n_array[1];
           b_hcal_sume_layer_n_2 = hcal_sume_layer_n_array[2];
@@ -2239,6 +2830,32 @@ void analysis (string particle, bool masked=false) {
           b_hcal_sume_layer_n_12 = hcal_sume_layer_n_array[12];
           b_hcal_sume_layer_n_13 = hcal_sume_layer_n_array[13];
           b_hcal_sume_layer_n_14 = hcal_sume_layer_n_array[14];
+          b_hcal_sume_layer_n_15 = hcal_sume_layer_n_array[15];
+          b_hcal_sume_layer_n_16 = hcal_sume_layer_n_array[16];
+          b_hcal_sume_layer_n_17 = hcal_sume_layer_n_array[17];
+          b_hcal_sume_layer_n_18 = hcal_sume_layer_n_array[18];
+          b_hcal_sume_layer_n_19 = hcal_sume_layer_n_array[19];
+          b_hcal_sume_layer_n_20 = hcal_sume_layer_n_array[20];
+          b_hcal_sume_layer_n_21 = hcal_sume_layer_n_array[21];
+          b_hcal_sume_layer_n_22 = hcal_sume_layer_n_array[22];
+          b_hcal_sume_layer_n_23 = hcal_sume_layer_n_array[23];
+          b_hcal_sume_layer_n_24 = hcal_sume_layer_n_array[24];
+          b_hcal_sume_layer_n_25 = hcal_sume_layer_n_array[25];
+          b_hcal_sume_layer_n_26 = hcal_sume_layer_n_array[26];
+          b_hcal_sume_layer_n_27 = hcal_sume_layer_n_array[27];
+          b_hcal_sume_layer_n_28 = hcal_sume_layer_n_array[28];
+          b_hcal_sume_layer_n_29 = hcal_sume_layer_n_array[29];
+          b_hcal_sume_layer_n_30 = hcal_sume_layer_n_array[30];
+          b_hcal_sume_layer_n_31 = hcal_sume_layer_n_array[31];
+          b_hcal_sume_layer_n_32 = hcal_sume_layer_n_array[32];
+          b_hcal_sume_layer_n_33 = hcal_sume_layer_n_array[33];
+          b_hcal_sume_layer_n_34 = hcal_sume_layer_n_array[34];
+          b_hcal_sume_layer_n_35 = hcal_sume_layer_n_array[35];
+          b_hcal_sume_layer_n_36 = hcal_sume_layer_n_array[36];
+          b_hcal_sume_layer_n_37 = hcal_sume_layer_n_array[37];
+          b_hcal_sume_layer_n_38 = hcal_sume_layer_n_array[38];
+          b_hcal_sume_layer_n_39 = hcal_sume_layer_n_array[39];
+          b_hcal_sume_layer_n_40 = hcal_sume_layer_n_array[40];
 
           b_hcal_shower_sume_max_layer = hcal_sume_ilayermax;
           b_hcal_shower_sume_start_layer = hcal_sume_ilayerstart;
@@ -2248,7 +2865,7 @@ void analysis (string particle, bool masked=false) {
           b_hcal_shower_sume_average = hcal_sume_shower_averagevalue;
           b_hcal_shower_sume_max = hcal_sume_shower_maxvalue;
 
-          b_hcal_weighte_layer_0 = hcal_weighte_layer_array[0];
+	  b_hcal_weighte_layer_0 = hcal_weighte_layer_array[0];
           b_hcal_weighte_layer_1 = hcal_weighte_layer_array[1];
           b_hcal_weighte_layer_2 = hcal_weighte_layer_array[2];
           b_hcal_weighte_layer_3 = hcal_weighte_layer_array[3];
@@ -2263,7 +2880,32 @@ void analysis (string particle, bool masked=false) {
           b_hcal_weighte_layer_12 = hcal_weighte_layer_array[12];
           b_hcal_weighte_layer_13 = hcal_weighte_layer_array[13];
           b_hcal_weighte_layer_14 = hcal_weighte_layer_array[14];
-
+          b_hcal_weighte_layer_15 = hcal_weighte_layer_array[15];
+          b_hcal_weighte_layer_16 = hcal_weighte_layer_array[16];
+          b_hcal_weighte_layer_17 = hcal_weighte_layer_array[17];
+          b_hcal_weighte_layer_18 = hcal_weighte_layer_array[18];
+          b_hcal_weighte_layer_19 = hcal_weighte_layer_array[19];
+          b_hcal_weighte_layer_20 = hcal_weighte_layer_array[20];
+          b_hcal_weighte_layer_21 = hcal_weighte_layer_array[21];
+          b_hcal_weighte_layer_22 = hcal_weighte_layer_array[22];
+          b_hcal_weighte_layer_23 = hcal_weighte_layer_array[23];
+          b_hcal_weighte_layer_24 = hcal_weighte_layer_array[24];
+          b_hcal_weighte_layer_25 = hcal_weighte_layer_array[25];
+          b_hcal_weighte_layer_26 = hcal_weighte_layer_array[26];
+          b_hcal_weighte_layer_27 = hcal_weighte_layer_array[27];
+          b_hcal_weighte_layer_28 = hcal_weighte_layer_array[28];
+          b_hcal_weighte_layer_29 = hcal_weighte_layer_array[29];
+          b_hcal_weighte_layer_30 = hcal_weighte_layer_array[30];
+          b_hcal_weighte_layer_31 = hcal_weighte_layer_array[31];
+          b_hcal_weighte_layer_32 = hcal_weighte_layer_array[32];
+          b_hcal_weighte_layer_33 = hcal_weighte_layer_array[33];
+          b_hcal_weighte_layer_34 = hcal_weighte_layer_array[34];
+          b_hcal_weighte_layer_35 = hcal_weighte_layer_array[35];
+          b_hcal_weighte_layer_36 = hcal_weighte_layer_array[36];
+          b_hcal_weighte_layer_37 = hcal_weighte_layer_array[37];
+          b_hcal_weighte_layer_38 = hcal_weighte_layer_array[38];
+          b_hcal_weighte_layer_39 = hcal_weighte_layer_array[39];
+          b_hcal_weighte_layer_40 = hcal_weighte_layer_array[40];
           b_hcal_weighte_layer_n_0 = hcal_weighte_layer_n_array[0];
           b_hcal_weighte_layer_n_1 = hcal_weighte_layer_n_array[1];
           b_hcal_weighte_layer_n_2 = hcal_weighte_layer_n_array[2];
@@ -2279,6 +2921,32 @@ void analysis (string particle, bool masked=false) {
           b_hcal_weighte_layer_n_12 = hcal_weighte_layer_n_array[12];
           b_hcal_weighte_layer_n_13 = hcal_weighte_layer_n_array[13];
           b_hcal_weighte_layer_n_14 = hcal_weighte_layer_n_array[14];
+          b_hcal_weighte_layer_n_15 = hcal_weighte_layer_n_array[15];
+          b_hcal_weighte_layer_n_16 = hcal_weighte_layer_n_array[16];
+          b_hcal_weighte_layer_n_17 = hcal_weighte_layer_n_array[17];
+          b_hcal_weighte_layer_n_18 = hcal_weighte_layer_n_array[18];
+          b_hcal_weighte_layer_n_19 = hcal_weighte_layer_n_array[19];
+          b_hcal_weighte_layer_n_20 = hcal_weighte_layer_n_array[20];
+          b_hcal_weighte_layer_n_21 = hcal_weighte_layer_n_array[21];
+          b_hcal_weighte_layer_n_22 = hcal_weighte_layer_n_array[22];
+          b_hcal_weighte_layer_n_23 = hcal_weighte_layer_n_array[23];
+          b_hcal_weighte_layer_n_24 = hcal_weighte_layer_n_array[24];
+          b_hcal_weighte_layer_n_25 = hcal_weighte_layer_n_array[25];
+          b_hcal_weighte_layer_n_26 = hcal_weighte_layer_n_array[26];
+          b_hcal_weighte_layer_n_27 = hcal_weighte_layer_n_array[27];
+          b_hcal_weighte_layer_n_28 = hcal_weighte_layer_n_array[28];
+          b_hcal_weighte_layer_n_29 = hcal_weighte_layer_n_array[29];
+          b_hcal_weighte_layer_n_30 = hcal_weighte_layer_n_array[30];
+          b_hcal_weighte_layer_n_31 = hcal_weighte_layer_n_array[31];
+          b_hcal_weighte_layer_n_32 = hcal_weighte_layer_n_array[32];
+          b_hcal_weighte_layer_n_33 = hcal_weighte_layer_n_array[33];
+          b_hcal_weighte_layer_n_34 = hcal_weighte_layer_n_array[34];
+          b_hcal_weighte_layer_n_35 = hcal_weighte_layer_n_array[35];
+          b_hcal_weighte_layer_n_36 = hcal_weighte_layer_n_array[36];
+          b_hcal_weighte_layer_n_37 = hcal_weighte_layer_n_array[37];
+          b_hcal_weighte_layer_n_38 = hcal_weighte_layer_n_array[38];
+          b_hcal_weighte_layer_n_39 = hcal_weighte_layer_n_array[39];
+          b_hcal_weighte_layer_n_40 = hcal_weighte_layer_n_array[40];
 
           b_hcal_shower_weighte_max_layer = hcal_weighte_ilayermax;
           b_hcal_shower_weighte_start_layer = hcal_weighte_ilayerstart;
@@ -2333,44 +3001,18 @@ void analysis (string particle, bool masked=false) {
           b_hcal_bar_r_layer_10 = hcal_bar_layer_array[10][2];
           b_hcal_bar_r_layer_11 = hcal_bar_layer_array[11][2];
           b_hcal_bar_r_layer_12 = hcal_bar_layer_array[12][2];
-
-	  for(int i = 0; i<N_TOTAL_LAYERS;i++) {
-	    if(i<N_ECAL_LAYERS) {
-	      total_nhit_layer_array[i] = ecal_nhit_layer_array[i];
-	      total_nhit_layer_n_array[i] = ecal_nhit_layer_n_array[i];
-	      total_sume_layer_array[i] = ecal_sume_layer_array[i];
-	      total_sume_layer_n_array[i] = ecal_sume_layer_n_array[i];
-	      total_weighte_layer_array[i] = ecal_weighte_layer_array[i];
-	      total_weighte_layer_n_array[i] = ecal_weighte_layer_n_array[i];
-	      total_bar_layer_array[i][0] = ecal_bar_layer_array[i][0];
-	      total_bar_layer_array[i][1] = ecal_bar_layer_array[i][1];
-	      total_bar_layer_array[i][2] = ecal_bar_layer_array[i][2];
-	      total_radius90_layer_array[i] = ecal_radius90_layer_array[i];
-	    }
-	    else{
-              total_nhit_layer_array[i] = hcal_nhit_layer_array[i];
-              total_nhit_layer_n_array[i] = hcal_nhit_layer_n_array[i];
-              total_sume_layer_array[i] = hcal_sume_layer_array[i];
-              total_sume_layer_n_array[i] = hcal_sume_layer_n_array[i];
-              total_weighte_layer_array[i] = hcal_weighte_layer_array[i];
-              total_weighte_layer_n_array[i] = hcal_weighte_layer_n_array[i];
-              total_bar_layer_array[i][0] = hcal_bar_layer_array[i][0];
-              total_bar_layer_array[i][1] = hcal_bar_layer_array[i][1];
-              total_bar_layer_array[i][2] = hcal_bar_layer_array[i][2];
-              total_radius90_layer_array[i] = hcal_radius90_layer_array[i];
-            }
-	  }
 	  
 	  
-	  b_total_nhit = ecal_nhit + hcal_nhit;
-          b_total_sume = ecal_sume + hcal_sume;
-          b_total_weighte = ecal_weighte + hcal_weighte;
+	  b_total_nhit = total_nhit;
+          b_total_sume = total_sume;
+          b_total_weighte = total_weighte;
           b_total_bar_x = total_bar_xyzr[0];
           b_total_bar_y = total_bar_xyzr[1];
           b_total_bar_z = total_bar_xyzr[2];
           b_total_bar_r = total_bar_xyzr[3];
           b_total_mol = total_mol_value;
-          b_total_MIP_Likeness = total_MIP_Likeness_value;
+          b_total_hits_max_distance = total_hits_max_distance_value;
+	  b_total_MIP_Likeness = total_MIP_Likeness_value;
 
 	  b_total_radius90_layer_0 = total_radius90_layer_array[0];
           b_total_radius90_layer_1 = total_radius90_layer_array[1];
@@ -2388,37 +3030,118 @@ void analysis (string particle, bool masked=false) {
           b_total_radius90_layer_13 = total_radius90_layer_array[13];
           b_total_radius90_layer_14 = total_radius90_layer_array[14];
 
-          b_total_nhit_layer_0 = total_nhit_layer_array[0];
-          b_total_nhit_layer_1 = total_nhit_layer_array[1];
-          b_total_nhit_layer_2 = total_nhit_layer_array[2];
-          b_total_nhit_layer_3 = total_nhit_layer_array[3];
-          b_total_nhit_layer_4 = total_nhit_layer_array[4];
-          b_total_nhit_layer_5 = total_nhit_layer_array[5];
-          b_total_nhit_layer_6 = total_nhit_layer_array[6];
-          b_total_nhit_layer_7 = total_nhit_layer_array[7];
-          b_total_nhit_layer_8 = total_nhit_layer_array[8];
-          b_total_nhit_layer_9 = total_nhit_layer_array[9];
-          b_total_nhit_layer_10 = total_nhit_layer_array[10];
-          b_total_nhit_layer_11 = total_nhit_layer_array[11];
-          b_total_nhit_layer_12 = total_nhit_layer_array[12];
-          b_total_nhit_layer_13 = total_nhit_layer_array[13];
-          b_total_nhit_layer_14 = total_nhit_layer_array[14];
-
-          b_total_nhit_layer_n_0 = total_nhit_layer_n_array[0];
-          b_total_nhit_layer_n_1 = total_nhit_layer_n_array[1];
-          b_total_nhit_layer_n_2 = total_nhit_layer_n_array[2];
-          b_total_nhit_layer_n_3 = total_nhit_layer_n_array[3];
-          b_total_nhit_layer_n_4 = total_nhit_layer_n_array[4];
-          b_total_nhit_layer_n_5 = total_nhit_layer_n_array[5];
-          b_total_nhit_layer_n_6 = total_nhit_layer_n_array[6];
-          b_total_nhit_layer_n_7 = total_nhit_layer_n_array[7];
-          b_total_nhit_layer_n_8 = total_nhit_layer_n_array[8];
-          b_total_nhit_layer_n_9 = total_nhit_layer_n_array[9];
-          b_total_nhit_layer_n_10 = total_nhit_layer_n_array[10];
-          b_total_nhit_layer_n_11 = total_nhit_layer_n_array[11];
-          b_total_nhit_layer_n_12 = total_nhit_layer_n_array[12];
-          b_total_nhit_layer_n_13 = total_nhit_layer_n_array[13];
-          b_total_nhit_layer_n_14 = total_nhit_layer_n_array[14];
+	  b_total_nhit_layer_0 = total_nhit_layer_array[0];
+	  b_total_nhit_layer_1 = total_nhit_layer_array[1];
+	  b_total_nhit_layer_2 = total_nhit_layer_array[2];
+	  b_total_nhit_layer_3 = total_nhit_layer_array[3];
+	  b_total_nhit_layer_4 = total_nhit_layer_array[4];
+	  b_total_nhit_layer_5 = total_nhit_layer_array[5];
+	  b_total_nhit_layer_6 = total_nhit_layer_array[6];
+	  b_total_nhit_layer_7 = total_nhit_layer_array[7];
+	  b_total_nhit_layer_8 = total_nhit_layer_array[8];
+	  b_total_nhit_layer_9 = total_nhit_layer_array[9];
+	  b_total_nhit_layer_10 = total_nhit_layer_array[10];
+	  b_total_nhit_layer_11 = total_nhit_layer_array[11];
+	  b_total_nhit_layer_12 = total_nhit_layer_array[12];
+	  b_total_nhit_layer_13 = total_nhit_layer_array[13];
+	  b_total_nhit_layer_14 = total_nhit_layer_array[14];
+	  b_total_nhit_layer_15 = total_nhit_layer_array[15];
+	  b_total_nhit_layer_16 = total_nhit_layer_array[16];
+	  b_total_nhit_layer_17 = total_nhit_layer_array[17];
+	  b_total_nhit_layer_18 = total_nhit_layer_array[18];
+	  b_total_nhit_layer_19 = total_nhit_layer_array[19];
+	  b_total_nhit_layer_20 = total_nhit_layer_array[20];
+	  b_total_nhit_layer_21 = total_nhit_layer_array[21];
+	  b_total_nhit_layer_22 = total_nhit_layer_array[22];
+	  b_total_nhit_layer_23 = total_nhit_layer_array[23];
+	  b_total_nhit_layer_24 = total_nhit_layer_array[24];
+	  b_total_nhit_layer_25 = total_nhit_layer_array[25];
+	  b_total_nhit_layer_26 = total_nhit_layer_array[26];
+	  b_total_nhit_layer_27 = total_nhit_layer_array[27];
+	  b_total_nhit_layer_28 = total_nhit_layer_array[28];
+	  b_total_nhit_layer_29 = total_nhit_layer_array[29];
+	  b_total_nhit_layer_30 = total_nhit_layer_array[30];
+	  b_total_nhit_layer_31 = total_nhit_layer_array[31];
+	  b_total_nhit_layer_32 = total_nhit_layer_array[32];
+	  b_total_nhit_layer_33 = total_nhit_layer_array[33];
+	  b_total_nhit_layer_34 = total_nhit_layer_array[34];
+	  b_total_nhit_layer_35 = total_nhit_layer_array[35];
+	  b_total_nhit_layer_36 = total_nhit_layer_array[36];
+	  b_total_nhit_layer_37 = total_nhit_layer_array[37];
+	  b_total_nhit_layer_38 = total_nhit_layer_array[38];
+	  b_total_nhit_layer_39 = total_nhit_layer_array[39];
+	  b_total_nhit_layer_40 = total_nhit_layer_array[40];
+	  b_total_nhit_layer_41 = total_nhit_layer_array[41];
+	  b_total_nhit_layer_42 = total_nhit_layer_array[42];
+	  b_total_nhit_layer_43 = total_nhit_layer_array[43];
+	  b_total_nhit_layer_44 = total_nhit_layer_array[44];
+	  b_total_nhit_layer_45 = total_nhit_layer_array[45];
+	  b_total_nhit_layer_46 = total_nhit_layer_array[46];
+	  b_total_nhit_layer_47 = total_nhit_layer_array[47];
+	  b_total_nhit_layer_48 = total_nhit_layer_array[48];
+	  b_total_nhit_layer_49 = total_nhit_layer_array[49];
+	  b_total_nhit_layer_50 = total_nhit_layer_array[50];
+	  b_total_nhit_layer_51 = total_nhit_layer_array[51];
+	  b_total_nhit_layer_52 = total_nhit_layer_array[52];
+	  b_total_nhit_layer_53 = total_nhit_layer_array[53];
+	  b_total_nhit_layer_54 = total_nhit_layer_array[54];
+	  b_total_nhit_layer_55 = total_nhit_layer_array[55];
+	  b_total_nhit_layer_n_0 = total_nhit_layer_n_array[0];
+	  b_total_nhit_layer_n_1 = total_nhit_layer_n_array[1];
+	  b_total_nhit_layer_n_2 = total_nhit_layer_n_array[2];
+	  b_total_nhit_layer_n_3 = total_nhit_layer_n_array[3];
+	  b_total_nhit_layer_n_4 = total_nhit_layer_n_array[4];
+	  b_total_nhit_layer_n_5 = total_nhit_layer_n_array[5];
+	  b_total_nhit_layer_n_6 = total_nhit_layer_n_array[6];
+	  b_total_nhit_layer_n_7 = total_nhit_layer_n_array[7];
+	  b_total_nhit_layer_n_8 = total_nhit_layer_n_array[8];
+	  b_total_nhit_layer_n_9 = total_nhit_layer_n_array[9];
+	  b_total_nhit_layer_n_10 = total_nhit_layer_n_array[10];
+	  b_total_nhit_layer_n_11 = total_nhit_layer_n_array[11];
+	  b_total_nhit_layer_n_12 = total_nhit_layer_n_array[12];
+	  b_total_nhit_layer_n_13 = total_nhit_layer_n_array[13];
+	  b_total_nhit_layer_n_14 = total_nhit_layer_n_array[14];
+	  b_total_nhit_layer_n_15 = total_nhit_layer_n_array[15];
+	  b_total_nhit_layer_n_16 = total_nhit_layer_n_array[16];
+	  b_total_nhit_layer_n_17 = total_nhit_layer_n_array[17];
+	  b_total_nhit_layer_n_18 = total_nhit_layer_n_array[18];
+	  b_total_nhit_layer_n_19 = total_nhit_layer_n_array[19];
+	  b_total_nhit_layer_n_20 = total_nhit_layer_n_array[20];
+	  b_total_nhit_layer_n_21 = total_nhit_layer_n_array[21];
+	  b_total_nhit_layer_n_22 = total_nhit_layer_n_array[22];
+	  b_total_nhit_layer_n_23 = total_nhit_layer_n_array[23];
+	  b_total_nhit_layer_n_24 = total_nhit_layer_n_array[24];
+	  b_total_nhit_layer_n_25 = total_nhit_layer_n_array[25];
+	  b_total_nhit_layer_n_26 = total_nhit_layer_n_array[26];
+	  b_total_nhit_layer_n_27 = total_nhit_layer_n_array[27];
+	  b_total_nhit_layer_n_28 = total_nhit_layer_n_array[28];
+	  b_total_nhit_layer_n_29 = total_nhit_layer_n_array[29];
+	  b_total_nhit_layer_n_30 = total_nhit_layer_n_array[30];
+	  b_total_nhit_layer_n_31 = total_nhit_layer_n_array[31];
+	  b_total_nhit_layer_n_32 = total_nhit_layer_n_array[32];
+	  b_total_nhit_layer_n_33 = total_nhit_layer_n_array[33];
+	  b_total_nhit_layer_n_34 = total_nhit_layer_n_array[34];
+	  b_total_nhit_layer_n_35 = total_nhit_layer_n_array[35];
+	  b_total_nhit_layer_n_36 = total_nhit_layer_n_array[36];
+	  b_total_nhit_layer_n_37 = total_nhit_layer_n_array[37];
+	  b_total_nhit_layer_n_38 = total_nhit_layer_n_array[38];
+	  b_total_nhit_layer_n_39 = total_nhit_layer_n_array[39];
+	  b_total_nhit_layer_n_40 = total_nhit_layer_n_array[40];
+	  b_total_nhit_layer_n_41 = total_nhit_layer_n_array[41];
+	  b_total_nhit_layer_n_42 = total_nhit_layer_n_array[42];
+	  b_total_nhit_layer_n_43 = total_nhit_layer_n_array[43];
+	  b_total_nhit_layer_n_44 = total_nhit_layer_n_array[44];
+	  b_total_nhit_layer_n_45 = total_nhit_layer_n_array[45];
+	  b_total_nhit_layer_n_46 = total_nhit_layer_n_array[46];
+	  b_total_nhit_layer_n_47 = total_nhit_layer_n_array[47];
+	  b_total_nhit_layer_n_48 = total_nhit_layer_n_array[48];
+	  b_total_nhit_layer_n_49 = total_nhit_layer_n_array[49];
+	  b_total_nhit_layer_n_50 = total_nhit_layer_n_array[50];
+	  b_total_nhit_layer_n_51 = total_nhit_layer_n_array[51];
+	  b_total_nhit_layer_n_52 = total_nhit_layer_n_array[52];
+	  b_total_nhit_layer_n_53 = total_nhit_layer_n_array[53];
+	  b_total_nhit_layer_n_54 = total_nhit_layer_n_array[54];
+	  b_total_nhit_layer_n_55 = total_nhit_layer_n_array[55];
 
           b_total_shower_nhit_max_layer = total_nhit_ilayermax;
           b_total_shower_nhit_start_layer = total_nhit_ilayerstart;
@@ -2428,7 +3151,7 @@ void analysis (string particle, bool masked=false) {
           b_total_shower_nhit_average = total_nhit_shower_averagevalue;
           b_total_shower_nhit_max = total_nhit_shower_maxvalue;
 
-          b_total_sume_layer_0 = total_sume_layer_array[0];
+	  b_total_sume_layer_0 = total_sume_layer_array[0];
           b_total_sume_layer_1 = total_sume_layer_array[1];
           b_total_sume_layer_2 = total_sume_layer_array[2];
           b_total_sume_layer_3 = total_sume_layer_array[3];
@@ -2443,7 +3166,47 @@ void analysis (string particle, bool masked=false) {
           b_total_sume_layer_12 = total_sume_layer_array[12];
           b_total_sume_layer_13 = total_sume_layer_array[13];
           b_total_sume_layer_14 = total_sume_layer_array[14];
-
+          b_total_sume_layer_15 = total_sume_layer_array[15];
+          b_total_sume_layer_16 = total_sume_layer_array[16];
+          b_total_sume_layer_17 = total_sume_layer_array[17];
+          b_total_sume_layer_18 = total_sume_layer_array[18];
+          b_total_sume_layer_19 = total_sume_layer_array[19];
+          b_total_sume_layer_20 = total_sume_layer_array[20];
+          b_total_sume_layer_21 = total_sume_layer_array[21];
+          b_total_sume_layer_22 = total_sume_layer_array[22];
+          b_total_sume_layer_23 = total_sume_layer_array[23];
+          b_total_sume_layer_24 = total_sume_layer_array[24];
+          b_total_sume_layer_25 = total_sume_layer_array[25];
+          b_total_sume_layer_26 = total_sume_layer_array[26];
+          b_total_sume_layer_27 = total_sume_layer_array[27];
+          b_total_sume_layer_28 = total_sume_layer_array[28];
+          b_total_sume_layer_29 = total_sume_layer_array[29];
+          b_total_sume_layer_30 = total_sume_layer_array[30];
+          b_total_sume_layer_31 = total_sume_layer_array[31];
+          b_total_sume_layer_32 = total_sume_layer_array[32];
+          b_total_sume_layer_33 = total_sume_layer_array[33];
+          b_total_sume_layer_34 = total_sume_layer_array[34];
+          b_total_sume_layer_35 = total_sume_layer_array[35];
+          b_total_sume_layer_36 = total_sume_layer_array[36];
+          b_total_sume_layer_37 = total_sume_layer_array[37];
+          b_total_sume_layer_38 = total_sume_layer_array[38];
+          b_total_sume_layer_39 = total_sume_layer_array[39];
+          b_total_sume_layer_40 = total_sume_layer_array[40];
+          b_total_sume_layer_41 = total_sume_layer_array[41];
+          b_total_sume_layer_42 = total_sume_layer_array[42];
+          b_total_sume_layer_43 = total_sume_layer_array[43];
+          b_total_sume_layer_44 = total_sume_layer_array[44];
+          b_total_sume_layer_45 = total_sume_layer_array[45];
+          b_total_sume_layer_46 = total_sume_layer_array[46];
+          b_total_sume_layer_47 = total_sume_layer_array[47];
+          b_total_sume_layer_48 = total_sume_layer_array[48];
+          b_total_sume_layer_49 = total_sume_layer_array[49];
+          b_total_sume_layer_50 = total_sume_layer_array[50];
+          b_total_sume_layer_51 = total_sume_layer_array[51];
+          b_total_sume_layer_52 = total_sume_layer_array[52];
+          b_total_sume_layer_53 = total_sume_layer_array[53];
+          b_total_sume_layer_54 = total_sume_layer_array[54];
+          b_total_sume_layer_55 = total_sume_layer_array[55];
           b_total_sume_layer_n_0 = total_sume_layer_n_array[0];
           b_total_sume_layer_n_1 = total_sume_layer_n_array[1];
           b_total_sume_layer_n_2 = total_sume_layer_n_array[2];
@@ -2459,7 +3222,48 @@ void analysis (string particle, bool masked=false) {
           b_total_sume_layer_n_12 = total_sume_layer_n_array[12];
           b_total_sume_layer_n_13 = total_sume_layer_n_array[13];
           b_total_sume_layer_n_14 = total_sume_layer_n_array[14];
-
+          b_total_sume_layer_n_15 = total_sume_layer_n_array[15];
+          b_total_sume_layer_n_16 = total_sume_layer_n_array[16];
+          b_total_sume_layer_n_17 = total_sume_layer_n_array[17];
+          b_total_sume_layer_n_18 = total_sume_layer_n_array[18];
+          b_total_sume_layer_n_19 = total_sume_layer_n_array[19];
+          b_total_sume_layer_n_20 = total_sume_layer_n_array[20];
+          b_total_sume_layer_n_21 = total_sume_layer_n_array[21];
+          b_total_sume_layer_n_22 = total_sume_layer_n_array[22];
+          b_total_sume_layer_n_23 = total_sume_layer_n_array[23];
+          b_total_sume_layer_n_24 = total_sume_layer_n_array[24];
+          b_total_sume_layer_n_25 = total_sume_layer_n_array[25];
+          b_total_sume_layer_n_26 = total_sume_layer_n_array[26];
+          b_total_sume_layer_n_27 = total_sume_layer_n_array[27];
+          b_total_sume_layer_n_28 = total_sume_layer_n_array[28];
+          b_total_sume_layer_n_29 = total_sume_layer_n_array[29];
+          b_total_sume_layer_n_30 = total_sume_layer_n_array[30];
+          b_total_sume_layer_n_31 = total_sume_layer_n_array[31];
+          b_total_sume_layer_n_32 = total_sume_layer_n_array[32];
+          b_total_sume_layer_n_33 = total_sume_layer_n_array[33];
+          b_total_sume_layer_n_34 = total_sume_layer_n_array[34];
+          b_total_sume_layer_n_35 = total_sume_layer_n_array[35];
+          b_total_sume_layer_n_36 = total_sume_layer_n_array[36];
+          b_total_sume_layer_n_37 = total_sume_layer_n_array[37];
+          b_total_sume_layer_n_38 = total_sume_layer_n_array[38];
+          b_total_sume_layer_n_39 = total_sume_layer_n_array[39];
+          b_total_sume_layer_n_40 = total_sume_layer_n_array[40];
+          b_total_sume_layer_n_41 = total_sume_layer_n_array[41];
+          b_total_sume_layer_n_42 = total_sume_layer_n_array[42];
+          b_total_sume_layer_n_43 = total_sume_layer_n_array[43];
+          b_total_sume_layer_n_44 = total_sume_layer_n_array[44];
+          b_total_sume_layer_n_45 = total_sume_layer_n_array[45];
+          b_total_sume_layer_n_46 = total_sume_layer_n_array[46];
+          b_total_sume_layer_n_47 = total_sume_layer_n_array[47];
+          b_total_sume_layer_n_48 = total_sume_layer_n_array[48];
+          b_total_sume_layer_n_49 = total_sume_layer_n_array[49];
+          b_total_sume_layer_n_50 = total_sume_layer_n_array[50];
+          b_total_sume_layer_n_51 = total_sume_layer_n_array[51];
+          b_total_sume_layer_n_52 = total_sume_layer_n_array[52];
+          b_total_sume_layer_n_53 = total_sume_layer_n_array[53];
+          b_total_sume_layer_n_54 = total_sume_layer_n_array[54];
+          b_total_sume_layer_n_55 = total_sume_layer_n_array[55];
+	  
           b_total_shower_sume_max_layer = total_sume_ilayermax;
           b_total_shower_sume_start_layer = total_sume_ilayerstart;
           b_total_shower_sume_end_layer = total_sume_ilayerend;
@@ -2468,7 +3272,7 @@ void analysis (string particle, bool masked=false) {
           b_total_shower_sume_average = total_sume_shower_averagevalue;
           b_total_shower_sume_max = total_sume_shower_maxvalue;
 
-          b_total_weighte_layer_0 = total_weighte_layer_array[0];
+	  b_total_weighte_layer_0 = total_weighte_layer_array[0];
           b_total_weighte_layer_1 = total_weighte_layer_array[1];
           b_total_weighte_layer_2 = total_weighte_layer_array[2];
           b_total_weighte_layer_3 = total_weighte_layer_array[3];
@@ -2483,7 +3287,47 @@ void analysis (string particle, bool masked=false) {
           b_total_weighte_layer_12 = total_weighte_layer_array[12];
           b_total_weighte_layer_13 = total_weighte_layer_array[13];
           b_total_weighte_layer_14 = total_weighte_layer_array[14];
-
+          b_total_weighte_layer_15 = total_weighte_layer_array[15];
+          b_total_weighte_layer_16 = total_weighte_layer_array[16];
+          b_total_weighte_layer_17 = total_weighte_layer_array[17];
+          b_total_weighte_layer_18 = total_weighte_layer_array[18];
+          b_total_weighte_layer_19 = total_weighte_layer_array[19];
+          b_total_weighte_layer_20 = total_weighte_layer_array[20];
+          b_total_weighte_layer_21 = total_weighte_layer_array[21];
+          b_total_weighte_layer_22 = total_weighte_layer_array[22];
+          b_total_weighte_layer_23 = total_weighte_layer_array[23];
+          b_total_weighte_layer_24 = total_weighte_layer_array[24];
+          b_total_weighte_layer_25 = total_weighte_layer_array[25];
+          b_total_weighte_layer_26 = total_weighte_layer_array[26];
+          b_total_weighte_layer_27 = total_weighte_layer_array[27];
+          b_total_weighte_layer_28 = total_weighte_layer_array[28];
+          b_total_weighte_layer_29 = total_weighte_layer_array[29];
+          b_total_weighte_layer_30 = total_weighte_layer_array[30];
+          b_total_weighte_layer_31 = total_weighte_layer_array[31];
+          b_total_weighte_layer_32 = total_weighte_layer_array[32];
+          b_total_weighte_layer_33 = total_weighte_layer_array[33];
+          b_total_weighte_layer_34 = total_weighte_layer_array[34];
+          b_total_weighte_layer_35 = total_weighte_layer_array[35];
+          b_total_weighte_layer_36 = total_weighte_layer_array[36];
+          b_total_weighte_layer_37 = total_weighte_layer_array[37];
+          b_total_weighte_layer_38 = total_weighte_layer_array[38];
+          b_total_weighte_layer_39 = total_weighte_layer_array[39];
+          b_total_weighte_layer_40 = total_weighte_layer_array[40];
+          b_total_weighte_layer_41 = total_weighte_layer_array[41];
+          b_total_weighte_layer_42 = total_weighte_layer_array[42];
+          b_total_weighte_layer_43 = total_weighte_layer_array[43];
+          b_total_weighte_layer_44 = total_weighte_layer_array[44];
+          b_total_weighte_layer_45 = total_weighte_layer_array[45];
+          b_total_weighte_layer_46 = total_weighte_layer_array[46];
+          b_total_weighte_layer_47 = total_weighte_layer_array[47];
+          b_total_weighte_layer_48 = total_weighte_layer_array[48];
+          b_total_weighte_layer_49 = total_weighte_layer_array[49];
+          b_total_weighte_layer_50 = total_weighte_layer_array[50];
+          b_total_weighte_layer_51 = total_weighte_layer_array[51];
+          b_total_weighte_layer_52 = total_weighte_layer_array[52];
+          b_total_weighte_layer_53 = total_weighte_layer_array[53];
+          b_total_weighte_layer_54 = total_weighte_layer_array[54];
+          b_total_weighte_layer_55 = total_weighte_layer_array[55];
           b_total_weighte_layer_n_0 = total_weighte_layer_n_array[0];
           b_total_weighte_layer_n_1 = total_weighte_layer_n_array[1];
           b_total_weighte_layer_n_2 = total_weighte_layer_n_array[2];
@@ -2499,6 +3343,47 @@ void analysis (string particle, bool masked=false) {
           b_total_weighte_layer_n_12 = total_weighte_layer_n_array[12];
           b_total_weighte_layer_n_13 = total_weighte_layer_n_array[13];
           b_total_weighte_layer_n_14 = total_weighte_layer_n_array[14];
+          b_total_weighte_layer_n_15 = total_weighte_layer_n_array[15];
+          b_total_weighte_layer_n_16 = total_weighte_layer_n_array[16];
+          b_total_weighte_layer_n_17 = total_weighte_layer_n_array[17];
+          b_total_weighte_layer_n_18 = total_weighte_layer_n_array[18];
+          b_total_weighte_layer_n_19 = total_weighte_layer_n_array[19];
+          b_total_weighte_layer_n_20 = total_weighte_layer_n_array[20];
+          b_total_weighte_layer_n_21 = total_weighte_layer_n_array[21];
+          b_total_weighte_layer_n_22 = total_weighte_layer_n_array[22];
+          b_total_weighte_layer_n_23 = total_weighte_layer_n_array[23];
+          b_total_weighte_layer_n_24 = total_weighte_layer_n_array[24];
+          b_total_weighte_layer_n_25 = total_weighte_layer_n_array[25];
+          b_total_weighte_layer_n_26 = total_weighte_layer_n_array[26];
+          b_total_weighte_layer_n_27 = total_weighte_layer_n_array[27];
+          b_total_weighte_layer_n_28 = total_weighte_layer_n_array[28];
+          b_total_weighte_layer_n_29 = total_weighte_layer_n_array[29];
+          b_total_weighte_layer_n_30 = total_weighte_layer_n_array[30];
+          b_total_weighte_layer_n_31 = total_weighte_layer_n_array[31];
+          b_total_weighte_layer_n_32 = total_weighte_layer_n_array[32];
+          b_total_weighte_layer_n_33 = total_weighte_layer_n_array[33];
+          b_total_weighte_layer_n_34 = total_weighte_layer_n_array[34];
+          b_total_weighte_layer_n_35 = total_weighte_layer_n_array[35];
+          b_total_weighte_layer_n_36 = total_weighte_layer_n_array[36];
+          b_total_weighte_layer_n_37 = total_weighte_layer_n_array[37];
+          b_total_weighte_layer_n_38 = total_weighte_layer_n_array[38];
+          b_total_weighte_layer_n_39 = total_weighte_layer_n_array[39];
+          b_total_weighte_layer_n_40 = total_weighte_layer_n_array[40];
+          b_total_weighte_layer_n_41 = total_weighte_layer_n_array[41];
+          b_total_weighte_layer_n_42 = total_weighte_layer_n_array[42];
+          b_total_weighte_layer_n_43 = total_weighte_layer_n_array[43];
+          b_total_weighte_layer_n_44 = total_weighte_layer_n_array[44];
+          b_total_weighte_layer_n_45 = total_weighte_layer_n_array[45];
+          b_total_weighte_layer_n_46 = total_weighte_layer_n_array[46];
+          b_total_weighte_layer_n_47 = total_weighte_layer_n_array[47];
+          b_total_weighte_layer_n_48 = total_weighte_layer_n_array[48];
+          b_total_weighte_layer_n_49 = total_weighte_layer_n_array[49];
+          b_total_weighte_layer_n_50 = total_weighte_layer_n_array[50];
+          b_total_weighte_layer_n_51 = total_weighte_layer_n_array[51];
+          b_total_weighte_layer_n_52 = total_weighte_layer_n_array[52];
+          b_total_weighte_layer_n_53 = total_weighte_layer_n_array[53];
+          b_total_weighte_layer_n_54 = total_weighte_layer_n_array[54];
+          b_total_weighte_layer_n_55 = total_weighte_layer_n_array[55];
 
           b_total_shower_weighte_max_layer = total_weighte_ilayermax;
           b_total_shower_weighte_start_layer = total_weighte_ilayerstart;

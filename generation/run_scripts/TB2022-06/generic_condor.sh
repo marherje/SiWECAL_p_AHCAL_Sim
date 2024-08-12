@@ -28,7 +28,7 @@ log_path="${local}/log"
 macfile=grid_-0.0-0.0_${particle}_${energy}GeV.mac
 #note: -0-0 are the beam position -x-y in mm
 
-nevt=3000
+nevt=6000
 # nevt=10
 
 cat > ${local}/macros/$macfile <<EOF

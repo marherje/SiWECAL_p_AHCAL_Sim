@@ -20,7 +20,7 @@ template_sub=combined_LCIO2build_gen.sub
 
 for particle in e- neutron kaon- pi- mu- gamma
 do
-  for energy in 1 2 3 4 5 6 7 8 9 10 #60 100 
+  for energy in 60 100 #1 2 3 4 5 6 7 8 9 10 #60 100 
   do
       filename="combined_LCIO2build_"$particle"_"$energy"GeV"
       cp $template_steer combined_LCIO2build_folder/combined_LCIO2build_steer/$filename".xml"

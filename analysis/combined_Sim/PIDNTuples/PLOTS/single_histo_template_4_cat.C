@@ -1,7 +1,7 @@
 #define N_ECAL_LAYERS 15
 
 void addCaliceLogo(bool WIP = true){
-  TImage *img = TImage::Open("../../style/CALICELogo_18pc.png");
+  TImage *img = TImage::Open("style/CALICELogo_18pc.png");
   img->SetConstRatio(kTRUE);
   img->SetImageCompression(0);
   TPad *p1 = new TPad("img", "img", 0.835, 0.92, 1.0, 1.0);
@@ -88,10 +88,10 @@ void drawHistosTH1(TString varname, TH1 * hA, TH1 * hB, TH1 * hC, TH1 * hD, bool
   hD->SetLineWidth(3);
   
   hA->SetTitle(varname);
-  hA->Draw("histo");
-  hB->Draw("histosame");
-  hC->Draw("histosame");
-  hD->Draw("histosame");
+  hA->DrawNormalized("histo");
+  hB->DrawNormalized("histosame");
+  hC->DrawNormalized("histosame");
+  hD->DrawNormalized("histosame");
 
   float xleg=0.;
   if( hA->GetBinCenter(hA->GetMaximumBin()) < (x_max-x_min)/2) xleg = 0.5;

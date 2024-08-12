@@ -427,6 +427,7 @@ void is_interaction(float &ecal_int, float &hcal_int, float &total_int, int nhit
   ecal_int = 0.;
   hcal_int = 0.;
   total_int = 0.;
+  //cout<<"ecal, hcal: "<<nhit_e<<", "<<nhit_h<<endl;
   if(nhit_e > 0) ecal_int = 1.;
   if(nhit_h > 0) hcal_int = 1.;
   if((nhit_e > 0) or (nhit_h > 0)) total_int = 1.;
