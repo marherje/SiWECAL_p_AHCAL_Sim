@@ -27,7 +27,7 @@ vector<size_t> sort_indexes(const vector<T> &v) {
   return idx;
 }
 
-#define N_ENERGIES 1 //18
+#define N_ENERGIES 3 //18
 #define N_ECAL_LAYERS 15
 #define N_HCAL_LAYERS 41 //pre+38+bad+tokyo
 
@@ -993,7 +993,7 @@ void graph_setup_add(TGraph *g, string title, Color_t color){
 
 void analysis (string particle, bool masked=false) {
     
-    double test_e[N_ENERGIES]={6.};
+    double test_e[N_ENERGIES]={6., 60., 100};
     TVectorD energies(N_ENERGIES, test_e);
     TVectorD energies_tr(N_ENERGIES);
     for (int j = 0; j < N_ENERGIES; j++) energies_tr[j] = 1/TMath::Sqrt(energies[j]);
