@@ -1,7 +1,7 @@
 #define N_ECAL_LAYERS 15
 
 void addCaliceLogo(bool WIP = true){
-  TImage *img = TImage::Open("../../style/CALICELogo_18pc.png");
+  TImage *img = TImage::Open("style/CALICELogo_18pc.png");
   img->SetConstRatio(kTRUE);
   img->SetImageCompression(0);
   TPad *p1 = new TPad("img", "img", 0.835, 0.92, 1.0, 1.0);

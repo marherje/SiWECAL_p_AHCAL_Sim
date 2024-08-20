@@ -2274,7 +2274,7 @@ void analysis (string particle, bool masked=false) {
 	  hits_layer_ecal(ecal_weighte_layer_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, false, "weight");
           hits_layer_ecal(ecal_weighte_layer_n_array, ecal_hit_energy, ecal_hit_slab, W_thicknesses, ecal_hit_isMasked, masked, true, "weight");
 	  
-	  float ecal_hits_max_distance_value = hits_max_distance(ecal_hit_slab, ecal_hit_x, ecal_hit_x, ecal_hit_isMasked, masked);
+	  float ecal_hits_max_distance_value = hits_max_distance(ecal_hit_slab, ecal_hit_x, ecal_hit_y, ecal_hit_isMasked, masked);
 	  float ecal_MIP_Likeness_value = MIP_Likeness_ecal(ecal_nhit_layer_array);
 	  bool ecal_shower_bool = is_Shower_ecal(ecal_sume, ecal_sume_layer_array);
 
@@ -2327,7 +2327,7 @@ void analysis (string particle, bool masked=false) {
           hits_layer_hcal(hcal_weighte_layer_n_array, hcal_hit_energy, hcal_hit_slab, S_thicknesses, hcal_hit_isMasked, masked, true, "weight");
 
 	  //float hcal_hits_max_distance_value = 0.;
-	  float hcal_hits_max_distance_value = hits_max_distance(hcal_hit_slab, hcal_hit_x, hcal_hit_x, hcal_hit_isMasked, masked);
+	  float hcal_hits_max_distance_value = hits_max_distance(hcal_hit_slab, hcal_hit_x, hcal_hit_y, hcal_hit_isMasked, masked);
           float hcal_MIP_Likeness_value = MIP_Likeness_hcal(hcal_nhit_layer_array);
           bool hcal_shower_bool = is_Shower_hcal(hcal_sume, hcal_sume_layer_array);
 

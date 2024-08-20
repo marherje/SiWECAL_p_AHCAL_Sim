@@ -99,3 +99,8 @@ analysis/ML4PID/PSOforECALPID_4cat/output
 analysis/ML4PID/PSOforECALPID_4cat/logs
 analysis/ML4PID/PSOforECALPID_4cat/SAVELOGS
 analysis/ML4PID/PSOforECALPID_4cat/data
+
+# PID Folders
+analysis/ECAL_Sim/PIDNTuples/PID_*
+
+analysis/combined_Sim/PIDNTuples/PID_*

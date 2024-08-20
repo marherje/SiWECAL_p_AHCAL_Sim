@@ -12,9 +12,9 @@ fi
 #    mkdir $copydir
 #fi
 
-for production in PID_6_GeV_e_pi_mu #PID_100_GeV_e_pi_mu PID_6_60_100_GeV_e_pi_mu
+for production in PID_6_GeV_e_pi_mu #PID_1_to_10_GeV_e_pi_mu #PID_6_GeV_e_pi_mu #PID_1_to_10_GeV_e_pi_mu #PID_100_GeV_e_pi_mu PID_6_60_100_GeV_e_pi_mu
 do
-    for variable in total_nhit_layer_20 total_nhit_layer_50 nhit_ratio weighte_ratio total_interaction total_MIP_Likeness ecal_MIP_Likeness hcal_MIP_Likeness total_hits_max_distance
+    for variable in MIP_Likeness #hits_max_distance shower_nhit_max_layer shower_nhit_start_layer shower_nhit_end_layer ecal_interaction nhit weighte mol bar_z radius90_layer_4 
     do
 	cp single_histo_template_3_cat.C single_histo_3_temp.C
 
@@ -65,6 +65,17 @@ do
             setC="n (0.5+4.5+8.5 GeV)"
         fi
 	
+	if [ $production == PID_1_to_10_GeV_e_pi_mu ]; then
+            resA=e-
+            resB=pi-
+            resC=mu-
+            partA=e-
+            partB=pi-
+            partC=mu-
+            setA="e- (1-10 GeV)"
+            setB="#pi- (1-10 GeV)"
+            setC="#mu- (1-10 GeV)"
+        fi
 
 	sed -i "s/XresAX/"$resA"/g" single_histo_3_temp.C
         sed -i "s/XresBX/"$resB"/g" single_histo_3_temp.C
