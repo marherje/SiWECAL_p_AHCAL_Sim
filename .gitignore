@@ -93,13 +93,13 @@ analysis/ECAL_Sim/ShowerStudy/plots*/
 analysis/ML4PID/PSOforECALPID/output
 analysis/ML4PID/PSOforECALPID/logs
 analysis/ML4PID/PSOforECALPID/SAVELOGS
-analysis/ML4PID/PSOforECALPID/data
+analysis/ML4PID/PSOforECALPID/data/PID_*
 
 analysis/ML4PID/PSOforECALPID_4cat/output
 analysis/ML4PID/PSOforECALPID_4cat/logs
 analysis/ML4PID/PSOforECALPID_4cat/SAVELOGS
 analysis/ML4PID/PSOforECALPID_4cat/data
-
+analysis/ML4PID/PSOforECALPID_4cat/data/PID_*
 # PID Folders
 analysis/ECAL_Sim/PIDNTuples/PID_*
 
