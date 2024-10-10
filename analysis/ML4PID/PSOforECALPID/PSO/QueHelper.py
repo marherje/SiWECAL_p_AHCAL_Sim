@@ -313,7 +313,7 @@ class QueHelper:
 
         "#!/bin/bash\n",
         "path=\"/lhome/ific/m/marherje/ParticleSwarmOptimization\"\n",
-        "source ${path}/init_ilcsoft_v02-02-03.sh\n",
+        "source ${path}/init_ilcsoft_v02-03-03.sh\n",
         "#source init_ilcsoft_v02-02-01.sh\n",
       ]
 
@@ -347,7 +347,10 @@ class QueHelper:
 
         '#requirements = (OpSysAndVer == "SL6")',
         'requirements = (OpSysAndVer == "CentOS7")',
-        '+JobFlavour = "normal"',
+        
+        '#RequestMemory  =  2000',
+        '+JobFlavour = "largo"',
+
         'queue',
       ]
 

@@ -1,7 +1,7 @@
 ##Parameters for the Particle Swarm Optimization
 
 ##RunOn = EKPSL5 | EKPSL5 | NAFSL5 | NAFSL6 | IFIC | DESY
-RunOn=DESY
+RunOn=IFIC
 
 ## Swarm Parameters
 ##change to 40-50 
@@ -71,16 +71,15 @@ coord=["MaxDepth",2,8,1,"int"]
 ## else TMVA will use built in splitting
 UseEvenOddSplitting=0
 ## use selections without quotation marks. E.g.:
-SelectionString=
+SelectionString=ecal_interaction==1
 
-
-SourceBFile=data/PID_6_GeV_e_pi_mu/resolution_e-_result.root
+SourceBFile=data/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_gamma_0.5to10GeV_ecal.root
 SourceBTree=ntp
 
-SourceCFile=data/PID_6_GeV_e_pi_mu/resolution_pi-_result.root
+SourceCFile=data/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_neutron_0.5to10GeV_ecal.root
 SourceCTree=ntp
 
-SourceOFile=data/PID_6_GeV_e_pi_mu/resolution_mu-_result.root
+SourceOFile=data/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE/PIDParams_PixelDigiCluster_ECALe_luxe_v1_QGSP_BERT_pi-_0.5to10GeV_ecal.root
 SourceOTree=ntp
 
 ##------------------------------------------------
@@ -93,20 +92,11 @@ InitialVariables:
 ["weighte","F","","weighte"]
 ["bar_z","F","","bar_z"]
 ["mol","F","","mol"]
-["radius90_layer_0","F","","radius90_layer_0"]
+["MIP_Likeness","F","","MIP_Likeness"]
+["hits_max_distance","F","","hits_max_distance"]
 ["radius90_layer_1","F","","radius90_layer_1"]
-["radius90_layer_2","F","","radius90_layer_2"]
-["radius90_layer_3","F","","radius90_layer_3"]
-["radius90_layer_4","F","","radius90_layer_4"]
 ["radius90_layer_5","F","","radius90_layer_5"]
-["radius90_layer_6","F","","radius90_layer_6"]
-["radius90_layer_7","F","","radius90_layer_7"]
-["radius90_layer_8","F","","radius90_layer_8"]
-["radius90_layer_9","F","","radius90_layer_9"]
 ["radius90_layer_10","F","","radius90_layer_10"]
-["radius90_layer_11","F","","radius90_layer_11"]
-["radius90_layer_12","F","","radius90_layer_12"]
-["radius90_layer_13","F","","radius90_layer_13"]
 ["radius90_layer_14","F","","radius90_layer_14"]
 ["shower_sume_max_layer","F","","shower_sume_max_layer"]
 ["shower_sume_start_layer","F","","shower_sume_start_layer"]
@@ -115,20 +105,9 @@ InitialVariables:
 ["shower_sume_end_10_layer","F","","shower_sume_end_10_layer"]
 ["shower_sume_average","F","","shower_sume_average"]
 ["shower_sume_max","F","","shower_sume_max"]
-["sume_layer_0","F","","sume_layer_0"]
 ["sume_layer_1","F","","sume_layer_1"]
-["sume_layer_2","F","","sume_layer_2"]
-["sume_layer_3","F","","sume_layer_3"]
-["sume_layer_4","F","","sume_layer_4"]
 ["sume_layer_5","F","","sume_layer_5"]
-["sume_layer_6","F","","sume_layer_6"]
-["sume_layer_7","F","","sume_layer_7"]
-["sume_layer_8","F","","sume_layer_8"]
-["sume_layer_9","F","","sume_layer_9"]
 ["sume_layer_10","F","","sume_layer_10"]
-["sume_layer_11","F","","sume_layer_11"]
-["sume_layer_12","F","","sume_layer_12"]
-["sume_layer_13","F","","sume_layer_13"]
 ["sume_layer_14","F","","sume_layer_14"]
 EndVariables
 

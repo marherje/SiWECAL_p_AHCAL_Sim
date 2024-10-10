@@ -176,7 +176,8 @@ return 0;
 
 
 bool is_Shower_ecal(float entries, float array[N_ECAL_LAYERS]) {
-  float threshold = 3.;
+  float threshold = 1.;
+  float threshold_max = 3.;
   float shower_maxvalue = 0.;
   bool isShower = false;
   if(entries > 0){
@@ -190,7 +191,7 @@ bool is_Shower_ecal(float entries, float array[N_ECAL_LAYERS]) {
       float thislayer = array[ilayer];
       float nextlayer = array[ilayer+1];
       float nextnextlayer = array[ilayer+2];
-      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > 5.)){
+      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > threshold_max)){
         isShower = true;
         break;
       }
@@ -200,7 +201,8 @@ bool is_Shower_ecal(float entries, float array[N_ECAL_LAYERS]) {
 }
 
 bool is_Shower_hcal(float entries, float array[N_HCAL_LAYERS]) {
-  float threshold = 3.;
+  float threshold = 1.;
+  float threshold_max = 3.;
   float shower_maxvalue = 0.;
   bool isShower = false;
   if(entries > 0){
@@ -214,7 +216,7 @@ bool is_Shower_hcal(float entries, float array[N_HCAL_LAYERS]) {
       float thislayer = array[ilayer];
       float nextlayer = array[ilayer+1];
       float nextnextlayer = array[ilayer+2];
-      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > 5.)){
+      if((thislayer > threshold) and (nextlayer > thislayer) and (nextnextlayer > nextlayer) and (shower_maxvalue > threshold_max)){
         isShower = true;
         break;
       }
@@ -227,7 +229,7 @@ void shower_variables_ecal(float entries, float array[N_ECAL_LAYERS], float arra
                       int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
 
   float percentage = 0.1;
-  float threshold = 3.;
+  float threshold = 1.;
  
   if((entries > 0) and (is_shower == true)){
     for(int ilayer=0; ilayer<N_ECAL_LAYERS; ilayer++){
@@ -277,7 +279,7 @@ void shower_variables_hcal(float entries, float array[N_HCAL_LAYERS], float arra
 			   int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
 
   float percentage = 0.1;
-  float threshold = 3.;
+  float threshold = 1.;
 
   if((entries > 0) and (is_shower == true)){
     for(int ilayer=0; ilayer<N_HCAL_LAYERS; ilayer++){
@@ -327,7 +329,7 @@ void shower_variables_total(float entries, float array[N_TOTAL_LAYERS], float ar
                            int &ilayerstart, int &ilayerstart_10, int &ilayerend, int &ilayerend_10, string count_type = "nhit", bool is_shower=false) {
 
   float percentage = 0.1;
-  float threshold = 3.;
+  float threshold = 1.;
 
   if((entries > 0) and (is_shower == true)){
     for(int ilayer=0; ilayer<N_HCAL_LAYERS; ilayer++){

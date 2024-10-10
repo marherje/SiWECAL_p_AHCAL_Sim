@@ -16,7 +16,7 @@ sed -i "s/XENERGIESX/3/g" analysis.C
 sed -i "s/XENERGYSTRINGX/6., 60., 100/g" analysis.C
 sed -i "s:XBASEPATHX:$basepath:g" analysis.C
 
-for particle in e- pi- mu- kaon- neutron gamma
+for particle in gamma #e- pi- mu- kaon- neutron gamma
 do
     root -q analysis.C\(\"$particle\"\)
 done

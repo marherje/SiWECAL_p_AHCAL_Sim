@@ -1,11 +1,11 @@
 ##Parameters for the Particle Swarm Optimization
 
 ##RunOn = EKPSL5 | EKPSL5 | NAFSL5 | NAFSL6 | IFIC | DESY
-RunOn=DESY
+RunOn=IFIC
 
 ## Swarm Parameters
 ##change to 40-50 
-NParticles=50 
+NParticles=40 
 ##change to 25-30
 NIterations=20 
 wIneratia=0.729
@@ -16,7 +16,7 @@ wSwarm=1.49445
 FOM=Weighted_1_AUC
 ADThreshold=0.20
 KSThreshold=0.10
-FindBestVariables=0 
+FindBestvariables=0 
 MaxVariablesInCombination=100
 ##only add variable if new FOM > ImprovementThreshold*FOM
 ImprovementThreshold=1.005
@@ -45,6 +45,7 @@ PreparationString=SplitMode=Random:NormMode=NumEvents:!V
 BWeightExpression=Weight
 CWeightExpression=Weight
 OWeightExpression=Weight
+NWeightExpression=Weight
 
 ##Method to train and test
 ##only tested with BDT so far
@@ -73,83 +74,63 @@ UseEvenOddSplitting=0
 ## use selections without quotation marks. E.g.:
 SelectionString=
 
-SourceBFile=data/PID_6_GeV_e_pi_mu/resolution_e-_result.root
+SourceBFile=data/PID_6_60_100_GeV/resolution_e-_result_total.root
 SourceBTree=ntp
 
-SourceCFile=data/PID_6_GeV_e_pi_mu/resolution_pi-_result.root
+SourceCFile=data/PID_6_60_100_GeV/resolution_pi-_result_total.root
 SourceCTree=ntp
 
-SourceOFile=data/PID_6_GeV_e_pi_mu/resolution_mu-_result.root
+SourceOFile=data/PID_6_60_100_GeV/resolution_mu-_result_total.root
 SourceOTree=ntp
+
+SourceNFile=data/PID_6_60_100_GeV/resolution_neutron_result_total.root
+SourceNTree=ntp
 
 ##------------------------------------------------
 ##Variables in Format ["NAME","TYPE","LENGTH","VarExpression"]
 ##IMPORTANT dont leave a blank line between the initial and the end variables line
 ##variables the optimization starts with
 InitialVariables:
-["nhit","F","","nhit"]
-["weighte","F","","weighte"]
-["bar_z","F","","bar_z"]
-["mol","F","","mol"]
-["radius90_layer_1","F","","radius90_layer_1"]
-["radius90_layer_5","F","","radius90_layer_5"]
-["radius90_layer_10","F","","radius90_layer_10"]
-["shower_sume_start_10_layer","F","","shower_sume_start_10_layer"]
-["shower_sume_end_10_layer","F","","shower_sume_end_10_layer"]
-["shower_sume_max","F","","shower_sume_max"]
-["sume_layer_1","F","","sume_layer_1"]
-["sume_layer_5","F","","sume_layer_5"]
-["sume_layer_10","F","","sume_layer_10"]
-["MIP_Likeness","F","","MIP_Likeness"]
+["ecal_weighte","F","","ecal_weighte"]
+["ecal_radius90_layer_1","F","","ecal_radius90_layer_1"]
+["ecal_radius90_layer_5","F","","ecal_radius90_layer_5"]
+["ecal_radius90_layer_10","F","","ecal_radius90_layer_10"]
+["ecal_radius90_layer_14","F","","ecal_radius90_layer_14"]
+["ecal_sume_layer_1","F","","ecal_sume_layer_1"]
+["ecal_sume_layer_5","F","","ecal_sume_layer_5"]
+["ecal_sume_layer_10","F","","ecal_sume_layer_10"]
+["ecal_sume_layer_14","F","","ecal_sume_layer_14"]
+["ecal_shower_sume_max_layer","F","","ecal_shower_sume_max_layer"]
+["ecal_shower_sume_start_10_layer","F","","ecal_shower_sume_start_10_layer"]
+["ecal_shower_sume_end_10_layer","F","","ecal_shower_sume_end_10_layer"]
+["hcal_weighte","F","","hcal_weighte"]
+["hcal_radius90_layer_1","F","","hcal_radius90_layer_1"]
+["hcal_radius90_layer_5","F","","hcal_radius90_layer_5"]
+["hcal_radius90_layer_10","F","","hcal_radius90_layer_10"]
+["hcal_radius90_layer_14","F","","hcal_radius90_layer_14"]
+["hcal_sume_layer_1","F","","hcal_sume_layer_1"]
+["hcal_sume_layer_5","F","","hcal_sume_layer_5"]
+["hcal_sume_layer_10","F","","hcal_sume_layer_10"]
+["hcal_sume_layer_14","F","","hcal_sume_layer_14"]
+["hcal_shower_sume_max_layer","F","","hcal_shower_sume_max_layer"]
+["weighte_ratio","F","","weighte_ratio"]
+["total_bar_z","F","","total_bar_z"]
+["total_mol","F","","total_mol"]
+["total_MIP_Likeness","F","","total_MIP_Likeness"]	
+["nhit_ratio","F","","nhit_ratio"]
+["total_hits_max_distance","F","","total_hits_max_distance"]
+["total_nhit","F","","total_nhit"]
+["ecal_MIP_Likeness","F","","ecal_MIP_Likeness"]
+["hcal_MIP_Likeness","F","","hcal_MIP_Likeness"]
+["sume_ratio","F","","sume_ratio"]
+["weighte_ratio","F","","weighte_ratio"]
+["ecal_hits_max_distance","F","","ecal_hits_max_distance"]
+["hcal_hits_max_distance","F","","hcal_hits_max_distance"]
 EndVariables
 
 ##---------------------------------------------------
 ## variables the swarm can try
 AdditionalVariables:
-["shower_nhit_max_layer","F","","shower_nhit_max_layer"]
-["shower_nhit_start_layer","F","","shower_nhit_start_layer"]
-["shower_nhit_end_layer","F","","shower_nhit_end_layer"]
-["shower_nhit_start_10_layer","F","","shower_nhit_start_10_layer"]
-["shower_nhit_end_10_layer","F","","shower_nhit_end_10_layer"]
-["shower_nhit_average","F","","shower_nhit_average"]
-["shower_nhit_max","F","","shower_nhit_max"]
-["nhit_layer_0","F","","nhit_layer_0"]
-["nhit_layer_1","F","","nhit_layer_1"]
-["nhit_layer_2","F","","nhit_layer_2"]
-["nhit_layer_3","F","","nhit_layer_3"]
-["nhit_layer_4","F","","nhit_layer_4"]
-["nhit_layer_5","F","","nhit_layer_5"]
-["nhit_layer_6","F","","nhit_layer_6"]
-["nhit_layer_7","F","","nhit_layer_7"]
-["nhit_layer_8","F","","nhit_layer_8"]
-["nhit_layer_9","F","","nhit_layer_9"]
-["nhit_layer_10","F","","nhit_layer_10"]
-["nhit_layer_11","F","","nhit_layer_11"]
-["nhit_layer_12","F","","nhit_layer_12"]
-["nhit_layer_13","F","","nhit_layer_13"]
-["nhit_layer_14","F","","nhit_layer_14"]
-["shower_weighte_max_layer","F","","shower_weighte_max_layer"]
-["shower_weighte_start_layer","F","","shower_weighte_start_layer"]
-["shower_weighte_end_layer","F","","shower_weighte_end_layer"]
-["shower_weighte_start_10_layer","F","","shower_weighte_start_10_layer"]
-["shower_weighte_end_10_layer","F","","shower_weighte_end_10_layer"]
-["shower_weighte_average","F","","shower_weighte_average"]
-["shower_weighte_max","F","","shower_weighte_max"]
-["weighte_layer_0","F","","weighte_layer_0"]
-["weighte_layer_1","F","","weighte_layer_1"]
-["weighte_layer_2","F","","weighte_layer_2"]
-["weighte_layer_3","F","","weighte_layer_3"]
-["weighte_layer_4","F","","weighte_layer_4"]
-["weighte_layer_5","F","","weighte_layer_5"]
-["weighte_layer_6","F","","weighte_layer_6"]
-["weighte_layer_7","F","","weighte_layer_7"]
-["weighte_layer_8","F","","weighte_layer_8"]
-["weighte_layer_9","F","","weighte_layer_9"]
-["weighte_layer_10","F","","weighte_layer_10"]
-["weighte_layer_11","F","","weighte_layer_11"]
-["weighte_layer_12","F","","weighte_layer_12"]
-["weighte_layer_13","F","","weighte_layer_13"]
-["weighte_layer_14","F","","weighte_layer_14"]
 EndVariables
 
 ##---------------------------------------------------
