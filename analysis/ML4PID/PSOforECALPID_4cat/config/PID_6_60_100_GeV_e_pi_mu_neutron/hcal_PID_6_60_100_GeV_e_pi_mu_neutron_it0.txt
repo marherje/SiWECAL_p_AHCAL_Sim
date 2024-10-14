@@ -118,7 +118,6 @@ EndVariables
 ##---------------------------------------------------
 ## variables the swarm can try
 AdditionalVariables:
-["hcal_nhit","F","","hcal_nhit"]
 EndVariables
 
 ##---------------------------------------------------

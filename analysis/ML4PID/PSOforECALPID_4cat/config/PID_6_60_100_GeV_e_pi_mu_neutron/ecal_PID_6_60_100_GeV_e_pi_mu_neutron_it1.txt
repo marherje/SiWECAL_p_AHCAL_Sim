@@ -92,8 +92,6 @@ SourceNTree=ntp
 ##variables the optimization starts with
 InitialVariables:
 ["ecal_nhit","F","","ecal_nhit"]
-["ecal_sume","F","","ecal_sume"]
-["ecal_weighte","F","","ecal_weighte"]
 ["ecal_bar_z","F","","ecal_bar_z"]
 ["ecal_mol","F","","ecal_mol"]
 ["ecal_MIP_Likeness","F","","ecal_MIP_Likeness"]
@@ -103,15 +101,9 @@ InitialVariables:
 ["ecal_radius90_layer_10","F","","ecal_radius90_layer_10"]
 ["ecal_radius90_layer_14","F","","ecal_radius90_layer_14"]
 ["ecal_shower_sume_max_layer","F","","ecal_shower_sume_max_layer"]
-["ecal_shower_sume_start_layer","F","","ecal_shower_sume_start_layer"]
-["ecal_shower_sume_end_layer","F","","ecal_shower_sume_end_layer"]
 ["ecal_shower_sume_start_10_layer","F","","ecal_shower_sume_start_10_layer"]
 ["ecal_shower_sume_end_10_layer","F","","ecal_shower_sume_end_10_layer"]
-["ecal_shower_sume_average","F","","ecal_shower_sume_average"]
-["ecal_shower_sume_max","F","","ecal_shower_sume_max"]
 ["ecal_sume_layer_1","F","","ecal_sume_layer_1"]
-["ecal_sume_layer_5","F","","ecal_sume_layer_5"]
-["ecal_sume_layer_10","F","","ecal_sume_layer_10"]
 ["ecal_sume_layer_14","F","","ecal_sume_layer_14"]
 EndVariables
 

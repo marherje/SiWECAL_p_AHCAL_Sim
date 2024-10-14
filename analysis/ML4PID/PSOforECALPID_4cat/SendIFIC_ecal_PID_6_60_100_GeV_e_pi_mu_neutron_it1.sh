@@ -24,6 +24,6 @@ source /cvmfs/ilc.desy.de/sw/x86_64_gcc82_centos7/v02-02-03/root/6.18.04/bin/thi
 # Loading newer ROOT:
 #/cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.24.02/x86_64-centos7-gcc48-opt/bin/thisroot.sh
 
-python runPSO.py -c config/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE_it0.txt -o output/PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE_it0 > log/Log_PID_0.5_to_10_GeV_gamma_neutron_pi_LUXE_it0.log
+python runPSO.py -c config/PID_6_60_100_GeV_e_pi_mu_neutron/ecal_PID_6_60_100_GeV_e_pi_mu_neutron_it1.txt -o output/ecal_PID_6_60_100_GeV_e_pi_mu_neutron_it1 > log/Log_ecal_PID_6_60_100_GeV_e_pi_mu_neutron_it1.log
 
 #nohup ./sendtoyific.sh >& run_production.out  &
